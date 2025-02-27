@@ -1,7 +1,3 @@
-using System;
-using UnityEngine;
-
-[SerializeField]
 public enum TabState
 {
     Keybind = 0,
