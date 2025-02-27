@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 334f40498ddf0c145843ec0aecf72080
+guid: c9654e50c7c8c7645ac101320c1d9046
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4344772015309762331
-    second: ButtonTab_0
+      213: 5792130642464033980
+    second: FolderIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 25, y: 0, z: 25, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ButtonTab_0
+      name: FolderIcon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 162
-        height: 49
+        x: 24
+        y: 45
+        width: 209
+        height: 166
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5e057652fd444b3c0800000000000000
-      internalID: -4344772015309762331
+      spriteID: cbc49bc9128c16050800000000000000
+      internalID: 5792130642464033980
       vertices: []
       indices: 
       edges: []
@@ -139,7 +139,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ButtonTab_0: -4344772015309762331
+      FolderIcon_0: 5792130642464033980
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

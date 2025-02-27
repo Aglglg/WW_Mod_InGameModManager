@@ -3,9 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class ScrollviewSnapZoom : MonoBehaviour
 {
+    [SerializeField] private InputAction mouseClickAction;
     [SerializeField] private Scrollbar scrollBar;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private HorizontalLayoutGroup horizontalLayoutGroup;
@@ -16,12 +19,9 @@ public class ScrollviewSnapZoom : MonoBehaviour
     private float scrollPos = 0;
     private float[] pos;
 
-    IEnumerator Start()
+    void Start()
     {
-        while(EventSystem.current == null)
-        {
-            yield return null;
-        }
+        mouseClickAction.Enable();
     }
 
     void Update()
@@ -38,8 +38,8 @@ public class ScrollviewSnapZoom : MonoBehaviour
         {
             pos[i] = distance * i;
         }
-
-        if (Input.GetMouseButton(0))
+        
+        if (mouseClickAction.IsInProgress())
         {
             scrollPos = scrollBar.value;
         }
@@ -70,28 +70,16 @@ public class ScrollviewSnapZoom : MonoBehaviour
         }
     }
 
+    //Called from when UI selected
     public void ScrollToItem(GameObject item)
     {
-        StartCoroutine(SmoothScroll(item));
-    }
-
-    private IEnumerator SmoothScroll(GameObject item)
-    {   
         int index = item.transform.GetSiblingIndex();
         float distance = 1f / (pos.Length - 1f);
         scrollPos = pos[index];
 
         float duration = 0.3f;
-        float elapsedTime = 0f;
         float startPos = scrollBar.value;
 
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            scrollBar.value = Mathf.Lerp(startPos, scrollPos, elapsedTime / duration);
-            yield return null;
-        }
-
-        scrollBar.value = scrollPos;
+        DOTween.To(() => scrollBar.value, x => scrollBar.value = x, scrollPos, duration);
     }
 }
