@@ -1,27 +1,42 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class TabSettingManager : MonoBehaviour
 {
+    #region VARIABLES
+    [Header("SELECTION")]
     [SerializeField] private InputAction actionAnyMouse;
     [SerializeField] private InputAction actionAnyKeyboard;
     [SerializeField] private InputAction actionAnyGamepad;
     [SerializeField] private Image[] selectedMarkers;
-
     [SerializeField] private GameObject tabTitle;
+
+    [Header("")]
+    [Header("SETTINGS")]
     [SerializeField] private Transform backgroundPanel;
     [SerializeField] private Image backgroundFillImage;
     [SerializeField] private TMP_InputField modPathField;
     [SerializeField] private Slider opacitySlider;
     [SerializeField] private Slider scaleSlider;
     [SerializeField] private InputAction actionResetTransform;
+
+    [Header("")]
+    [Header("SUPPORT")]
+    [SerializeField] private Image supportImageIcon;
+    private string supportLink;
+    #endregion
+    
     private void Start()
     {
-        LoadSetting();
+        StartCoroutine(LoadSupportImage());
+        StartCoroutine(LoadSupportLink());
     }
 
     private void OnEnable()
@@ -115,7 +130,8 @@ public class TabSettingManager : MonoBehaviour
         SaveModPath();
     }
 
-    private void LoadSetting()
+    //Called from UIManager
+    public void LoadSetting()
     {
         if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_MODPATH))
         {
@@ -154,6 +170,7 @@ public class TabSettingManager : MonoBehaviour
         }
     }
 
+    #region MODS PATH
     //Called from Button
     public void SelectModPath()
     {
@@ -169,7 +186,9 @@ public class TabSettingManager : MonoBehaviour
     {
         PlayerPrefs.SetString(ConstantVar.PLAYERPERFKEY_MODPATH, modPathField.text);
     }
+    #endregion
 
+    #region SLIDER SETTING
     //Called from Slider OnValueChanged
     public void ValueChangedOpacitySlider(float value)
     {
@@ -183,4 +202,48 @@ public class TabSettingManager : MonoBehaviour
         backgroundPanel.localScale = new Vector3(value, value, value);
         PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, value);
     }
+    #endregion
+
+    #region SUPPORT
+    //Called from Button
+    public void SupportButton()
+    {
+        Application.OpenURL(supportLink);
+    }
+    public void ProfileButton()
+    {
+        Application.OpenURL(ConstantVar.LINK_GAMEBANANA);
+    }
+
+    IEnumerator LoadSupportImage()
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(ConstantVar.LINK_GETSUPPORTICON);
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            supportImageIcon.sprite = sprite;
+        }
+        else
+        {
+            Debug.LogError("Failed to load image: " + request.error);
+        }
+    }
+    IEnumerator LoadSupportLink()
+    {
+        UnityWebRequest request = UnityWebRequest.Get(ConstantVar.LINK_GETSUPPORTLINK);
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            supportLink = request.downloadHandler.text;
+        }
+        else
+        {
+            Debug.LogError("Failed to load link: " + request.error);
+        }
+    }
+    #endregion
 }

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
 {
     public static TabState CurrentTabState = TabState.Mod;
+    [SerializeField] private TabSettingManager tabSettingManager;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private RectTransform selectedTab;
     [SerializeField] private float[] selectedTabPositions;
@@ -22,6 +23,7 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
 
     private void Start()
     {
+        tabSettingManager.LoadSetting();
         ChangeTab((int)TabState.Mod);
     }
 
