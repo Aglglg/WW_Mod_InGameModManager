@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 
 public class TabModManager : MonoBehaviour
@@ -24,21 +25,35 @@ public class TabModManager : MonoBehaviour
 
     private void InitializeTabMod()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_MODPATH))
+        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_MODPATH)
+            && Directory.Exists(PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH))
+            && (PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX1)
+               || PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX2)))
         {
-            textInfo.SetActive(false);
-            foreach (GameObject gameObject in objects)
-            {
-                gameObject.SetActive(true);
-            }
+            ValidModPath();
+            Debug.Log("VALID: " + PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH));
+            Debug.Log(Directory.Exists(PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH)));
         }
         else
         {
-            textInfo.SetActive(true);
-            foreach (GameObject gameObject in objects)
-            {
-                gameObject.SetActive(false);
-            }
+            InvalidModPath();
+            Debug.Log("INVALID");
+        }
+    }
+    private void ValidModPath()
+    {
+        textInfo.SetActive(false);
+        foreach (GameObject gameObject in objects)
+        {
+            gameObject.SetActive(true);
+        }
+    }
+    private void InvalidModPath()
+    {
+        textInfo.SetActive(true);
+        foreach (GameObject gameObject in objects)
+        {
+            gameObject.SetActive(false);
         }
     }
 }

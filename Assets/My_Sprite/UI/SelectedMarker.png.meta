@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 74087e535bd554e45a74851cb3508bf9
+guid: 8104be90e4adb6545b5f1bbfe57d1b05
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1025201493761909294
-    second: ButtonTabBorder_0
+      213: 2704268524275632177
+    second: SelectedMarker_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 10, z: 10, w: 0}
+  spriteBorder: {x: 5, y: 5, z: 5, w: 5}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ButtonTabBorder_0
+      name: SelectedMarker_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 662
-        height: 63
+        width: 174
+        height: 57
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e22e0eaa35f3a3e00800000000000000
-      internalID: 1025201493761909294
+      spriteID: 13808be15ed778520800000000000000
+      internalID: 2704268524275632177
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ButtonTabBorder_0: 1025201493761909294
+      SelectedMarker_0: 2704268524275632177
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

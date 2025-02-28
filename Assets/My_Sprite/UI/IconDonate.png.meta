@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 74087e535bd554e45a74851cb3508bf9
+guid: 66b82d837991b5043a9c0db7d9ffec1e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1025201493761909294
-    second: ButtonTabBorder_0
+      213: 6701684831015439228
+    second: IconDonate_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 10, z: 10, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ButtonTabBorder_0
+      name: IconDonate_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 662
-        height: 63
+        y: 9
+        width: 55
+        height: 37
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e22e0eaa35f3a3e00800000000000000
-      internalID: 1025201493761909294
+      spriteID: c7b8c45c8da210d50800000000000000
+      internalID: 6701684831015439228
       vertices: []
       indices: 
       edges: []
@@ -139,7 +139,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ButtonTabBorder_0: 1025201493761909294
+      IconDonate_0: 6701684831015439228
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
