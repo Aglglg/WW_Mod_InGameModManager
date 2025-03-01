@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using DG.Tweening;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -83,9 +83,14 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
                 tabContents[(int)CurrentTabState].GetComponent<CanvasGroup>().DOFade(1f, animationDuration/2);
             }
         );
+
+        //SELECTION MARKERS
+        Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
+        ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), false);
+        SetSelectedObject(tabTitle[(int)CurrentTabState]);
     }
 
-    //Called from PlayerInput component on this GameObject
+    //Called from PlayerInput component
     public void OnTabNavigate(InputAction.CallbackContext context)
     {
         if(context.phase != InputActionPhase.Performed) return;
@@ -93,7 +98,6 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
     }
 
     #region KEYBIND Tab
-
     //Called from context menu
     public void ShowKeybind(string mainFolder)
     {
@@ -105,6 +109,68 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
     {
         Application.OpenURL(ConstantVar.LINK_VALIDKEYS);
     }
+    #endregion
 
+    #region SELECTION MARKER
+    [Header("UI SELECTION")]
+    [SerializeField] private Image[] selectedMarkersTabKeybind;
+    [SerializeField] private Image[] selectedMarkersTabMod;
+    [SerializeField] private Image[] selectedMarkersTabModFix;
+    [SerializeField] private Image[] selectedMarkersTabSetting;
+    [SerializeField] private GameObject[] tabTitle;
+
+    private void SetSelectedObject(GameObject selectedObject)
+    {
+        EventSystem.current.SetSelectedGameObject(selectedObject);
+    }
+    private void ToggleSelectedMarkers(Image[] images, bool activate, bool changeImageAlpha=false)
+    {
+        if(changeImageAlpha)
+        {
+            foreach (Image image in images)
+            {
+                Color color = image.color;
+                color.a = activate ? 1 : 0;
+                image.color = color;
+            }
+        }
+        else
+        {
+            if(activate)
+            {
+                foreach (Image image in images)
+                {
+                    image.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                foreach (Image image in images)
+                {
+                    image.gameObject.SetActive(false);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region  CALLED FROM PlayerInput COMPONENT
+    public void OnAnyMouse()
+    {
+        Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
+        ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), false, true);
+    }
+    public void OnAnyKeyboard()
+    {
+        if(EventSystem.current.currentSelectedGameObject == null) SetSelectedObject(tabTitle[(int)CurrentTabState]);
+        Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
+        ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), true, true);
+    }
+    public void OnAnyGamepad()
+    {
+        if(EventSystem.current.currentSelectedGameObject == null) SetSelectedObject(tabTitle[(int)CurrentTabState]);
+        Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
+        ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), true, true);
+    }
     #endregion
 }

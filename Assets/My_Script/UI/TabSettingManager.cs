@@ -1,127 +1,42 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class TabSettingManager : MonoBehaviour
 {
     #region VARIABLES
-    [Header("SELECTION")]
-    [SerializeField] private InputAction actionAnyMouse;
-    [SerializeField] private InputAction actionAnyKeyboard;
-    [SerializeField] private InputAction actionAnyGamepad;
-    [SerializeField] private Image[] selectedMarkers;
-    [SerializeField] private GameObject tabTitle;
-
-    [Header("")]
-    [Header("SETTINGS")]
+    [Header("\n\nSETTINGS")]
     [SerializeField] private Transform backgroundPanel;
     [SerializeField] private Image backgroundFillImage;
     [SerializeField] private TMP_InputField modPathField;
     [SerializeField] private Slider opacitySlider;
     [SerializeField] private Slider scaleSlider;
-    [SerializeField] private InputAction actionResetTransform;
 
-    [Header("")]
-    [Header("SUPPORT")]
+
+    [Header("\n\nSUPPORT")]
     [SerializeField] private Image supportImageIcon;
     private string supportLink;
     #endregion
     
     private void Start()
     {
-        StartCoroutine(LoadSupportImage());
-        StartCoroutine(LoadSupportLink());
+        
     }
 
     private void OnEnable()
     {
+        StartCoroutine(LoadSupportImage());
+        StartCoroutine(LoadSupportLink());
+
         modPathField.onSubmit.AddListener(ModPathOnSubmit);
         modPathField.onEndEdit.AddListener(ModPathOnSubmit);
-
-        actionResetTransform.Enable();
-        actionResetTransform.performed += ResetPanelTransform;
-
-        actionAnyMouse.Enable();
-        actionAnyKeyboard.Enable();
-        actionAnyGamepad.Enable();
-        actionAnyMouse.performed += OnAnyMouse;
-        actionAnyKeyboard.performed += OnAnyKeyboard;
-        actionAnyGamepad.performed += OnAnyGamepad;
-
-        SetSelectedObject(tabTitle);
     }
     private void OnDisable()
     {
         modPathField.onSubmit.RemoveListener(ModPathOnSubmit);
         modPathField.onEndEdit.RemoveListener(ModPathOnSubmit);
-
-        actionResetTransform.Disable();
-        actionResetTransform.performed -= ResetPanelTransform;
-
-        actionAnyMouse.Disable();
-        actionAnyKeyboard.Disable();
-        actionAnyGamepad.Disable();
-        actionAnyMouse.performed -= OnAnyMouse;
-        actionAnyKeyboard.performed -= OnAnyKeyboard;
-        actionAnyGamepad.performed -= OnAnyGamepad;
-
-        foreach (Image image in selectedMarkers)
-        {
-            image.gameObject.SetActive(false);
-        }
-    }
-
-    private void SetSelectedObject(GameObject selectedObject)
-    {
-        EventSystem.current.SetSelectedGameObject(selectedObject);
-    }
-
-    private void ResetPanelTransform(InputAction.CallbackContext context)
-    {
-        Debug.Log("RESET SCALE & POS");
-        float panelScale = ConstantVar.DEFAULT_SCALE;
-        backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, panelScale);
-
-        backgroundPanel.localPosition = Vector3.zero;
-    }
-
-    private void OnAnyMouse(InputAction.CallbackContext context)
-    {
-        foreach (Image image in selectedMarkers)
-        {
-            Color color = image.color;
-            color.a = 0;
-            image.color = color;
-        }
-    }
-
-    private void OnAnyKeyboard(InputAction.CallbackContext context)
-    {
-        if(EventSystem.current.currentSelectedGameObject == null) SetSelectedObject(tabTitle);
-        foreach (Image image in selectedMarkers)
-        {
-            Color color = image.color;
-            color.a = 1;
-            image.color = color;
-        }
-    }
-
-    private void OnAnyGamepad(InputAction.CallbackContext context)
-    {
-        if(EventSystem.current.currentSelectedGameObject == null) SetSelectedObject(tabTitle);
-        foreach (Image image in selectedMarkers)
-        {
-            Color color = image.color;
-            color.a = 1;
-            image.color = color;
-        }
     }
 
     private void ModPathOnSubmit(string arg0)
@@ -244,6 +159,19 @@ public class TabSettingManager : MonoBehaviour
         {
             Debug.LogError("Failed to load link: " + request.error);
         }
+    }
+    #endregion
+
+    #region Called from PlayerInput
+    //Called from PlayerInput in PanelRoot&Background GameObject
+    public void OnResetPanelTransform()
+    {
+        Debug.Log("RESET SCALE & POS");
+        float panelScale = ConstantVar.DEFAULT_SCALE;
+        backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
+        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, panelScale);
+
+        backgroundPanel.localPosition = Vector3.zero;
     }
     #endregion
 }
