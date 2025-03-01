@@ -6,6 +6,10 @@ using System.Text;
 using System;
 using TMPro;
 using DG.Tweening;
+using System.Collections;
+using UnityEngine.Networking;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class TabModFixManager : MonoBehaviour
 {
@@ -13,17 +17,10 @@ public class TabModFixManager : MonoBehaviour
     [SerializeField] private CanvasGroup gameListCanvasGroup;
     [SerializeField] private CanvasGroup expandedGameListCanvasGroup;
     [SerializeField] private GameObject[] expandedGameObjects;
-    private int selectedGame;
 
-    void Start()
-    {
-        // CreateAndLockFile();
-    }
-
-    void OnApplicationQuit()
-    {
-        // ReleaseAndDeleteFile();
-    }
+    private ModFixGame selectedGame;
+    private Coroutine downloadDataCoroutine;
+    private List<string> modFixDatasJson = new List<string>();
 
     private void TestLoadingAndAddingModFix()
     {
@@ -32,12 +29,9 @@ public class TabModFixManager : MonoBehaviour
         pairs.Add("AAAA", "BBBB");
         ModFixData modFixData = new ModFixData
         {
-            fixName = "test fix",
-            dateTime = "24/2/2025",
-            modFixGame = ModFixGame.WUWA,
+            modFixGame = ModFixGame.Wuwa,
             modFixType = ModFixType.HashReplacement,
-            note = "test note",
-            submitter = "test submitter",
+            note = "<align=center><b>Fix Ultra Performance & Performance Graphic Setting\nby <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link></b>01/03/2025</align>\n\nMost characters/entity mods only works in Quality. Using Ultra Performance/Performance game setting will give you more FPS because textures have lower resolution (great for low VRAM computer).\nMake sure your mod already works fine in 'Quality'.\n\n<align=center><link=\"FIX\"><b><color=#3BBBFF><u>FIX</u></color></b></link></align>",
             hashpair = pairs
         };
         modFixDatas.Add(modFixData);
@@ -51,7 +45,8 @@ public class TabModFixManager : MonoBehaviour
     //Called from dropdown button
     public void ChangeSelectedGame(int selectedGameIndex)
     {
-        selectedGame = selectedGameIndex;
+        selectedGame = (ModFixGame)selectedGameIndex;
+        GetFixesList();
     }
     public void ExpandModFix(bool isExpand)
     {
@@ -64,7 +59,7 @@ public class TabModFixManager : MonoBehaviour
                     {
                         go.SetActive(false);
                     }
-                    expandedGameObjects[selectedGame].SetActive(true);
+                    expandedGameObjects[(int)selectedGame].SetActive(true);
 
                     gameListCanvasGroup.gameObject.SetActive(false);
                     expandedGameListCanvasGroup.alpha = 0;
@@ -86,6 +81,73 @@ public class TabModFixManager : MonoBehaviour
             );
         }
     }
+
+    private void GetFixesList()
+    {
+        StartCoroutine(DownloadJsonFilesFromGitHub(ConstantVar.LINK_PATH_MODFIXES[(int)selectedGame]));
+    }
+
+    IEnumerator DownloadJsonFilesFromGitHub(string url)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(url);
+
+        request.SetRequestHeader("User-Agent", "UnityWebRequest");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError("Error fetching file list: " + request.error);
+        }
+        else
+        {
+            string jsonResponse = request.downloadHandler.text;
+            ProcessFileList(jsonResponse);
+        }
+    }
+
+    void ProcessFileList(string jsonResponse)
+    {
+        var contents = JsonConvert.DeserializeObject<List<GitHubContent>>(jsonResponse);
+
+        // Filter JSON files
+        var jsonFiles = contents.Where(c => c.type == "file" && c.name.EndsWith(".json")).ToArray();
+
+        //Download the content of each JSON file
+        foreach (var file in jsonFiles)
+        {
+            // StartCoroutine(DownloadJsonFile(file.download_url));
+        }
+    }
+
+    IEnumerator DownloadJsonFile(string downloadUrl)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(downloadUrl);
+
+        request.SetRequestHeader("User-Agent", "UnityWebRequest");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError("Error downloading JSON file: " + request.error);
+        }
+        else
+        {
+            string jsonContent = request.downloadHandler.text;
+            modFixDatasJson.Add(jsonContent);
+            Debug.Log("Downloaded JSON: " + jsonContent);
+        }
+    }
+}
+
+public class GitHubContent
+{
+    public string name;
+    public string type; // "dir" for folders, "file" for files
+    public string download_url;
+    public string path;
+}
 
     //private static FileStream fileStream;
     //private static string filePath;
@@ -137,4 +199,3 @@ public class TabModFixManager : MonoBehaviour
     //         Debug.LogError("Error releasing or deleting file: " + ex.Message);
     //     }
     // }
-}

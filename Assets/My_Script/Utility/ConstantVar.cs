@@ -6,10 +6,14 @@ public class ConstantVar
     public const string LINK_GETSUPPORTLINK = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/supportlink.txt";
     public const string LINK_GETSUPPORTICON = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/My_Sprite/UI/IconDonate.png";
 
-    public const string LINK_MODFIX_WUWA = "";
-    public const string LINK_MODFIX_GI = "";
-    public const string LINK_MODFIX_HSR = "";
-    public const string LINK_MODFIX_ZZZ = "";
+    public static readonly string[] LINK_PATH_MODFIXES = new string[4]{
+        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/Wuwa",
+        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/Genshin",
+        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/HSR",
+        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/ZZZ"
+    };
+    public const string LINK_BUTTONFIXMOD = "FIX";
+
     public const string MODFOLDER_VALIDSUFFIX1 = "mi\\mods\\";
     public const string MODFOLDER_VALIDSUFFIX2 = "mi\\mods";
     public const string PLAYERPERFKEY_MODPATH = "Mod Path"; 

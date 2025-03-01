@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -164,8 +165,10 @@ public class TabSettingManager : MonoBehaviour
 
     #region Called from PlayerInput
     //Called from PlayerInput in PanelRoot&Background GameObject
-    public void OnResetPanelTransform()
+    public void OnResetPanelTransform(InputAction.CallbackContext context)
     {
+        //Make sure it's only when performed not started/ended(on hold 1 sec only)
+        if(context.phase != InputActionPhase.Performed) return;
         Debug.Log("RESET SCALE & POS");
         float panelScale = ConstantVar.DEFAULT_SCALE;
         backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);

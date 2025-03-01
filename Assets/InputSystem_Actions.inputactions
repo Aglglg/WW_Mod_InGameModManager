@@ -607,7 +607,7 @@
                 },
                 {
                     "name": "EscHold",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "78cea0b2-0151-46fc-ab4b-e0b39468a320",
                     "expectedControlType": "",
                     "processors": "",
