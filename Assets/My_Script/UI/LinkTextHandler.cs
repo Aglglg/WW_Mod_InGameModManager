@@ -23,7 +23,7 @@ public class LinkTextHandler : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            Application.OpenURL(linkInfo.GetLinkID());
+            Application.OpenURL(linkInfo.GetLink());
         }
     }
 }

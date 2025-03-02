@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public class ModFixData
@@ -6,6 +7,7 @@ public class ModFixData
     public ModFixType modFixType;
     public ModFixGame modFixGame;
     public Dictionary<string, string> hashpair;
+    public DateTime modifiedDate;
 }
 
 public enum ModFixType

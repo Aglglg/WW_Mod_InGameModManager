@@ -9,45 +9,53 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Linq;
-using Unity.VisualScripting;
-
+using System.Threading.Tasks;
+using UnityEngine.UI;
 public class TabModFixManager : MonoBehaviour
 {
     [SerializeField] private float animationDuration;
+    public TMP_InputField modPathField;
     [SerializeField] private CanvasGroup gameListCanvasGroup;
     [SerializeField] private CanvasGroup expandedGameListCanvasGroup;
+    [SerializeField] private Transform[] contentsRootTransform;
+    [SerializeField] private GameObject itemFixPrefab;
     [SerializeField] private GameObject[] expandedGameObjects;
 
-    private ModFixGame selectedGame;
-    private Coroutine downloadDataCoroutine;
-    private List<string> modFixDatasJson = new List<string>();
+    [SerializeField] private TextMeshProUGUI textModFixLoadingInfo;
+    private string textInfoAfterLoading;
 
-    private void TestLoadingAndAddingModFix()
+    private List<ModFixData> modFixDatas = new List<ModFixData>();
+    private ModFixGame selectedGame;    
+
+    private void OnEnable()
     {
-        List<ModFixData> modFixDatas = new List<ModFixData>();
-        Dictionary<string, string> pairs = new Dictionary<string, string>();
-        pairs.Add("AAAA", "BBBB");
-        ModFixData modFixData = new ModFixData
-        {
-            modFixGame = ModFixGame.Wuwa,
-            modFixType = ModFixType.HashReplacement,
-            note = "<align=center><b>Fix Ultra Performance & Performance Graphic Setting\nby <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link></b>01/03/2025</align>\n\nMost characters/entity mods only works in Quality. Using Ultra Performance/Performance game setting will give you more FPS because textures have lower resolution (great for low VRAM computer).\nMake sure your mod already works fine in 'Quality'.\n\n<align=center><link=\"FIX\"><b><color=#3BBBFF><u>FIX</u></color></b></link></align>",
-            hashpair = pairs
-        };
-        modFixDatas.Add(modFixData);
-        string jsonData = JsonConvert.SerializeObject(modFixDatas, Formatting.Indented);;
-        Debug.Log(jsonData);
-
-        List<ModFixData> deserializedDatas = JsonConvert.DeserializeObject<List<ModFixData>>(jsonData);
-        Debug.Log(deserializedDatas[0].hashpair.ContainsKey("AAAA"));
     }
+
+    private void OnDisable()
+    {
+
+    }
+
+    #region MODS PATH
+    //Called from Button
+    public void SelectModPath()
+    {
+        string[] folder = OpenFileExplorer.OpenFolder("Select a mod folder to be fixed");
+        if(folder.Length > 0)
+        {
+            modPathField.text = folder[0];
+        }
+    }
+    #endregion
 
     //Called from dropdown button
     public void ChangeSelectedGame(int selectedGameIndex)
     {
         selectedGame = (ModFixGame)selectedGameIndex;
+        Debug.Log(Application.persistentDataPath);
         GetFixesList();
     }
+    //Called from button & PlayerInput InputSystem
     public void ExpandModFix(bool isExpand)
     {
         if(isExpand)
@@ -70,6 +78,11 @@ public class TabModFixManager : MonoBehaviour
         }
         else
         {
+            modFixDatas.Clear();
+            foreach (Transform child in contentsRootTransform[(int)selectedGame])
+            {
+                Destroy(child.gameObject);
+            }
             expandedGameListCanvasGroup.DOFade(0, animationDuration).OnComplete(
                 () =>
                 {
@@ -82,18 +95,46 @@ public class TabModFixManager : MonoBehaviour
         }
     }
 
-    private void GetFixesList()
+    #region Retrive fixes data
+    private async void GetFixesList()
     {
-        StartCoroutine(DownloadJsonFilesFromGitHub(ConstantVar.LINK_PATH_MODFIXES[(int)selectedGame]));
+        expandedGameObjects[(int)selectedGame].GetComponentInChildren<Button>().interactable = false;
+
+        string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES, selectedGame.ToString());
+
+        if (Directory.Exists(cachedDir))
+        {
+            // Load cached JSON files asynchronously
+            Debug.Log("Loading Json");
+            textModFixLoadingInfo.text = "Loading";
+            string[] fixFiles = Directory.GetFiles(cachedDir, "*.json");
+            foreach (string file in fixFiles)
+            {
+                await LoadModFixAsync(file);
+            }
+            Debug.Log("Loaded");
+            textModFixLoadingInfo.text = textInfoAfterLoading;
+            InstantiateModFixPrefabs();
+        }
+        else
+        {
+            // Download JSON files from GitHub
+            Debug.Log("Downloading");
+            textModFixLoadingInfo.text = "Downloading";
+            await DownloadJsonFiles(ConstantVar.LINK_PATH_MODFIXES[(int)selectedGame]);
+            Debug.Log("Finished");
+            textModFixLoadingInfo.text = textInfoAfterLoading;
+            InstantiateModFixPrefabs();
+        }
+        expandedGameObjects[(int)selectedGame].GetComponentInChildren<Button>().interactable = true;
     }
 
-    IEnumerator DownloadJsonFilesFromGitHub(string url)
+    private async Task DownloadJsonFiles(string url)
     {
         UnityWebRequest request = UnityWebRequest.Get(url);
-
         request.SetRequestHeader("User-Agent", "UnityWebRequest");
 
-        yield return request.SendWebRequest();
+        await request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
@@ -102,31 +143,31 @@ public class TabModFixManager : MonoBehaviour
         else
         {
             string jsonResponse = request.downloadHandler.text;
-            ProcessFileList(jsonResponse);
+            await ProcessFileListAsync(jsonResponse);
         }
     }
 
-    void ProcessFileList(string jsonResponse)
+    private async Task ProcessFileListAsync(string jsonResponse)
     {
         var contents = JsonConvert.DeserializeObject<List<GitHubContent>>(jsonResponse);
+        Debug.Log(jsonResponse);
 
         // Filter JSON files
         var jsonFiles = contents.Where(c => c.type == "file" && c.name.EndsWith(".json")).ToArray();
 
-        //Download the content of each JSON file
+        // Download the content of each JSON file asynchronously
         foreach (var file in jsonFiles)
         {
-            // StartCoroutine(DownloadJsonFile(file.download_url));
+            await DownloadJsonFileAsync(file);
         }
     }
 
-    IEnumerator DownloadJsonFile(string downloadUrl)
+    private async Task DownloadJsonFileAsync(GitHubContent gitHubContent)
     {
-        UnityWebRequest request = UnityWebRequest.Get(downloadUrl);
-
+        UnityWebRequest request = UnityWebRequest.Get(gitHubContent.download_url);
         request.SetRequestHeader("User-Agent", "UnityWebRequest");
 
-        yield return request.SendWebRequest();
+        await request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
@@ -135,10 +176,83 @@ public class TabModFixManager : MonoBehaviour
         else
         {
             string jsonContent = request.downloadHandler.text;
-            modFixDatasJson.Add(jsonContent);
-            Debug.Log("Downloaded JSON: " + jsonContent);
+            string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES, selectedGame.ToString());
+
+            if (!Directory.Exists(cachedDir))
+            {
+                Directory.CreateDirectory(cachedDir);
+            }
+
+            string filePath = Path.Join(cachedDir, gitHubContent.name);
+            await WriteFileAsync(filePath, jsonContent);
+            
+            await LoadModFixAsync(filePath);
         }
     }
+
+    private async Task WriteFileAsync(string filePath, string content)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            await writer.WriteAsync(content);
+        }
+        Debug.Log("File written: " + filePath);
+    }
+
+    private async Task LoadModFixAsync(string file)
+    {
+        string jsonData = await ReadFileAsync(file);
+        if(file.EndsWith(ConstantVar.FILE_FIX_LOG))
+        {
+            textInfoAfterLoading = jsonData;
+        }
+        else
+        {
+            try
+            {
+                ModFixData fixData = JsonConvert.DeserializeObject<ModFixData>(jsonData);
+                modFixDatas.Add(fixData);
+            }
+            catch (JsonSerializationException ex)
+            {
+                Debug.LogError("JSON deserialization error: " + ex.Message);
+            }
+            catch (JsonReaderException ex)
+            {
+                Debug.LogError("JSON parsing error: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("An unexpected error occurred: " + ex.Message);
+            }
+        }
+        
+    }
+
+    private async Task<string> ReadFileAsync(string filePath)
+    {
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            return await reader.ReadToEndAsync();
+        }
+    }
+
+    private void InstantiateModFixPrefabs()
+    {
+        // Sort the ModFixData objects by modifiedDate (newest first)
+        var sortedModFixDatas = modFixDatas.OrderByDescending(x => x.modifiedDate).ToList();
+
+        // Instantiate prefabs for each ModFixData
+        foreach (var fixData in sortedModFixDatas)
+        {
+            GameObject itemFixInstantiated = Instantiate(itemFixPrefab, contentsRootTransform[(int)selectedGame]);
+            ItemFixHandler itemFixHandler = itemFixInstantiated.GetComponent<ItemFixHandler>();
+            itemFixHandler.modFixData = fixData;
+            itemFixHandler.LoadModFixData();
+            itemFixHandler.modFixManager = this;
+        }
+    }
+    #endregion
 }
 
 public class GitHubContent
@@ -149,6 +263,7 @@ public class GitHubContent
     public string path;
 }
 
+    // Directory.Delete(cachePath, recursive: true);
     //private static FileStream fileStream;
     //private static string filePath;
 

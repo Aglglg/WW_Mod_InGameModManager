@@ -13,6 +13,8 @@ public class ConstantVar
         "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/ZZZ"
     };
     public const string LINK_BUTTONFIXMOD = "FIX";
+    public const string FILE_FIX_LOG = "LOG.json";
+    public const string PATH_CACHED_FIXES = "cache_mod_fix";
 
     public const string MODFOLDER_VALIDSUFFIX1 = "mi\\mods\\";
     public const string MODFOLDER_VALIDSUFFIX2 = "mi\\mods";
