@@ -22,15 +22,6 @@ public class LinkTextHandler : MonoBehaviour, IPointerClickHandler
 
         TMP_LinkInfo linkInfo = textMeshProUGUI.textInfo.linkInfo[linkIndex];
 
-        //FIX Mod Button, from Rich Text
-        if(linkInfo.GetLink() == ConstantVar.LINK_BUTTONFIXMOD)
-        {
-            tabModFixManager.ShowConfirmation();
-            tabModFixManager.selectedFixData = modFixData;
-        }
-        else
-        {
-            Application.OpenURL(linkInfo.GetLink());
-        }
+        Application.OpenURL(linkInfo.GetLink());
     }
 }

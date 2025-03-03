@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class ModFixData
 {
+    public string title;
     public string note;
     public ModFixType modFixType;
     public ModFixGame modFixGame;

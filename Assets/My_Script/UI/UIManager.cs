@@ -90,7 +90,6 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
         ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), false);
         SetSelectedObject(tabTitle[(int)CurrentTabState]);
 
-        tabModFixManager.CancelConfirmation();
     }
 
     //Called from PlayerInput component

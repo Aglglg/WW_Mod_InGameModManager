@@ -16,7 +16,8 @@ public class TabModFixManager : MonoBehaviour
 
 
     [Header("Mod Path")]
-    [SerializeField] private TMP_InputField modPathField;
+    //also called from ItemFixHandler
+    public TMP_InputField modPathField;
 
 
     [Header("\nGameList")]
@@ -34,8 +35,6 @@ public class TabModFixManager : MonoBehaviour
     private string textInfoAfterLoading;
     private ModFixGame selectedGame;
     List<ModFixData> modFixDatas = new List<ModFixData>();
-    //From LinkTextHandler
-    [HideInInspector] public ModFixData selectedFixData;
 
 
     [Header("\nLogging")]
@@ -43,17 +42,26 @@ public class TabModFixManager : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroupLogUI;
     [SerializeField] private GameObject gameObjectLogUI;
     [SerializeField] private Button doneButton;
-    
-
-    [Header("\nConfirmation")]
-    [SerializeField] private CanvasGroup canvasGroupConfirmation;
-    [SerializeField] private GameObject gameObjectConfirmation;
-    private bool isConfirmationPanelActive = false;
 
     private void Awake()
     {
+        //For log to ui
         Application.logMessageReceived += modFixLogToUI.LogCallback;
         ModFixer.Initialize();
+    }
+
+    private void InstantiateModFixPrefabs()
+    {
+        // Sort the ModFixData objects by modifiedDate (newest first)
+        var sortedModFixDatas = modFixDatas.OrderByDescending(x => x.modifiedDate).ToList();
+
+        // Instantiate prefabs for each ModFixData
+        foreach (var fixData in sortedModFixDatas)
+        {
+            GameObject itemFixInstantiated = Instantiate(itemFixPrefab, itemFixContentParentTransform[(int)selectedGame]);
+            itemFixInstantiated.GetComponent<ItemFixHandler>().modFixData = fixData;
+            itemFixInstantiated.GetComponent<ItemFixHandler>().tabModFixManager = this;
+        }
     }
 
     #region ModPath
@@ -107,81 +115,32 @@ public class TabModFixManager : MonoBehaviour
     }
     #endregion
 
-    #region Confirmation
-    //Called from button confirmation Yes
-    public void FixMod()
+    #region  LOG UI
+    //Called from ItemFixHandler
+    public void ToggleDoneButton(bool isInteractible)
     {
-        if(Directory.Exists(modPathField.text))
+        if(isInteractible)
         {
-            isConfirmationPanelActive = false;
+            doneButton.interactable = true;
+        }
+        else
+        {
             doneButton.interactable = false;
-            canvasGroupConfirmation.DOFade(0, animationDuration).OnComplete(async () =>
+        }
+    }
+    public void ShowLog()
+    {
+        //From ItemFixHandler
+        canvasGroupGameExpanded.DOFade(0, animationDuration).OnComplete( () =>
                 {
-                    gameObjectConfirmation.SetActive(false);
+                    gameObjectExpandedGame.SetActive(false);
                     canvasGroupLogUI.alpha = 0;
                     gameObjectLogUI.SetActive(true);
                     canvasGroupLogUI.DOFade(1, animationDuration);
-
-                    //FIX
-                    if(selectedFixData.modFixType == ModFixType.HashReplacement)
-                    {
-                        await ModFixer.FixModHashReplacementAsync(selectedFixData, modPathField.text);
-                    }
-                    else if(selectedFixData.modFixType == ModFixType.HashAddition)
-                    {
-                        await ModFixer.FixModHashReplacementAsync(selectedFixData, modPathField.text);
-                    }
-                    else
-                    {
-                        Debug.Log("UI--Mod fix type not recognized, try update Mod Manager");
-                    }
-                    doneButton.interactable = true;
-                }
-            );
-        }
-        else
-        {
-            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
-        }
-    }
-    //Called from LinkTextHandler
-    public void ShowConfirmation()
-    {
-        if(Directory.Exists(modPathField.text))
-        {
-            isConfirmationPanelActive = true;
-            canvasGroupGameExpanded.DOFade(0, animationDuration).OnComplete( () =>
-                {
-                    gameObjectExpandedGame.SetActive(false);
-                    canvasGroupConfirmation.alpha = 0;
-                    gameObjectConfirmation.SetActive(true);
-                    canvasGroupConfirmation.DOFade(1, animationDuration);
-                }
-            );
-        }
-        else
-        {
-            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
-        }
-    }
-    //Called from button confirmation No & UIManager if changing tab
-    public void CancelConfirmation()
-    {
-        //So that if called from UI manager don't cause visual bug
-        if(!isConfirmationPanelActive) return;
-        isConfirmationPanelActive = false;
-        canvasGroupConfirmation.DOFade(0, animationDuration).OnComplete( () =>
-                {
-                    gameObjectConfirmation.SetActive(false);
-                    canvasGroupGameExpanded.alpha = 0;
-                    gameObjectExpandedGame.SetActive(true);
-                    canvasGroupGameExpanded.DOFade(1, animationDuration);
                 }
             );
     }
-    #endregion
-
-    #region  LOG UI
+    //From Button
     public void DoneButton()
     {
         modFixLogToUI.logText.text = "";
@@ -334,20 +293,6 @@ public class TabModFixManager : MonoBehaviour
         using (StreamReader reader = new StreamReader(filePath))
         {
             return await reader.ReadToEndAsync();
-        }
-    }
-
-    private void InstantiateModFixPrefabs()
-    {
-        // Sort the ModFixData objects by modifiedDate (newest first)
-        var sortedModFixDatas = modFixDatas.OrderByDescending(x => x.modifiedDate).ToList();
-
-        // Instantiate prefabs for each ModFixData
-        foreach (var fixData in sortedModFixDatas)
-        {
-            GameObject itemFixInstantiated = Instantiate(itemFixPrefab, itemFixContentParentTransform[(int)selectedGame]);
-            itemFixInstantiated.transform.GetComponentInChildren<TextMeshProUGUI>().text = $"<align=center>{fixData.modifiedDate}\n</align>" + fixData.note;
-            itemFixInstantiated.transform.GetComponentInChildren<LinkTextHandler>().modFixData = fixData;
         }
     }
     #endregion
