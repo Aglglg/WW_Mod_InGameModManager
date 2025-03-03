@@ -5,9 +5,15 @@ using UnityEngine.EventSystems;
 public class LinkTextHandler : MonoBehaviour, IPointerClickHandler
 {
     private TextMeshProUGUI textMeshProUGUI;
+    private TabModFixManager tabModFixManager;
+
+    //Only for Mod Fix, called when instantiating Item Fix
+    [HideInInspector] public ModFixData modFixData;
+
     private void Start()
     {
         textMeshProUGUI = GetComponent<TextMeshProUGUI>();
+        tabModFixManager = GameObject.FindGameObjectWithTag(ConstantVar.TAG_MODFIXMANAGER).GetComponent<TabModFixManager>();
     }
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -16,10 +22,11 @@ public class LinkTextHandler : MonoBehaviour, IPointerClickHandler
 
         TMP_LinkInfo linkInfo = textMeshProUGUI.textInfo.linkInfo[linkIndex];
 
-        //Fix Mod Button, from Rich Text
+        //FIX Mod Button, from Rich Text
         if(linkInfo.GetLink() == ConstantVar.LINK_BUTTONFIXMOD)
         {
-            GetComponentInParent<ItemFixHandler>()?.FixMod();
+            tabModFixManager.ShowConfirmation();
+            tabModFixManager.selectedFixData = modFixData;
         }
         else
         {

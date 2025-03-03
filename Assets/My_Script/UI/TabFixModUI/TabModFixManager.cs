@@ -2,42 +2,62 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
-using System.Text;
 using System;
 using TMPro;
 using DG.Tweening;
-using System.Collections;
 using UnityEngine.Networking;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class TabModFixManager : MonoBehaviour
 {
     [SerializeField] private float animationDuration;
-    public TMP_InputField modPathField;
-    [SerializeField] private CanvasGroup gameListCanvasGroup;
-    [SerializeField] private CanvasGroup expandedGameListCanvasGroup;
-    [SerializeField] private Transform[] contentsRootTransform;
-    [SerializeField] private GameObject itemFixPrefab;
-    [SerializeField] private GameObject[] expandedGameObjects;
 
+
+    [Header("Mod Path")]
+    [SerializeField] private TMP_InputField modPathField;
+
+
+    [Header("\nGameList")]
+    [SerializeField] private CanvasGroup canvasGroupGameList;
+    [SerializeField] private GameObject gameObjectGameList;
+
+
+    [Header("\nExpandedGame/FixList")]
+    [SerializeField] private CanvasGroup canvasGroupGameExpanded;
+    [SerializeField] private GameObject gameObjectExpandedGame;
     [SerializeField] private TextMeshProUGUI textModFixLoadingInfo;
+    [SerializeField] private GameObject[] expandedGames;
+    [SerializeField] private Transform[] itemFixContentParentTransform;
+    [SerializeField] private GameObject itemFixPrefab;
     private string textInfoAfterLoading;
+    private ModFixGame selectedGame;
+    List<ModFixData> modFixDatas = new List<ModFixData>();
+    //From LinkTextHandler
+    [HideInInspector] public ModFixData selectedFixData;
 
-    private List<ModFixData> modFixDatas = new List<ModFixData>();
-    private ModFixGame selectedGame;    
 
-    private void OnEnable()
+    [Header("\nLogging")]
+    [SerializeField] private ModFixLogToUI modFixLogToUI;
+    [SerializeField] private CanvasGroup canvasGroupLogUI;
+    [SerializeField] private GameObject gameObjectLogUI;
+    [SerializeField] private Button doneButton;
+    
+
+    [Header("\nConfirmation")]
+    [SerializeField] private CanvasGroup canvasGroupConfirmation;
+    [SerializeField] private GameObject gameObjectConfirmation;
+    private bool isConfirmationPanelActive = false;
+
+    private void Awake()
     {
+        Application.logMessageReceived += modFixLogToUI.LogCallback;
+        ModFixer.Initialize();
     }
 
-    private void OnDisable()
-    {
-
-    }
-
-    #region MODS PATH
-    //Called from Button
+    #region ModPath
+    //Called from button modpath folder icon
     public void SelectModPath()
     {
         string[] folder = OpenFileExplorer.OpenFolder("Select a mod folder to be fixed");
@@ -48,85 +68,165 @@ public class TabModFixManager : MonoBehaviour
     }
     #endregion
 
-    //Called from dropdown button
-    public void ChangeSelectedGame(int selectedGameIndex)
+    #region GameList
+    //Called from button
+    public void ButtonGameList(int game)
     {
-        selectedGame = (ModFixGame)selectedGameIndex;
-        Debug.Log(Application.persistentDataPath);
-        GetFixesList();
+        selectedGame = (ModFixGame)game;
+        canvasGroupGameList.DOFade(0, animationDuration).OnComplete(
+            () => {
+                gameObjectGameList.SetActive(false);
+                canvasGroupGameExpanded.alpha = 0;
+                gameObjectExpandedGame.SetActive(true);
+                expandedGames[game].SetActive(true);
+                canvasGroupGameExpanded.DOFade(1, animationDuration);
+                GetFixesList();
+            }
+        );
     }
-    //Called from button & PlayerInput InputSystem
-    public void ExpandModFix(bool isExpand)
-    {
-        if(isExpand)
-        {
-            gameListCanvasGroup.DOFade(0, animationDuration).OnComplete(
-                () =>
-                {
-                    foreach (GameObject go in expandedGameObjects)
-                    {
-                        go.SetActive(false);
-                    }
-                    expandedGameObjects[(int)selectedGame].SetActive(true);
+    #endregion
 
-                    gameListCanvasGroup.gameObject.SetActive(false);
-                    expandedGameListCanvasGroup.alpha = 0;
-                    expandedGameListCanvasGroup.gameObject.SetActive(true);
-                    expandedGameListCanvasGroup.DOFade(1, animationDuration);
+    #region FixList/ExpandedGame
+    public void ButtonCloseFixList()
+    {
+        foreach (Transform child in itemFixContentParentTransform[(int)selectedGame])
+        {
+            Destroy(child.gameObject);
+        }
+        modFixDatas.Clear();
+        
+        canvasGroupGameExpanded.DOFade(0, animationDuration).OnComplete(
+            () => {
+                gameObjectExpandedGame.SetActive(false);
+                canvasGroupGameList.alpha = 0;
+                gameObjectGameList.SetActive(true);
+                expandedGames[(int)selectedGame].SetActive(false);
+                canvasGroupGameList.DOFade(1, animationDuration);
+            }
+        );
+    }
+    #endregion
+
+    #region Confirmation
+    //Called from button confirmation Yes
+    public void FixMod()
+    {
+        if(Directory.Exists(modPathField.text))
+        {
+            isConfirmationPanelActive = false;
+            doneButton.interactable = false;
+            canvasGroupConfirmation.DOFade(0, animationDuration).OnComplete(async () =>
+                {
+                    gameObjectConfirmation.SetActive(false);
+                    canvasGroupLogUI.alpha = 0;
+                    gameObjectLogUI.SetActive(true);
+                    canvasGroupLogUI.DOFade(1, animationDuration);
+
+                    //FIX
+                    if(selectedFixData.modFixType == ModFixType.HashReplacement)
+                    {
+                        await ModFixer.FixModHashReplacementAsync(selectedFixData, modPathField.text);
+                    }
+                    else if(selectedFixData.modFixType == ModFixType.HashAddition)
+                    {
+                        await ModFixer.FixModHashReplacementAsync(selectedFixData, modPathField.text);
+                    }
+                    else
+                    {
+                        Debug.Log("UI--Mod fix type not recognized, try update Mod Manager");
+                    }
+                    doneButton.interactable = true;
                 }
             );
         }
         else
         {
-            modFixDatas.Clear();
-            foreach (Transform child in contentsRootTransform[(int)selectedGame])
-            {
-                Destroy(child.gameObject);
-            }
-            expandedGameListCanvasGroup.DOFade(0, animationDuration).OnComplete(
-                () =>
+            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
+        }
+    }
+    //Called from LinkTextHandler
+    public void ShowConfirmation()
+    {
+        if(Directory.Exists(modPathField.text))
+        {
+            isConfirmationPanelActive = true;
+            canvasGroupGameExpanded.DOFade(0, animationDuration).OnComplete( () =>
                 {
-                    expandedGameListCanvasGroup.gameObject.SetActive(false);
-                    gameListCanvasGroup.alpha = 0;
-                    gameListCanvasGroup.gameObject.SetActive(true);
-                    gameListCanvasGroup.DOFade(1, animationDuration);
+                    gameObjectExpandedGame.SetActive(false);
+                    canvasGroupConfirmation.alpha = 0;
+                    gameObjectConfirmation.SetActive(true);
+                    canvasGroupConfirmation.DOFade(1, animationDuration);
                 }
             );
         }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
+        }
     }
+    //Called from button confirmation No & UIManager if changing tab
+    public void CancelConfirmation()
+    {
+        //So that if called from UI manager don't cause visual bug
+        if(!isConfirmationPanelActive) return;
+        isConfirmationPanelActive = false;
+        canvasGroupConfirmation.DOFade(0, animationDuration).OnComplete( () =>
+                {
+                    gameObjectConfirmation.SetActive(false);
+                    canvasGroupGameExpanded.alpha = 0;
+                    gameObjectExpandedGame.SetActive(true);
+                    canvasGroupGameExpanded.DOFade(1, animationDuration);
+                }
+            );
+    }
+    #endregion
+
+    #region  LOG UI
+    public void DoneButton()
+    {
+        modFixLogToUI.logText.text = "";
+        canvasGroupLogUI.DOFade(0, animationDuration).OnComplete( () =>
+                {
+                    gameObjectLogUI.SetActive(false);
+                    canvasGroupGameExpanded.alpha = 0;
+                    gameObjectExpandedGame.SetActive(true);
+                    canvasGroupGameExpanded.DOFade(1, animationDuration);
+                }
+            );
+        //DO RELOAD MOD HERE
+    }
+    #endregion
 
     #region Retrive fixes data
     private async void GetFixesList()
     {
-        expandedGameObjects[(int)selectedGame].GetComponentInChildren<Button>().interactable = false;
+        //Back/close button
+        expandedGames[(int)selectedGame].GetComponentInChildren<Button>().interactable = false;
 
         string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES, selectedGame.ToString());
 
         if (Directory.Exists(cachedDir))
         {
             // Load cached JSON files asynchronously
-            Debug.Log("Loading Json");
             textModFixLoadingInfo.text = "Loading";
             string[] fixFiles = Directory.GetFiles(cachedDir, "*.json");
             foreach (string file in fixFiles)
             {
                 await LoadModFixAsync(file);
             }
-            Debug.Log("Loaded");
             textModFixLoadingInfo.text = textInfoAfterLoading;
             InstantiateModFixPrefabs();
         }
         else
         {
             // Download JSON files from GitHub
-            Debug.Log("Downloading");
             textModFixLoadingInfo.text = "Downloading";
             await DownloadJsonFiles(ConstantVar.LINK_PATH_MODFIXES[(int)selectedGame]);
-            Debug.Log("Finished");
             textModFixLoadingInfo.text = textInfoAfterLoading;
             InstantiateModFixPrefabs();
         }
-        expandedGameObjects[(int)selectedGame].GetComponentInChildren<Button>().interactable = true;
+        //Back/close button
+        expandedGames[(int)selectedGame].GetComponentInChildren<Button>().interactable = true;
     }
 
     private async Task DownloadJsonFiles(string url)
@@ -223,7 +323,7 @@ public class TabModFixManager : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError("An unexpected error occurred: " + ex.Message);
+                Debug.LogError("Error Deserialize JSON: " + ex.Message);
             }
         }
         
@@ -245,11 +345,9 @@ public class TabModFixManager : MonoBehaviour
         // Instantiate prefabs for each ModFixData
         foreach (var fixData in sortedModFixDatas)
         {
-            GameObject itemFixInstantiated = Instantiate(itemFixPrefab, contentsRootTransform[(int)selectedGame]);
-            ItemFixHandler itemFixHandler = itemFixInstantiated.GetComponent<ItemFixHandler>();
-            itemFixHandler.modFixData = fixData;
-            itemFixHandler.LoadModFixData();
-            itemFixHandler.modFixManager = this;
+            GameObject itemFixInstantiated = Instantiate(itemFixPrefab, itemFixContentParentTransform[(int)selectedGame]);
+            itemFixInstantiated.transform.GetComponentInChildren<TextMeshProUGUI>().text = $"<align=center>{fixData.modifiedDate}\n</align>" + fixData.note;
+            itemFixInstantiated.transform.GetComponentInChildren<LinkTextHandler>().modFixData = fixData;
         }
     }
     #endregion

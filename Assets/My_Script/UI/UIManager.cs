@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
 {
     public static TabState CurrentTabState = TabState.Mod;
     [SerializeField] private TabSettingManager tabSettingManager;
+    [SerializeField] private TabModFixManager tabModFixManager;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private RectTransform selectedTab;
     [SerializeField] private float[] selectedTabPositions;
@@ -88,6 +89,8 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
         Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
         ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), false);
         SetSelectedObject(tabTitle[(int)CurrentTabState]);
+
+        tabModFixManager.CancelConfirmation();
     }
 
     //Called from PlayerInput component

@@ -1,7 +1,7 @@
 using SFB;
 using UnityEngine;
 
-public class OpenFileExplorer : MonoBehaviour
+public static class OpenFileExplorer
 {
     public static string[] OpenFile()
     {
