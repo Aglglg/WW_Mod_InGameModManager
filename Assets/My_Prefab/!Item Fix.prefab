@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5026406485231917404}
   - component: {fileID: 7285847655284110658}
   m_Layer: 5
-  m_Name: Item Fix
+  m_Name: '!Item Fix'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -703,7 +703,6 @@ GameObject:
   m_Component:
   - component: {fileID: 728628239909176631}
   - component: {fileID: 5993875538714815708}
-  - component: {fileID: 5803329267820655992}
   - component: {fileID: 5066992606762878062}
   m_Layer: 5
   m_Name: Text
@@ -739,18 +738,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4390820160303106808}
   m_CullTransparentMesh: 1
---- !u!114 &5803329267820655992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4390820160303106808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baaaa61ab8c24074b8d4ee1b193346ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5066992606762878062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,7 +842,7 @@ GameObject:
   - component: {fileID: 3455759524862325528}
   - component: {fileID: 8928568589765046673}
   m_Layer: 5
-  m_Name: Notes
+  m_Name: '!Notes'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

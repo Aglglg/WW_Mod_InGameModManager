@@ -114,7 +114,7 @@ public class TabModFixManager : MonoBehaviour
             buttonInfoRevertAndApplyPermanent.onClick.AddListener(() => {/*DO RELOAD*/ Debug.Log("RELOAD");});
             if(success)
             {
-                textInfoRevertAndApplyPermanent.text = "Success to revert, Please Reload!";
+                textInfoRevertAndApplyPermanent.text = "Revert success, please <u>reload</u>!";
             }
             else
             {
@@ -124,7 +124,7 @@ public class TabModFixManager : MonoBehaviour
         else
         {
             EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
-            modPathTitleText.text = "<color=#FF3232>Mod path empty/doesn't exist!</color>";
+            modPathTitleText.text = "<color=#3BBBFF>Mod path empty or doesn't exist.</color>";
         }
     }
     #endregion
@@ -154,7 +154,7 @@ public class TabModFixManager : MonoBehaviour
             buttonInfoRevertAndApplyPermanent.onClick.RemoveAllListeners();
             if(success)
             {
-                textInfoRevertAndApplyPermanent.text = "Success to apply permanent fix, backup deleted";
+                textInfoRevertAndApplyPermanent.text = "Success to apply permanent fix, backup deleted.";
             }
             else
             {
@@ -164,7 +164,7 @@ public class TabModFixManager : MonoBehaviour
         else
         {
             EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
-            modPathTitleText.text = "<color=#FF3232>Mod path empty/doesn't exist!</color>";
+            modPathTitleText.text = "<color=#3BBBFF>Mod path empty or doesn't exist.</color>";
         }
     }
     #endregion
