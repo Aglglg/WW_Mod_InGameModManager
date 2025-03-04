@@ -1,7 +1,7 @@
 {
     "title": "Fix Mod for Ultra Performance/Performance Graphic Setting",
     "note":
-        "by <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link>\nMost character mods only works in Quality&Balanced(In-Game Graphic Setting), that's bad if you have low VRAM GPU. You can use this to make mods work in Ultra Performance & Performance.\nOriginal(unmodded) texture will have lower resolution only if you set the game to Ultra Performance/Performance (even after you custom it to be all high).\n\nIncluded in this fix:\n   - All characters\n   - All characters injured state\n   - Character skins\n\nMake sure your target mods is already working fine on Quality. Make sure to disable Auto Config in XXMI. Restart the game in Ultra Performance/Performance (You can custom it to be all high, etc)",
+        "by <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link>\nMost character mods only works in Quality&Balanced(In-Game Graphic Setting), that's bad if you have low VRAM GPU. You can use this to make mods work in Ultra Performance & Performance.\nOriginal(unmodded) texture will have lower resolution only if you set the game to Ultra Performance/Performance (even after you custom it to be all high).\n\nIncluded in this fix:\n   - All characters\n   - All characters injured state\n   - Character skins\n\nMake sure your target mods is already working fine on Quality. Make sure to disable Auto Config in XXMI. If still not working, restart the game in Ultra Performance/Performance (You can custom it to be all high, etc)",
     "modFixType": "1",
     "modFixGame": "0",
     "hashpair":
