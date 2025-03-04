@@ -171,8 +171,8 @@ public class TabSettingManager : MonoBehaviour
         if(context.phase != InputActionPhase.Performed) return;
         Debug.Log("RESET SCALE & POS");
         float panelScale = ConstantVar.DEFAULT_SCALE;
-        backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, panelScale);
+        scaleSlider.value = panelScale;
+        
 
         backgroundPanel.localPosition = Vector3.zero;
     }
