@@ -12,4 +12,10 @@ public static class FindIniFiles
                             .ToArray();
         return iniFiles;
     }
+
+    public static string[] FindIniFilesFixBackupRecursive(string mainFolder)
+    {
+        string[] iniFilesFixBackup = Directory.GetFiles(mainFolder, $"*.{ConstantVar.FIX_BACKUP_SUFFIX}", SearchOption.AllDirectories);
+        return iniFilesFixBackup;
+    }
 }

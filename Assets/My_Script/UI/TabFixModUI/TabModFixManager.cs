@@ -16,8 +16,9 @@ public class TabModFixManager : MonoBehaviour
 
 
     [Header("Mod Path")]
-    //also called from ItemFixHandler
+    //also used from ItemFixHandler
     public TMP_InputField modPathField;
+    [SerializeField] private TextMeshProUGUI modPathTitleText;
 
 
     [Header("\nGameList")]
@@ -43,11 +44,27 @@ public class TabModFixManager : MonoBehaviour
     [SerializeField] private GameObject gameObjectLogUI;
     [SerializeField] private Button doneButton;
 
+    [Header("Revert&ApplyPermanent")]
+    [SerializeField] private GameObject buttonRevertFix;
+    [SerializeField] private GameObject buttonApplyPermanent;
+    [SerializeField] private GameObject buttonConfirmRevert;
+    [SerializeField] private GameObject buttonConfirmApply;
+    [SerializeField] private TextMeshProUGUI textInfoRevertAndApplyPermanent;
+    [SerializeField] private Button buttonInfoRevertAndApplyPermanent;
+
     private void Awake()
     {
         //For log to ui
         Application.logMessageReceived += modFixLogToUI.LogCallback;
         ModFixer.Initialize();
+    }
+    private void OnEnable()
+    {
+        modPathField.onDeselect.AddListener(OnModPathDeselect);
+    }
+    private void OnDisable()
+    {
+        modPathField.onDeselect.RemoveListener(OnModPathDeselect);
     }
 
     private void InstantiateModFixPrefabs()
@@ -63,7 +80,95 @@ public class TabModFixManager : MonoBehaviour
             itemFixInstantiated.GetComponent<ItemFixHandler>().tabModFixManager = this;
         }
     }
-
+    
+    #region RevertFixes
+    public void ButtonRevertFixes()
+    {
+        if(Directory.Exists(modPathField.text))
+        {
+            bool success = true;
+            string[] filesBackup = FindIniFiles.FindIniFilesFixBackupRecursive(modPathField.text);
+            foreach (string backupFile in filesBackup)
+            {
+                string originalFile = Path.ChangeExtension(backupFile, ".ini");
+                if (File.Exists(backupFile))
+                {
+                    try
+                    {
+                        File.Copy(backupFile, originalFile, true);
+                        File.Delete(backupFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log($"Failed to revert fix: {e}");
+                        success = false;
+                    }
+                }
+            }
+            buttonApplyPermanent.SetActive(false);
+            buttonRevertFix.SetActive(false);
+            buttonConfirmApply.SetActive(false);
+            buttonConfirmRevert.SetActive(false);
+            buttonInfoRevertAndApplyPermanent.gameObject.SetActive(true);
+            buttonInfoRevertAndApplyPermanent.onClick.RemoveAllListeners();
+            buttonInfoRevertAndApplyPermanent.onClick.AddListener(() => {/*DO RELOAD*/ Debug.Log("RELOAD");});
+            if(success)
+            {
+                textInfoRevertAndApplyPermanent.text = "Success to revert, Please Reload!";
+            }
+            else
+            {
+                textInfoRevertAndApplyPermanent.text = "Some files failed, try to close your file explorer";
+            }
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
+            modPathTitleText.text = "<color=#FF3232>Mod path empty/doesn't exist!</color>";
+        }
+    }
+    #endregion
+    #region ApplyPermanent
+    public void ButtonApplyFixesPermanently()
+    {
+        if(Directory.Exists(modPathField.text))
+        {
+            bool success = true;
+            string[] filesBackup = FindIniFiles.FindIniFilesFixBackupRecursive(modPathField.text);
+            foreach (string backupFile in filesBackup)
+            {
+                try
+                {
+                    File.Delete(backupFile);
+                }
+                catch
+                {
+                    success = false;
+                }
+            }
+            buttonApplyPermanent.SetActive(false);
+            buttonRevertFix.SetActive(false);
+            buttonConfirmApply.SetActive(false);
+            buttonConfirmRevert.SetActive(false);
+            buttonInfoRevertAndApplyPermanent.gameObject.SetActive(true);
+            buttonInfoRevertAndApplyPermanent.onClick.RemoveAllListeners();
+            if(success)
+            {
+                textInfoRevertAndApplyPermanent.text = "Success to apply permanent fix, backup deleted";
+            }
+            else
+            {
+                textInfoRevertAndApplyPermanent.text = "Some files failed, try to close your file explorer";
+            }
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(modPathField.gameObject);
+            modPathTitleText.text = "<color=#FF3232>Mod path empty/doesn't exist!</color>";
+        }
+    }
+    #endregion
+    
     #region ModPath
     //Called from button modpath folder icon
     public void SelectModPath()
@@ -73,6 +178,10 @@ public class TabModFixManager : MonoBehaviour
         {
             modPathField.text = folder[0];
         }
+    }
+    private void OnModPathDeselect(string arg0)
+    {
+        modPathTitleText.text = "Mod path";
     }
     #endregion
 
