@@ -164,7 +164,10 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
     }
     public void OnAnyKeyboard()
     {
-        if(EventSystem.current.currentSelectedGameObject == null) SetSelectedObject(tabTitle[(int)CurrentTabState]);
+        if(EventSystem.current.currentSelectedGameObject == null)
+        {
+            SetSelectedObject(tabTitle[(int)CurrentTabState]);
+        }
         Image[][] allTabs = { selectedMarkersTabKeybind, selectedMarkersTabMod, selectedMarkersTabModFix, selectedMarkersTabSetting };
         ToggleSelectedMarkers(allTabs.SelectMany(images => images).ToArray(), true, true);
     }

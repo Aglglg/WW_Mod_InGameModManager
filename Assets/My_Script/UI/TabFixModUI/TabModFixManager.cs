@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
 using System.IO;
 using System;
 using TMPro;
@@ -57,6 +56,9 @@ public class TabModFixManager : MonoBehaviour
         //For log to ui
         Application.logMessageReceived += modFixLogToUI.LogCallback;
         ModFixer.Initialize();
+
+        //For getting latest mod fixes, the mod fix retrive data from cloud once only, and will use cached fixes except app quit & this called once only.
+        DeleteModFixCache();
     }
     private void OnEnable()
     {
@@ -317,16 +319,16 @@ public class TabModFixManager : MonoBehaviour
 
     private async Task ProcessFileListAsync(string jsonResponse)
     {
-        var contents = JsonConvert.DeserializeObject<List<GitHubContent>>(jsonResponse);
-        Debug.Log(jsonResponse);
+        // Wrap the JSON array in an object to make it compatible with JsonUtility
+        string wrappedJson = "{\"items\":" + jsonResponse + "}";
 
-        // Filter JSON files
-        var jsonFiles = contents.Where(c => c.type == "file" && c.name.EndsWith(".json")).ToArray();
+        // Deserialize the JSON
+        GitHubContentArrayWrapper wrapper = JsonUtility.FromJson<GitHubContentArrayWrapper>(wrappedJson);
 
-        // Download the content of each JSON file asynchronously
-        foreach (var file in jsonFiles)
+        // Access the deserialized data
+        foreach (var item in wrapper.items)
         {
-            await DownloadJsonFileAsync(file);
+            await DownloadJsonFileAsync(item);
         }
     }
 
@@ -370,7 +372,7 @@ public class TabModFixManager : MonoBehaviour
     private async Task LoadModFixAsync(string file)
     {
         string jsonData = await ReadFileAsync(file);
-        if(file.EndsWith(ConstantVar.FILE_FIX_LOG))
+        if (file.EndsWith(ConstantVar.FILE_FIX_LOG))
         {
             textInfoAfterLoading = jsonData;
         }
@@ -378,23 +380,28 @@ public class TabModFixManager : MonoBehaviour
         {
             try
             {
-                ModFixData fixData = JsonConvert.DeserializeObject<ModFixData>(jsonData);
+                // Deserialize JSON into the wrapper class
+                ModFixDataWrapper wrapper = JsonUtility.FromJson<ModFixDataWrapper>(jsonData);
+
+                // Convert the wrapper to ModFixData
+                ModFixData fixData = new ModFixData
+                {
+                    title = wrapper.title,
+                    note = wrapper.note,
+                    modFixType = wrapper.modFixType,
+                    modFixGame = wrapper.modFixGame,
+                    hashpair = wrapper.hashpair.ToDictionary(pair => pair.key, pair => pair.value), 
+                    modifiedDate = DateTime.Parse(wrapper.modifiedDate)
+                };
+
+                // Add to list
                 modFixDatas.Add(fixData);
-            }
-            catch (JsonSerializationException ex)
-            {
-                Debug.LogError("JSON deserialization error: " + ex.Message);
-            }
-            catch (JsonReaderException ex)
-            {
-                Debug.LogError("JSON parsing error: " + ex.Message);
             }
             catch (Exception ex)
             {
                 Debug.LogError("Error Deserialize JSON: " + ex.Message);
             }
         }
-        
     }
 
     private async Task<string> ReadFileAsync(string filePath)
@@ -405,8 +412,25 @@ public class TabModFixManager : MonoBehaviour
         }
     }
     #endregion
+
+    #region Delete mod fix cache
+    private void DeleteModFixCache()
+    {
+        if(Directory.Exists(Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES)))
+        {
+            Directory.Delete(Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES), recursive: true);
+        }
+    }
+    #endregion
 }
 
+[Serializable]
+public class GitHubContentArrayWrapper
+{
+    public GitHubContent[] items;
+}
+
+[Serializable]
 public class GitHubContent
 {
     public string name;
@@ -415,54 +439,3 @@ public class GitHubContent
     public string path;
 }
 
-    // Directory.Delete(cachePath, recursive: true);
-    //private static FileStream fileStream;
-    //private static string filePath;
-
-    // public static void CreateAndLockFile()
-    // {
-    //     // Define the file path in Application.persistentDataPath
-    //     filePath = Path.Combine(Application.persistentDataPath, "WuWa Mod Manager Still Running.txt");
-    //     Debug.Log(filePath);
-
-    //     try
-    //     {
-    //         // Create or overwrite the file and open it with exclusive lock
-    //         fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-
-    //         // Write some initial data
-    //         string content = "That means \n";
-    //         byte[] data = Encoding.UTF8.GetBytes(content);
-    //         fileStream.Write(data, 0, data.Length);
-    //         fileStream.Flush();
-
-    //         Debug.Log("File created and locked: " + filePath);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Debug.LogError("Error creating or locking file: " + ex.Message);
-    //     }
-    // }
-
-    // public static void ReleaseAndDeleteFile()
-    // {
-    //     try
-    //     {
-    //         if (fileStream != null)
-    //         {
-    //             fileStream.Close();
-    //             fileStream.Dispose();
-    //             fileStream = null;
-    //         }
-
-    //         if (File.Exists(filePath))
-    //         {
-    //             File.Delete(filePath);
-    //             Debug.Log("File deleted: " + filePath);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Debug.LogError("Error releasing or deleting file: " + ex.Message);
-    //     }
-    // }

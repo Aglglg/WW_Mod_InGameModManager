@@ -1,6 +1,12 @@
 
 public static class ConstantVar
 {
+    //bat file to start the app must match this, _ will be replace with space on Initialization
+    public const string START_ARG_WUWA = "Wuthering_Waves";
+    public const string START_ARG_GENSHIN = "Genshin_Impact";
+    public const string START_ARG_HSR = "Honkai_Star_Rail";
+    public const string START_ARG_ZZZ = "Zenless_Zone_Zero";
+
     public const string LINK_VALIDKEYS = "https://forums.frontier.co.uk/attachments/edhm-hotkeys-pdf.343006/";
     public const string LINK_GAMEBANANA = "https://gamebanana.com/members/3948540";
     public const string LINK_GETSUPPORTLINK = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/supportlink.txt";
@@ -22,7 +28,9 @@ public static class ConstantVar
 
     public const string MODFOLDER_VALIDSUFFIX1 = "mi\\mods\\";
     public const string MODFOLDER_VALIDSUFFIX2 = "mi\\mods";
-    public const string PLAYERPERFKEY_MODPATH = "Mod Path"; 
+
+    //suffix only, the usage will be ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
+    public const string SUFFIX_PLAYERPERFKEY_MODPATH = "Mod Path "; 
     public const string PLAYERPERFKEY_OPACITY = "Opacity";
     public const float DEFAULT_OPACITY = 0.5f;
     public const string PLAYERPERFKEY_SCALE = "Scale";

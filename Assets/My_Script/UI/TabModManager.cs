@@ -25,14 +25,14 @@ public class TabModManager : MonoBehaviour
 
     private void InitializeTabMod()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_MODPATH)
-            && Directory.Exists(PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH))
-            && (PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX1)
-               || PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX2)))
+        if(PlayerPrefs.HasKey(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName)
+            && Directory.Exists(PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
+            && (PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX1)
+               || PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX2)))
         {
             ValidModPath();
-            Debug.Log("VALID: " + PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH));
-            Debug.Log(Directory.Exists(PlayerPrefs.GetString(ConstantVar.PLAYERPERFKEY_MODPATH)));
+            Debug.Log("VALID: " + PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName));
+            Debug.Log(Directory.Exists(PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName)));
         }
         else
         {
