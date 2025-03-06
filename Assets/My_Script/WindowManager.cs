@@ -57,7 +57,8 @@ public class WindowManager : MonoBehaviour
     static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
     private static IntPtr thisApphWnd;
-    private static IntPtr targetGamehWnd;
+    public static IntPtr targetGamehWnd; //Also used in KeyToggleWindow
+    public static bool targetGamehWndFound = false;
     private bool windowIsHidden;
 
     //Activated after done initialization
@@ -87,6 +88,7 @@ public class WindowManager : MonoBehaviour
                     ForceFocusWindow(true);
                     StartCoroutine(CheckCurrentActiveWindow());
                     StartCoroutine(SetClickthrough());
+                    if(!targetGamehWndFound) StartCoroutine(SetTargetWindowIsFound());
                 }
             }
         }
@@ -182,19 +184,22 @@ public class WindowManager : MonoBehaviour
     {
         while(!windowIsHidden)
         {
-            Debug.Log("SET CLICKTHROUGH: " + EventSystem.current.IsPointerOverGameObject());
             if (EventSystem.current.IsPointerOverGameObject() /*&& keysimulator not simulating key*/)
             {
-                Debug.Log("SET CLICKTHROUGH: NO\n");
                 SetWindowLong(thisApphWnd, GWL_EXSTYLE, WS_EX_LAYERED);
             }
             else
             {
-                Debug.Log("SET CLICKTHROUGH: YES\n");
                 SetWindowLong(thisApphWnd, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT);
             }
             yield return null;
         }
+    }
+
+    private IEnumerator SetTargetWindowIsFound()
+    {
+        yield return new WaitForSeconds(1);
+        targetGamehWndFound = true;
     }
 }
 
