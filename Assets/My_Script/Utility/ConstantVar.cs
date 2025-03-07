@@ -2,10 +2,10 @@
 public static class ConstantVar
 {
     //bat file to start the app must match this, _ will be replace with space on Initialization
-    public const string START_ARG_WUWA = "Wuthering_Waves";
-    public const string START_ARG_GENSHIN = "Genshin_Impact";
-    public const string START_ARG_HSR = "Honkai_Star_Rail";
-    public const string START_ARG_ZZZ = "Zenless_Zone_Zero";
+    // public const string START_ARG_WUWA = "Wuthering_Waves";
+    // public const string START_ARG_GENSHIN = "Genshin_Impact";
+    // public const string START_ARG_HSR = "Honkai_Star_Rail";
+    // public const string START_ARG_ZZZ = "Zenless_Zone_Zero";
 
     public const string LINK_VALIDKEYS = "https://forums.frontier.co.uk/attachments/edhm-hotkeys-pdf.343006/";
     public const string LINK_GAMEBANANA = "https://gamebanana.com/members/3948540";

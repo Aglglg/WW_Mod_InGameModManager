@@ -1,21 +1,18 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using WindowsInput;
-using WindowsInput.Native;
 
 public class WindowManager : MonoBehaviour
 {
     [Header("This by default disabled, enabled automatically after Initialization script")]
     [SerializeField] private bool unusedBool;
 
-    
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
@@ -111,7 +108,7 @@ public class WindowManager : MonoBehaviour
         
     }
 
-    public static void ForceFocusWindow(bool isThisApp)//Used when simulating input
+    public static void ForceFocusWindow(bool isThisApp)//Used when simulating input, currently not used
     {
         IntPtr selectedHwnd = isThisApp ? thisApphWnd : targetGamehWnd;
 
@@ -144,7 +141,7 @@ public class WindowManager : MonoBehaviour
 
     private void GetThisAppWindow()
     {
-        thisApphWnd = FindWindow(null, Application.productName);
+        thisApphWnd = Process.GetCurrentProcess().MainWindowHandle;
     }
 
     private void SetWindowTransparent()

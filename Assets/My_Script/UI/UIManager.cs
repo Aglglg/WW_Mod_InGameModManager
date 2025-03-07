@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
 
     private Vector2 initialMousePos;
     private Vector2 initialPanelPos;
-
+    
     private void Start()
     {
         tabSettingManager.LoadSetting();

@@ -23,52 +23,12 @@ public class Initialization : MonoBehaviour
         #if !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
 
-        //The ConstantVar.StartArgs use _ for example Wuthering_Waves, but window title ofcourse use space.
-        foreach (string arg in args)
+        for (int i = 0; i < args.Length; i++)
         {
-            if (arg.StartsWith(ConstantVar.START_ARG_WUWA))
+            if (args[i] == "-game" && i + 1 < args.Length)
             {
                 argGameNull = false;
-                gameName = ConstantVar.START_ARG_WUWA.Replace("_", " ");
-                filePath = Path.Combine(Application.persistentDataPath, gameName);
-                if(File.Exists(filePath))
-                {
-                    Application.Quit();
-                    return;
-                }
-                CreateAndLockFile();
-                break;
-            }
-            else if (arg.StartsWith(ConstantVar.START_ARG_GENSHIN))
-            {
-                argGameNull = false;
-                gameName = ConstantVar.START_ARG_GENSHIN.Replace("_", " ");
-                filePath = Path.Combine(Application.persistentDataPath, gameName);
-                if(File.Exists(filePath))
-                {
-                    Application.Quit();
-                    return;
-                }
-                CreateAndLockFile();
-                break;
-            }
-            else if (arg.StartsWith(ConstantVar.START_ARG_HSR))
-            {
-                argGameNull = false;
-                gameName = ConstantVar.START_ARG_HSR.Replace("_", " ");
-                filePath = Path.Combine(Application.persistentDataPath, gameName);
-                if(File.Exists(filePath))
-                {
-                    Application.Quit();
-                    return;
-                }
-                CreateAndLockFile();
-                break;
-            }
-            else if (arg.StartsWith(ConstantVar.START_ARG_ZZZ))
-            {
-                argGameNull = false;
-                gameName = ConstantVar.START_ARG_ZZZ.Replace("_", " ");
+                gameName = args[i + 1];
                 filePath = Path.Combine(Application.persistentDataPath, gameName);
                 if(File.Exists(filePath))
                 {
@@ -90,7 +50,7 @@ public class Initialization : MonoBehaviour
         SetToEfficiencyMode();
         
         #if UNITY_EDITOR
-        gameName = "Wuthering_Waves";
+        gameName = "Wuthering Waves";
         #endif
         
         manager.SetActive(true);
