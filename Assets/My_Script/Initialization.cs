@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 
@@ -84,6 +86,8 @@ public class Initialization : MonoBehaviour
             return;
         }
         #endif
+
+        SetToEfficiencyMode();
         
         #if UNITY_EDITOR
         gameName = "Wuthering_Waves";
@@ -92,6 +96,28 @@ public class Initialization : MonoBehaviour
         manager.SetActive(true);
         Instantiate(panelPrefabObject, canvasTransform);
     }
+
+
+
+#region Set To Efficiency
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr GetCurrentThread();
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool SetThreadPriority(IntPtr hThread, int nPriority);
+    private const int THREAD_PRIORITY_IDLE = -15;
+
+    private void SetToEfficiencyMode()
+    {
+        Process currentProcess = Process.GetCurrentProcess();
+        currentProcess.PriorityClass = ProcessPriorityClass.Idle;
+
+        IntPtr threadHandle = GetCurrentThread();
+        SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE);
+    }
+#endregion
+
+
 
     private void OnApplicationQuit()
     {
@@ -112,7 +138,7 @@ public class Initialization : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError("Error creating or locking file: " + ex.Message);
+            UnityEngine.Debug.LogError("Error creating or locking file: " + ex.Message);
         }
     }
 
@@ -134,7 +160,7 @@ public class Initialization : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError("Error releasing or deleting file: " + ex.Message);
+            UnityEngine.Debug.LogError("Error releasing or deleting file: " + ex.Message);
         }
     }
 }

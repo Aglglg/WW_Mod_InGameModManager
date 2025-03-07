@@ -5,14 +5,17 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using WindowsInput;
+using WindowsInput.Native;
 
 public class WindowManager : MonoBehaviour
 {
     [Header("This by default disabled, enabled automatically after Initialization script")]
     [SerializeField] private bool unusedBool;
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
+    
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
@@ -85,10 +88,14 @@ public class WindowManager : MonoBehaviour
 
                     ShowWindow(thisApphWnd, SW_SHOW);
 
-                    ForceFocusWindow(true);
+                    SetWindowLong(thisApphWnd, GWL_EXSTYLE, WS_EX_LAYERED);
+                    var sim = new InputSimulator();
+                    sim.Mouse.LeftButtonClick();
+
                     StartCoroutine(CheckCurrentActiveWindow());
                     StartCoroutine(SetClickthrough());
                     if(!targetGamehWndFound) StartCoroutine(SetTargetWindowIsFound());
+                    StartCoroutine(ToggleButtons(true));
                 }
             }
         }
@@ -98,11 +105,13 @@ public class WindowManager : MonoBehaviour
             Application.targetFrameRate = 10;
             windowIsHidden = true;
             ShowWindow(thisApphWnd, SW_HIDE);
+            StartCoroutine(ToggleButtons(false));
         }
         #endif
+        
     }
 
-    public static void ForceFocusWindow(bool isThisApp)
+    public static void ForceFocusWindow(bool isThisApp)//Used when simulating input
     {
         IntPtr selectedHwnd = isThisApp ? thisApphWnd : targetGamehWnd;
 
@@ -135,7 +144,7 @@ public class WindowManager : MonoBehaviour
 
     private void GetThisAppWindow()
     {
-        thisApphWnd = GetActiveWindow();
+        thisApphWnd = FindWindow(null, Application.productName);
     }
 
     private void SetWindowTransparent()
@@ -160,6 +169,26 @@ public class WindowManager : MonoBehaviour
         return title.Length > 0 ? title.ToString() : null;
     }
 
+    private IEnumerator ToggleButtons(bool isActive)
+    {
+        Selectable[] selectables = FindObjectsByType<Selectable>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        if(isActive)
+        {
+            yield return null;
+            foreach (Selectable button in selectables)
+            {
+                button.interactable = true;
+            }
+        }
+        else
+        {
+            foreach (Selectable button in selectables)
+            {
+                button.interactable = false;
+            }
+        }
+    }
+
     private IEnumerator CheckCurrentActiveWindow()
     {
         while (!windowIsHidden)
@@ -180,7 +209,7 @@ public class WindowManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SetClickthrough()
+    private IEnumerator SetClickthrough()//Not used for now
     {
         while(!windowIsHidden)
         {
