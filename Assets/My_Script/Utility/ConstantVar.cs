@@ -7,7 +7,7 @@ public static class ConstantVar
     // public const string START_ARG_HSR = "Honkai_Star_Rail";
     // public const string START_ARG_ZZZ = "Zenless_Zone_Zero";
 
-    public const string LINK_VALIDKEYS = "https://forums.frontier.co.uk/attachments/edhm-hotkeys-pdf.343006/";
+    public const string LINK_VALIDKEYS = "https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes";
     public const string LINK_GAMEBANANA = "https://gamebanana.com/members/3948540";
     public const string LINK_GETSUPPORTLINK = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/supportlink.txt";
     public const string LINK_GETSUPPORTICON = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/My_Sprite/UI/IconDonate.png";
@@ -35,4 +35,8 @@ public static class ConstantVar
     public const float DEFAULT_OPACITY = 0.5f;
     public const string PLAYERPERFKEY_SCALE = "Scale";
     public const float DEFAULT_SCALE = 0.85f;
+    public const string PLAYERPERFKEY_WIDTH = "Width";
+    public const float DEFAULT_WIDTH = 820f;
+    public const string PLAYERPERFKEY_HEIGHT = "Height";
+    public const float DEFAULT_HEIGHT = 1080f;
 }

@@ -1120,8 +1120,9 @@ GameObject:
   - component: {fileID: 7681754111567604473}
   - component: {fileID: 8716930770151096309}
   - component: {fileID: 6105596650018841153}
+  - component: {fileID: 8796942235495181949}
   m_Layer: 5
-  m_Name: ExpandButtonLeft
+  m_Name: '!ExpandButtonLeft'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1184,6 +1185,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8796942235495181949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381188571664225184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b260db2373ca994b8b70592364d6e32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootTransform: {fileID: 6664704873146613521}
+  isButtonRight: 0
 --- !u!1 &402886589303458661
 GameObject:
   m_ObjectHideFlags: 0
@@ -2429,18 +2444,6 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 5023453620419380220}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: TestSimulateKey
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -22307,8 +22310,9 @@ GameObject:
   - component: {fileID: 291019875525128674}
   - component: {fileID: 2138098358733562564}
   - component: {fileID: 4945527985936874775}
+  - component: {fileID: 26257638577442268}
   m_Layer: 5
-  m_Name: ExpandButtonRight
+  m_Name: '!ExpandButtonRight'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22371,6 +22375,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &26257638577442268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6081230951072086714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b260db2373ca994b8b70592364d6e32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootTransform: {fileID: 6664704873146613521}
+  isButtonRight: 1
 --- !u!1 &6085234666217822715
 GameObject:
   m_ObjectHideFlags: 0
@@ -28976,12 +28994,12 @@ RectTransform:
   m_Children:
   - {fileID: 5857285997651123170}
   - {fileID: 2031727299070923224}
-  - {fileID: 7681754111567604473}
-  - {fileID: 291019875525128674}
   - {fileID: 229620222065773945}
   - {fileID: 8254754744349859461}
   - {fileID: 8095876444052044683}
   - {fileID: 1189521732134436601}
+  - {fileID: 7681754111567604473}
+  - {fileID: 291019875525128674}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
