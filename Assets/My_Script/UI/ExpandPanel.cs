@@ -25,8 +25,17 @@ public class ExpandPanel : MonoBehaviour, IDragHandler, IPointerDownHandler, IPo
         Vector2 localMousePos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(rootTransform, eventData.position, eventData.pressEventCamera, out localMousePos);
 
-        float widthChange = localMousePos.x - initialMousePos.x;
+        float widthChange;
         float heightChange = initialMousePos.y - localMousePos.y;
+
+        if(isButtonRight)
+        {
+            widthChange = localMousePos.x - initialMousePos.x;
+        }
+        else
+        {
+            widthChange = initialMousePos.x - localMousePos.x;
+        }
 
         rootTransform.sizeDelta = new Vector2(Mathf.Max(initialSize.x + widthChange, ConstantVar.DEFAULT_WIDTH), Mathf.Max(initialSize.y + heightChange, ConstantVar.DEFAULT_HEIGHT));
     }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using WindowsInput;
 public class TabModFixManager : MonoBehaviour
 {
     [SerializeField] private float animationDuration;
@@ -113,7 +114,7 @@ public class TabModFixManager : MonoBehaviour
             buttonConfirmRevert.SetActive(false);
             buttonInfoRevertAndApplyPermanent.gameObject.SetActive(true);
             buttonInfoRevertAndApplyPermanent.onClick.RemoveAllListeners();
-            buttonInfoRevertAndApplyPermanent.onClick.AddListener(() => {/*DO RELOAD*/ Debug.Log("RELOAD");});
+            buttonInfoRevertAndApplyPermanent.onClick.AddListener(() => { KeyPressSimulator.SimulateKey(virtualKeys: VirtualKeyCode.F10);});
             if(success)
             {
                 textInfoRevertAndApplyPermanent.text = "Revert success, please <u>reload</u>!";
@@ -263,7 +264,7 @@ public class TabModFixManager : MonoBehaviour
                     canvasGroupGameExpanded.DOFade(1, animationDuration);
                 }
             );
-        //DO RELOAD MOD HERE
+        KeyPressSimulator.SimulateKey(virtualKeys: VirtualKeyCode.F10);
     }
     #endregion
 
