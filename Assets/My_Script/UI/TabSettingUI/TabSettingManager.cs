@@ -49,16 +49,16 @@ public class TabSettingManager : MonoBehaviour
     //Called from UIManager
     public void LoadSetting()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
+        if(PlayerPrefs.HasKey(ConstantVar.SUFFIX_PLAYERPREFKEY_MODPATH + Initialization.gameName))
         {
-            modPathField.text = PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName);
+            modPathField.text = PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPREFKEY_MODPATH + Initialization.gameName);
             SaveModPath();
         }
 
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_OPACITY))
+        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPREFKEY_OPACITY))
         {
             Color fillColor = backgroundFillImage.color;
-            fillColor.a = PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_OPACITY);
+            fillColor.a = PlayerPrefs.GetFloat(ConstantVar.PLAYERPREFKEY_OPACITY);
             backgroundFillImage.color = fillColor;
             opacitySlider.value = fillColor.a;
         }
@@ -68,12 +68,12 @@ public class TabSettingManager : MonoBehaviour
             fillColor.a = ConstantVar.DEFAULT_OPACITY;
             backgroundFillImage.color = fillColor;
             opacitySlider.value = fillColor.a;
-            PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_OPACITY, fillColor.a);
+            PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_OPACITY, fillColor.a);
         }
 
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_SCALE))
+        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPREFKEY_SCALE))
         {
-            float panelScale = PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_SCALE);
+            float panelScale = PlayerPrefs.GetFloat(ConstantVar.PLAYERPREFKEY_SCALE);
             backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
             scaleSlider.value = panelScale;
         }
@@ -82,7 +82,7 @@ public class TabSettingManager : MonoBehaviour
             float panelScale = ConstantVar.DEFAULT_SCALE;
             backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
             scaleSlider.value = panelScale;
-            PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, panelScale);
+            PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_SCALE, panelScale);
         }
     }
 
@@ -100,7 +100,7 @@ public class TabSettingManager : MonoBehaviour
 
     private void SaveModPath()
     {
-        PlayerPrefs.SetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName, modPathField.text);
+        PlayerPrefs.SetString(ConstantVar.SUFFIX_PLAYERPREFKEY_MODPATH + Initialization.gameName, modPathField.text);
     }
     #endregion
 
@@ -111,12 +111,12 @@ public class TabSettingManager : MonoBehaviour
         Color fillColor = backgroundFillImage.color;
         fillColor.a = value;
         backgroundFillImage.color = fillColor;
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_OPACITY, value);
+        PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_OPACITY, value);
     }
     public void ValueChangedScaleSlider(float value)
     {
         backgroundPanel.localScale = new Vector3(value, value, value);
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, value);
+        PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_SCALE, value);
     }
     #endregion
 
