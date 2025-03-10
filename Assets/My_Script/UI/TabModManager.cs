@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class TabModManager : MonoBehaviour
 {
-    [SerializeField] private GameObject groupItem;
-    [SerializeField] private Transform groupRoot;
-    [SerializeField] private Transform modsRoot;
     [SerializeField] private UIManager uIManager;
     [SerializeField] private GameObject textInfo;
     [SerializeField] private GameObject[] objects;
@@ -28,19 +25,19 @@ public class TabModManager : MonoBehaviour
 
     private void InitializeTabMod()
     {
-        string key = ConstantVar.SUFFIX_PLAYERPREFKEY_MODPATH + Initialization.gameName;
-        if(PlayerPrefs.HasKey(key)
-            && Directory.Exists(PlayerPrefs.GetString(key))
-            && PlayerPrefs.GetString(key).TrimEnd('\\').ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX)
-               )
+        if(PlayerPrefs.HasKey(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName)
+            && Directory.Exists(PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
+            && (PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX1)
+               || PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName).ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX2)))
         {
             ValidModPath();
-            ModsManager.InitializeMods();
-            InstantiateMods();
+            Debug.Log("VALID: " + PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName));
+            Debug.Log(Directory.Exists(PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName)));
         }
         else
         {
             InvalidModPath();
+            Debug.Log("INVALID");
         }
     }
     private void ValidModPath()
@@ -57,15 +54,6 @@ public class TabModManager : MonoBehaviour
         foreach (GameObject gameObject in objects)
         {
             gameObject.SetActive(false);
-        }
-    }
-
-    private void InstantiateMods()
-    {
-        foreach (var item in ModsManager.managedModDatas.groupDatas)
-        {
-            GameObject instantiatedGroup = Instantiate(groupItem, groupRoot);
-            instantiatedGroup.GetComponent<GroupItemHandler>().groupPath = item.groupPath;
         }
     }
 }

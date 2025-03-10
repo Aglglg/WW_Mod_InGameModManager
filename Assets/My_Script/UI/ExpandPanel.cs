@@ -15,9 +15,9 @@ public class ExpandPanel : MonoBehaviour, IDragHandler, IPointerDownHandler, IPo
 
     private void Awake()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPREFKEY_HEIGHT) && PlayerPrefs.HasKey(ConstantVar.PLAYERPREFKEY_WIDTH))
+        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_HEIGHT) && PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_WIDTH))
         {
-            rootTransform.sizeDelta = new Vector2(PlayerPrefs.GetFloat(ConstantVar.PLAYERPREFKEY_WIDTH), PlayerPrefs.GetFloat(ConstantVar.PLAYERPREFKEY_HEIGHT));
+            rootTransform.sizeDelta = new Vector2(PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_WIDTH), PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_HEIGHT));
         }
     }
     public void OnDrag(PointerEventData eventData)
@@ -54,8 +54,8 @@ public class ExpandPanel : MonoBehaviour, IDragHandler, IPointerDownHandler, IPo
         ChangePivot(pivotIfNotExpanding);
         initialMousePos = Vector2.zero;
 
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_WIDTH, rootTransform.sizeDelta.x);
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPREFKEY_HEIGHT, rootTransform.sizeDelta.y);
+        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_WIDTH, rootTransform.sizeDelta.x);
+        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_HEIGHT, rootTransform.sizeDelta.y);
     }
 
     private void ChangePivot(Vector2 pivot)

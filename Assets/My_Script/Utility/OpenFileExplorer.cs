@@ -3,15 +3,15 @@ using UnityEngine;
 
 public static class OpenFileExplorer
 {
-    public static string[] OpenFile(string title, ExtensionFilter[] extensions)
+    public static string[] OpenFile()
     {
-        var paths = StandaloneFileBrowser.OpenFilePanel(title, "", extensions, false);
+        var paths = StandaloneFileBrowser.OpenFilePanel("Select File", "", "*", false);
         return paths;
     }
 
-    public static string[] OpenFolder(string title)
+    public static string[] OpenFolder(string windowTitle)
     {
-        var paths = StandaloneFileBrowser.OpenFolderPanel(title, "", false);
+        var paths = StandaloneFileBrowser.OpenFolderPanel(windowTitle, "", false);
         return paths;
     }
 }
