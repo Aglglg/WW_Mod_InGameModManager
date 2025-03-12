@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f26d04ac989a15842b9227d045286c69
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Examples/Example 3 (Slot Machine)/Scripts/SlotMachine.cs
+  uploadId: 470672

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4a74913cddc5db24e9d7fabf437f0d8f
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Plugins/SimpleInspectorAttributes/Editor/SimpleInspectorAttributesEditor.asmdef
+  uploadId: 470672

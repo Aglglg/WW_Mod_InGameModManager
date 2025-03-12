@@ -5,7 +5,6 @@ public static class ConstantVar
     public const string LINK_GAMEBANANA = "https://gamebanana.com/members/3948540";
     public const string LINK_GETSUPPORTLINK = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/supportlink.txt";
     public const string LINK_GETSUPPORTICON = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/My_Sprite/UI/IconDonate.png";
-    public const string MANAGER_BACKUP_SUFFIX = "ini_managed_backup";
 
     public static readonly string[] LINK_PATH_MODFIXES = new string[4]{
         "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/Wuwa",
@@ -20,11 +19,15 @@ public static class ConstantVar
     public const string TAG_INPUTSYSTEM = "InputSystem";
 
 
-    public const string MODFOLDER_VALIDSUFFIX1 = "mi\\mods\\";
-    public const string MODFOLDER_VALIDSUFFIX2 = "mi\\mods";
+    public const string MODFOLDER_VALIDSUFFIX = "mi\\mods";
+    public const string MODDATA_JSON_FILE = "moddata.json";
+    public const string MODDATA_ICON_FILE = "icon.png";
+    public const string MANAGED_PATH = "MANAGED_DO-NOT-EDIT";
+    public const string REMOVED_PATH = "DISABLED_MANAGED_REMOVED";
+    public const string MANAGER_BACKUP_SUFFIX = "ini_managed_backup";
 
-    //suffix only, the usage will be ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
-    public const string SUFFIX_PLAYERPERFKEY_MODPATH = "Mod Path "; 
+    //suffix only, the usage will be ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
+    public const string PREFIX_PLAYERPERFKEY_MODPATH = "Mod Path "; 
     public const string PLAYERPERFKEY_OPACITY = "Opacity";
     public const float DEFAULT_OPACITY = 0.5f;
     public const string PLAYERPERFKEY_SCALE = "Scale";

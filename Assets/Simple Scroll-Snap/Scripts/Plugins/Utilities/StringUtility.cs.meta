@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f48484db9b1f6524193b047016d92447
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Plugins/Utilities/StringUtility.cs
+  uploadId: 470672

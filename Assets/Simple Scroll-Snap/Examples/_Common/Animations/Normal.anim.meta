@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a2bc5fbb5767b3a42b0fab6ff54f17b6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Examples/_Common/Animations/Normal.anim
+  uploadId: 470672

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bd40a93214a352f4090ee5aa999ef018
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Plugins/Utilities/Utilities.asmdef
+  uploadId: 470672

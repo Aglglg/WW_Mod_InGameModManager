@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 1557034398}
-  panelPrefabObject: {fileID: 8213030559424617860, guid: 18d6425aefdc4d3468c8e1070aa6ccba, type: 3}
+  panelPrefabObject: {fileID: 5356934888613444057, guid: 18d6425aefdc4d3468c8e1070aa6ccba, type: 3}
   canvasTransform: {fileID: 1877439401}
 --- !u!4 &16110536
 Transform:

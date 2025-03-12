@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: cdbdfab938e3cad46a9e6949970f268e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Core/Runtime/Enums/SizeControl.cs
+  uploadId: 470672

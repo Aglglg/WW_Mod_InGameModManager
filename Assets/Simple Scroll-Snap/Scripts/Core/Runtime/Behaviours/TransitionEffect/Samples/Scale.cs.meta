@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f48746d449c8c7d499df614ae4640802
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Core/Runtime/Behaviours/TransitionEffect/Samples/Scale.cs
+  uploadId: 470672

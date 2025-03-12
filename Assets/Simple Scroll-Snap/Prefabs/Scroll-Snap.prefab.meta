@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a1ec3309957318841a5e68ab2178c627
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Prefabs/Scroll-Snap.prefab
+  uploadId: 470672

@@ -1,10 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using WindowsInput;
 
 public static class KeyPressSimulator
 {
-    public static void SimulateKey(int delayMs = 50, params VirtualKeyCode[] virtualKeys)
+    static readonly InputSimulator sim = new InputSimulator();
+    public static void SimulateKey(params VirtualKeyCode[] virtualKeys)
     {
-        InputSimulator sim = new InputSimulator();
+        int delayMs = 50;
+
         // Press all keys
         foreach (var key in virtualKeys)
         {
@@ -19,5 +24,6 @@ public static class KeyPressSimulator
         {
             sim.Keyboard.KeyUp(key);
         }
-    }
+
+    }    
 }

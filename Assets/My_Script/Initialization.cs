@@ -30,12 +30,11 @@ public class Initialization : MonoBehaviour
                 argGameNull = false;
                 gameName = args[i + 1];
                 filePath = Path.Combine(Application.persistentDataPath, gameName);
-                if(File.Exists(filePath))
+                if(SuccessToCreateAndLockFile() == false)
                 {
                     Application.Quit();
                     return;
                 }
-                CreateAndLockFile();
                 break;
             }
         }
@@ -84,7 +83,7 @@ public class Initialization : MonoBehaviour
         ReleaseAndDeleteFile();
     }
 
-    public void CreateAndLockFile()
+    public bool SuccessToCreateAndLockFile()
     {
         try
         {
@@ -95,10 +94,12 @@ public class Initialization : MonoBehaviour
             byte[] data = Encoding.UTF8.GetBytes(content);
             fileStream.Write(data, 0, data.Length);
             fileStream.Flush();
+            return true;
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError("Error creating or locking file: " + ex.Message);
+            UnityEngine.Debug.LogError("Error creating or locking file, another process already running: " + ex.Message);
+            return false;
         }
     }
 

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7969b7d9da6829f4a89c7c4a0a83b3aa
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Plugins/Utilities/Editor/EditorLayoutUtility.cs
+  uploadId: 470672

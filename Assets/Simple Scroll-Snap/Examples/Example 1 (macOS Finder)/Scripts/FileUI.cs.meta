@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c502cb3690ba9ab4991878d05370d8b1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Examples/Example 1 (macOS Finder)/Scripts/FileUI.cs
+  uploadId: 470672

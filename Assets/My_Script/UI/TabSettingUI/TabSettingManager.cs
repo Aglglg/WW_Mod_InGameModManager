@@ -49,9 +49,9 @@ public class TabSettingManager : MonoBehaviour
     //Called from UIManager
     public void LoadSetting()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
+        if(PlayerPrefs.HasKey(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
         {
-            modPathField.text = PlayerPrefs.GetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName);
+            modPathField.text = PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName);
             SaveModPath();
         }
 
@@ -100,7 +100,7 @@ public class TabSettingManager : MonoBehaviour
 
     private void SaveModPath()
     {
-        PlayerPrefs.SetString(ConstantVar.SUFFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName, modPathField.text);
+        PlayerPrefs.SetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName, modPathField.text);
     }
     #endregion
 

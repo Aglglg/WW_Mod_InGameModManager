@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f63524c493027aa408fdfb996091c681
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140884
+  packageName: Simple Scroll-Snap
+  packageVersion: 2.0.0
+  assetPath: Assets/Simple Scroll-Snap/Scripts/Plugins/SimpleInspectorAttributes/Runtime/Margins.cs
+  uploadId: 470672
