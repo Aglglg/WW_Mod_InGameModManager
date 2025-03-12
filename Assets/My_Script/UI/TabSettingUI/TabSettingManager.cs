@@ -17,7 +17,7 @@ public class TabSettingManager : MonoBehaviour
 
 
     [Header("\n\nSUPPORT")]
-    [SerializeField] private Image supportImageIcon;
+    [SerializeField] private RawImage supportImageIcon;
     private string supportLink;
     #endregion
     
@@ -131,7 +131,7 @@ public class TabSettingManager : MonoBehaviour
         Application.OpenURL(ConstantVar.LINK_GAMEBANANA);
     }
 
-    IEnumerator LoadSupportImage()
+    private IEnumerator LoadSupportImage()
     {
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(ConstantVar.LINK_GETSUPPORTICON);
         yield return request.SendWebRequest();
@@ -139,8 +139,7 @@ public class TabSettingManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             Texture2D texture = DownloadHandlerTexture.GetContent(request);
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            supportImageIcon.sprite = sprite;
+            supportImageIcon.texture = texture;
         }
         else
         {

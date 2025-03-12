@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
@@ -13,8 +15,10 @@ public class ModScrollHandler : MonoBehaviour
     private const int TitleTextChildIndex = 0;
     private const int ImageMaskIconChildIndex = 1;
     private const int ImageIconChildIndexInMaskTransform = 0;
+    private const float ModImageIconDefaultWidth = 215;
+    private const float ModImageIconDefaultHeight = 309;
     
-    [SerializeField] private Sprite modDefaultIcon;
+    [SerializeField] private Texture2D modDefaultIcon;
     [SerializeField] private float animationDuration;
     [SerializeField] private SimpleScrollSnap simpleScrollSnap;
     [SerializeField] private Transform contentModTransform;
@@ -38,7 +42,7 @@ public class ModScrollHandler : MonoBehaviour
     }
 
     // Called from GroupScrollHandler
-    public async void UpdateModItems(int selectedGroupIndex, GroupData selectedGroupData)
+    public void UpdateModItems(int selectedGroupIndex, GroupData selectedGroupData)
     {
         bool isAddButtonGroup = selectedGroupIndex == 0;
 
@@ -46,7 +50,7 @@ public class ModScrollHandler : MonoBehaviour
         if(!isAddButtonGroup)
         {
             SetModTitle(selectedGroupData);
-            await SetModIconAsync(selectedGroupData);
+            SetModIcon(selectedGroupData);
         }
     }
 
@@ -100,6 +104,18 @@ public class ModScrollHandler : MonoBehaviour
         GetComponent<CanvasGroup>().DOFade(isActive ? 1 : 0, animationDuration/2);
     }
 
+    private void ScaleModToSelected(int modIndex)
+    {
+        contentModTransform.GetChild(modIndex).DOScale(new Vector3(selectedScale, selectedScale, selectedScale), animationDuration);
+    }
+
+    private void ScaleModToDefault(int modIndex)
+    {
+        contentModTransform.GetChild(modIndex).DOScale(new Vector3(notSelectedScale, notSelectedScale, notSelectedScale), animationDuration);
+    }
+
+
+    #region LOAD MOD ICON & TITLE
     private void SetModTitle(GroupData selectedGroupData)
     {
         //First, reset all
@@ -119,125 +135,73 @@ public class ModScrollHandler : MonoBehaviour
             titleInputField.text = Path.GetFileName(selectedGroupData.modPaths[i]);
         }
     }
-    private async Task SetModIconAsync(GroupData selectedGroupData)
+    private void SetModIcon(GroupData selectedGroupData)
     {
         //First, reset all
         for (int i = 0; i < contentModTransform.childCount; i++)
         {
             if(i == 0) continue; //None Button
             Transform modTransform = contentModTransform.GetChild(i);
-            Image imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<Image>();
+            RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
             imageIcon.gameObject.SetActive(false);
         }
 
-        //TODO: Cause lag, need to be fixed-------Fixed, instead of texture.LoadImage, now use unitywebreq, BUT still a bit lag
-        //SFB plugin also have example of loading image using unitywebreq, learn from it
         for (int i = 0; i < selectedGroupData.modPaths.Count; i++)
         {
             if(i == 0) continue; //None Button
             string iconPath = Path.Combine(selectedGroupData.modPaths[i], ConstantVar.MODDATA_ICON_FILE);
             Transform modTransform = contentModTransform.GetChild(i);
-            Image imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<Image>();
+            RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
             imageIcon.gameObject.SetActive(true);
             if(File.Exists(iconPath))
             {
-                Texture2D texture = await LoadTextureAsync(iconPath);
-                if (texture != null)
-                {
-                    Texture2D croppedTexture = CropToAspectRatio(texture, 2, 3);
-                    Sprite sprite = Sprite.Create(croppedTexture, new Rect(0, 0, croppedTexture.width, croppedTexture.height), new Vector2(0.5f, 0.5f));
-                    imageIcon.sprite = sprite;
-                }
-                else
-                {
-                    imageIcon.sprite = modDefaultIcon;
-                }
+                StartCoroutine(LoadModImageIcon(new System.Uri(iconPath).AbsoluteUri, imageIcon));
             }
             else
             {
-                imageIcon.sprite = modDefaultIcon;
+                LoadDefaultImageIcon(imageIcon);
             }
         }
     }
-
-    private void ScaleModToSelected(int modIndex)
+    private IEnumerator LoadModImageIcon(string uri, RawImage imageIcon)
     {
-        contentModTransform.GetChild(modIndex).DOScale(new Vector3(selectedScale, selectedScale, selectedScale), animationDuration);
-    }
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(uri);
+        yield return request.SendWebRequest();
 
-    private void ScaleModToDefault(int modIndex)
-    {
-        contentModTransform.GetChild(modIndex).DOScale(new Vector3(notSelectedScale, notSelectedScale, notSelectedScale), animationDuration);
-    }
-
-
-    private async Task<Texture2D> LoadTextureAsync(string path)
-    {
-        try
+        if (request.result == UnityWebRequest.Result.Success)
         {
-            // Convert the file path to a URI
-            string fileUri = "file://" + path;
-
-            // Use UnityWebRequestTexture to load the texture asynchronously
-            using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(fileUri))
-            {
-                // Send the request and wait for it to complete
-                var asyncOperation = request.SendWebRequest();
-                while (!asyncOperation.isDone)
-                {
-                    await Task.Yield(); // Wait without blocking the main thread
-                }
-
-                // Check for errors
-                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError($"Failed to load texture: {request.error}");
-                    return null;
-                }
-
-                // Get the downloaded texture
-                return DownloadHandlerTexture.GetContent(request);
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Failed to load texture: {ex.Message}");
-            return null;
-        }
-    }
-    private Texture2D CropToAspectRatio(Texture2D texture, int widthRatio, int heightRatio)
-    {
-        float targetAspect = (float)widthRatio / heightRatio; // Desired aspect ratio (2:3)
-        float originalAspect = (float)texture.width / texture.height; // Original aspect ratio
-
-        int newWidth, newHeight;
-        int x = 0, y = 0;
-
-        if (originalAspect > targetAspect)
-        {
-            // Image is wider than the target aspect ratio
-            newHeight = texture.height;
-            newWidth = Mathf.RoundToInt(newHeight * targetAspect);
-            x = (texture.width - newWidth) / 2; // Center the crop horizontally
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+            imageIcon.texture = texture;
+            SetImageIconWidthHeight(imageIcon.rectTransform, texture);
         }
         else
         {
-            // Image is taller than the target aspect ratio
-            newWidth = texture.width;
-            newHeight = Mathf.RoundToInt(newWidth / targetAspect);
-            y = (texture.height - newHeight) / 2; // Center the crop vertically
+            LoadDefaultImageIcon(imageIcon);
         }
-
-        // Create a new Texture2D for the cropped image
-        Texture2D croppedTexture = new Texture2D(newWidth, newHeight);
-
-        // Get the pixels from the original texture within the cropping area
-        Color[] pixels = texture.GetPixels(x, y, newWidth, newHeight);
-
-        // Set the pixels to the new cropped texture
-        croppedTexture.SetPixels(pixels);
-        croppedTexture.Apply(); // Apply the changes
-
-        return croppedTexture;
     }
+    private void SetImageIconWidthHeight(RectTransform rectTransform, Texture2D texture)
+    {
+        bool isImageLandscape = texture.width > texture.height;
+        float width;
+        float height;
+        if(isImageLandscape) //Maintain default height, change width
+        {
+            height = ModImageIconDefaultHeight;
+            float divideBy = texture.height / ModImageIconDefaultHeight;
+            width = texture.width / divideBy;
+        }
+        else //Maintain default width, change height
+        {
+            width = ModImageIconDefaultWidth;
+            float divideBy = texture.width / ModImageIconDefaultWidth;
+            height = texture.height / divideBy;
+        }
+        rectTransform.sizeDelta = new Vector2(width, height);
+    }
+    private void LoadDefaultImageIcon(RawImage imageIcon)
+    {
+        imageIcon.texture = modDefaultIcon;
+        imageIcon.rectTransform.sizeDelta = new Vector2(ModImageIconDefaultWidth, ModImageIconDefaultHeight);
+    }
+    #endregion
 }

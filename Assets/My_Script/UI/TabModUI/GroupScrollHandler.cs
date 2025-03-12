@@ -1,9 +1,11 @@
+using System.Collections;
 using System.IO;
 using DanielLochner.Assets.SimpleScrollSnap;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class GroupScrollHandler : MonoBehaviour
@@ -11,8 +13,10 @@ public class GroupScrollHandler : MonoBehaviour
     private const int TitleTextChildIndex = 0;
     private const int ImageMaskIconChildIndex = 1;
     private const int ImageIconChildIndexInMaskTransform = 0;
+    private const float GroupImageIconDefaultWidth = 160;
+    private const float GroupImageIconDefaultHeight = 160;
 
-    [SerializeField] private Sprite defaultIcon;
+    [SerializeField] private Texture2D groupDefaultIcon;
     [SerializeField] private ModScrollHandler modScrollHandler;
     [SerializeField] private GameObject groupPrefab;
     [SerializeField] private GameObject groupPrefabAddButton;
@@ -92,30 +96,6 @@ public class GroupScrollHandler : MonoBehaviour
         }
     }
 
-    private void SetGroupTitle(int groupIndex)
-    {
-        Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
-        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
-        titleInputField.text = Path.GetFileName(TabModManager.modData.groupDatas[groupIndex].groupPath);
-    }
-
-    private void SetGroupIcon(int groupIndex)
-    {
-        string iconPath = Path.Combine(TabModManager.modData.groupDatas[groupIndex].groupPath, ConstantVar.MODDATA_ICON_FILE);
-        if(File.Exists(iconPath))
-        {
-            Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
-            Image imageIcon = groupTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<Image>();
-
-            byte[] fileData = File.ReadAllBytes(iconPath);
-            Texture2D texture = new Texture2D(2, 2);
-            texture.LoadImage(fileData);
-            Texture2D croppedTexture = CropToAspectRatio(texture, 1, 1);
-            Sprite sprite = Sprite.Create(croppedTexture, new Rect(0, 0, croppedTexture.width, croppedTexture.height), new Vector2(0.5f, 0.5f));
-            imageIcon.sprite = sprite;
-        }
-    }
-
     private void InitializeSelectedGroup()
     {
         _selectedGroupData = TabModManager.modData.groupDatas[0];
@@ -161,40 +141,69 @@ public class GroupScrollHandler : MonoBehaviour
     }
 
 
-
-    private Texture2D CropToAspectRatio(Texture2D texture, int widthRatio, int heightRatio)
+    #region LOAD GROUP ICON & TITLE
+    private void SetGroupTitle(int groupIndex)
     {
-        float targetAspect = (float)widthRatio / heightRatio; // Desired aspect ratio (2:3)
-        float originalAspect = (float)texture.width / texture.height; // Original aspect ratio
+        Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
+        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+        titleInputField.text = Path.GetFileName(TabModManager.modData.groupDatas[groupIndex].groupPath);
+    }
 
-        int newWidth, newHeight;
-        int x = 0, y = 0;
-
-        if (originalAspect > targetAspect)
+    private void SetGroupIcon(int groupIndex)
+    {
+        string iconPath = Path.Combine(TabModManager.modData.groupDatas[groupIndex].groupPath, ConstantVar.MODDATA_ICON_FILE);
+        Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
+        RawImage imageIcon = groupTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
+        if(File.Exists(iconPath))
         {
-            // Image is wider than the target aspect ratio
-            newHeight = texture.height;
-            newWidth = Mathf.RoundToInt(newHeight * targetAspect);
-            x = (texture.width - newWidth) / 2; // Center the crop horizontally
+            StartCoroutine(LoadGroupImageIcon(new System.Uri(iconPath).AbsoluteUri, imageIcon));
         }
         else
         {
-            // Image is taller than the target aspect ratio
-            newWidth = texture.width;
-            newHeight = Mathf.RoundToInt(newWidth / targetAspect);
-            y = (texture.height - newHeight) / 2; // Center the crop vertically
+            LoadDefaultImageIcon(imageIcon);
         }
-
-        // Create a new Texture2D for the cropped image
-        Texture2D croppedTexture = new Texture2D(newWidth, newHeight);
-
-        // Get the pixels from the original texture within the cropping area
-        Color[] pixels = texture.GetPixels(x, y, newWidth, newHeight);
-
-        // Set the pixels to the new cropped texture
-        croppedTexture.SetPixels(pixels);
-        croppedTexture.Apply(); // Apply the changes
-
-        return croppedTexture;
     }
+
+    private IEnumerator LoadGroupImageIcon(string uri, RawImage imageIcon)
+    {
+        Debug.Log(uri);
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(uri);
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+            imageIcon.texture = texture;
+            SetImageIconWidthHeight(imageIcon.rectTransform, texture);
+        }
+        else
+        {
+            LoadDefaultImageIcon(imageIcon);
+        }
+    }
+    private void SetImageIconWidthHeight(RectTransform rectTransform, Texture2D texture)
+    {
+        bool isImageLandscape = texture.width > texture.height;
+        float width;
+        float height;
+        if(isImageLandscape) //Maintain default height, change width
+        {
+            height = GroupImageIconDefaultHeight;
+            float divideBy = texture.height / GroupImageIconDefaultHeight;
+            width = texture.width / divideBy;
+        }
+        else //Maintain default width, change height
+        {
+            width = GroupImageIconDefaultWidth;
+            float divideBy = texture.width / GroupImageIconDefaultWidth;
+            height = texture.height / divideBy;
+        }
+        rectTransform.sizeDelta = new Vector2(width, height);
+    }
+    private void LoadDefaultImageIcon(RawImage imageIcon)
+    {
+        imageIcon.texture = groupDefaultIcon;
+        imageIcon.rectTransform.sizeDelta = new Vector2(GroupImageIconDefaultWidth, GroupImageIconDefaultHeight);
+    }
+    #endregion
 }
