@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -135,7 +136,7 @@ public class ModScrollHandler : MonoBehaviour
             titleInputField.text = Path.GetFileName(selectedGroupData.modPaths[i]);
         }
     }
-    private void SetModIcon(GroupData selectedGroupData)
+    private async void SetModIcon(GroupData selectedGroupData)
     {
         //First, reset all
         for (int i = 0; i < contentModTransform.childCount; i++)
@@ -155,53 +156,39 @@ public class ModScrollHandler : MonoBehaviour
             imageIcon.gameObject.SetActive(true);
             if(File.Exists(iconPath))
             {
-                StartCoroutine(LoadModImageIcon(new System.Uri(iconPath).AbsoluteUri, imageIcon));
+                byte[] ddsBytes = await File.ReadAllBytesAsync(iconPath);
+                imageIcon.texture = LoadDDS(ddsBytes);
+                imageIcon.transform.localScale = new Vector3(1, -1, 1);
             }
             else
             {
                 LoadDefaultImageIcon(imageIcon);
+                imageIcon.transform.localScale = Vector3.one;
             }
         }
-    }
-    private IEnumerator LoadModImageIcon(string uri, RawImage imageIcon)
-    {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(uri);
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            Texture2D texture = DownloadHandlerTexture.GetContent(request);
-            imageIcon.texture = texture;
-            SetImageIconWidthHeight(imageIcon.rectTransform, texture);
-        }
-        else
-        {
-            LoadDefaultImageIcon(imageIcon);
-        }
-    }
-    private void SetImageIconWidthHeight(RectTransform rectTransform, Texture2D texture)
-    {
-        bool isImageLandscape = texture.width > texture.height;
-        float width;
-        float height;
-        if(isImageLandscape) //Maintain default height, change width
-        {
-            height = ModImageIconDefaultHeight;
-            float divideBy = texture.height / ModImageIconDefaultHeight;
-            width = texture.width / divideBy;
-        }
-        else //Maintain default width, change height
-        {
-            width = ModImageIconDefaultWidth;
-            float divideBy = texture.width / ModImageIconDefaultWidth;
-            height = texture.height / divideBy;
-        }
-        rectTransform.sizeDelta = new Vector2(width, height);
     }
     private void LoadDefaultImageIcon(RawImage imageIcon)
     {
         imageIcon.texture = modDefaultIcon;
         imageIcon.rectTransform.sizeDelta = new Vector2(ModImageIconDefaultWidth, ModImageIconDefaultHeight);
+    }
+
+    //DDS is faster, I think, jpg/png slow and unity can only load texture on main thread, so it will freeze/stutter if use png/jpg
+    private Texture2D LoadDDS(byte[] ddsBytes)
+    {
+        int height = ddsBytes[13] * 256 + ddsBytes[12];
+        int width = ddsBytes[17] * 256 + ddsBytes[16];
+        Texture2D texture = new Texture2D(width, height, TextureFormat.BC7, false);
+
+
+        int DDS_HEADER_SIZE = 148;
+        byte[] dxtBytes = new byte[ddsBytes.Length - DDS_HEADER_SIZE];
+        Buffer.BlockCopy(ddsBytes, DDS_HEADER_SIZE, dxtBytes, 0, ddsBytes.Length - DDS_HEADER_SIZE);
+
+        texture.LoadRawTextureData(dxtBytes);
+        texture.Apply();
+
+        return texture;
     }
     #endregion
 }

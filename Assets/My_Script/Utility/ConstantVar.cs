@@ -21,7 +21,7 @@ public static class ConstantVar
 
     public const string MODFOLDER_VALIDSUFFIX = "mi\\mods";
     public const string MODDATA_JSON_FILE = "moddata.json";
-    public const string MODDATA_ICON_FILE = "icon.png";
+    public const string MODDATA_ICON_FILE = "icon.dds";
     public const string MANAGED_PATH = "MANAGED_DO-NOT-EDIT";
     public const string REMOVED_PATH = "DISABLED_MANAGED_REMOVED";
     public const string MANAGER_BACKUP_SUFFIX = "ini_managed_backup";
