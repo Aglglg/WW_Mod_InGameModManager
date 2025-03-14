@@ -7,6 +7,7 @@ using DanielLochner.Assets.SimpleScrollSnap;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public class ModScrollHandler : MonoBehaviour
     private const float ModImageIconDefaultWidth = 215;
     private const float ModImageIconDefaultHeight = 309;
     
+    public GameObject modContextMenu;
     [SerializeField] private Texture2D modDefaultIcon;
     [SerializeField] private float animationDuration;
     [SerializeField] private SimpleScrollSnap simpleScrollSnap;
@@ -28,7 +30,7 @@ public class ModScrollHandler : MonoBehaviour
     [SerializeField] private float selectedScale;
     [SerializeField] private float notSelectedScale;
 
-    private int _selectedModIndex = 0;
+    private int _currentTargetIndex = 0;
     private int _previousTargetIndex = 0;
 
     private void Start()
@@ -41,24 +43,42 @@ public class ModScrollHandler : MonoBehaviour
     {
         simpleScrollSnap.GoToPanel(modItem.GetSiblingIndex());
     }
+    public void ShowContextMenu(Transform modItem)
+    {
+        if(modItem.GetSiblingIndex() == _currentTargetIndex)
+        {
+            modContextMenu.SetActive(!modContextMenu.activeSelf);
+            if(modContextMenu.activeSelf)
+            {
+                EventSystem.current.SetSelectedGameObject(modContextMenu.transform.GetChild(0).gameObject);//Child 0 hidden button as helper
+                StartCoroutine(CheckToHideContextMenu());
+            }
+        }
+    }
+    private IEnumerator CheckToHideContextMenu()
+    {
+        while (modContextMenu.activeSelf)
+        {
+            if(EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.transform.parent != modContextMenu.transform)
+            {
+                modContextMenu.SetActive(false);
+            }
+            yield return null;
+        }
+    }
 
     // Called from GroupScrollHandler
     public void UpdateModItems(int selectedGroupIndex, GroupData selectedGroupData)
     {
         bool isAddButtonGroup = selectedGroupIndex == 0;
 
-        SetModItemsActive(!isAddButtonGroup); //If add button, disable
-        if(!isAddButtonGroup)
-        {
-            SetModTitle(selectedGroupData);
-            SetModIcon(selectedGroupData);
-        }
+        SetModItemsActive(isAddButtonGroup, selectedGroupData); //If add button, disable
     }
 
     // Called from PlayerInput
     public void OnModNavigate(InputAction.CallbackContext context)
     {
-        if (context.phase != InputActionPhase.Performed) return;
+        if (context.phase != InputActionPhase.Performed || modContextMenu.activeSelf) return;
 
         if (context.ReadValue<float>() > 0)
         {
@@ -84,6 +104,7 @@ public class ModScrollHandler : MonoBehaviour
     // Called from SimpleScrollSnap when a panel is centered
     public void OnPanelCentered(int targetIndex, int previousIndex)
     {
+        _currentTargetIndex = targetIndex;
         ScaleModToSelected(targetIndex);
         ScaleModToDefault(previousIndex);
 
@@ -100,9 +121,20 @@ public class ModScrollHandler : MonoBehaviour
         ScaleModToSelected(0); // Scale the first mod to selected state
     }
 
-    private void SetModItemsActive(bool isActive)
+    private void SetModItemsActive(bool isAddButtonGroup, GroupData selectedGroupData)
     {
-        GetComponent<CanvasGroup>().DOFade(isActive ? 1 : 0, animationDuration/2);
+        //if group == add group button, first show it(1), then disable it(0), if not, disable it then show it(like refresh animation)
+        GetComponent<CanvasGroup>().DOFade(isAddButtonGroup ? 1 : 0, animationDuration/2).OnComplete(
+            () =>
+            {
+                if(!isAddButtonGroup)
+                {
+                    SetModTitle(selectedGroupData);
+                    SetModIcon(selectedGroupData);
+                }
+                GetComponent<CanvasGroup>().DOFade(isAddButtonGroup ? 0 : 1, animationDuration/2);
+            }
+        );
     }
 
     private void ScaleModToSelected(int modIndex)

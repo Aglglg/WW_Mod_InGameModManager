@@ -5,11 +5,12 @@ using DanielLochner.Assets.SimpleScrollSnap;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class GroupScrollHandler : MonoBehaviour
+public class GroupScrollHandler : MonoBehaviour, IPointerClickHandler
 {
     private const int TitleTextChildIndex = 0;
     private const int ImageMaskIconChildIndex = 1;
@@ -17,6 +18,7 @@ public class GroupScrollHandler : MonoBehaviour
     private const float GroupImageIconDefaultWidth = 160;
     private const float GroupImageIconDefaultHeight = 160;
 
+    [SerializeField] private GameObject groupContextMenu;
     [SerializeField] private Texture2D groupDefaultIcon;
     [SerializeField] private ModScrollHandler modScrollHandler;
     [SerializeField] private GameObject groupPrefab;
@@ -29,6 +31,8 @@ public class GroupScrollHandler : MonoBehaviour
 
     private GroupData _selectedGroupData;
     private int _previousTargetIndex = 0;
+    private int _currentTargetIndex = 0;
+
 
     // Called from TabModManager after mod path validation and ModData loading
     public void InstantiateGroup()
@@ -37,9 +41,9 @@ public class GroupScrollHandler : MonoBehaviour
 
         for (int i = 0; i < TabModManager.modData.groupDatas.Count; i++)
         {
-            if (i == 0)
+            if (i == 0)// Add button
             {
-                simpleScrollSnap.Add(groupPrefabAddButton, i); // Add button
+                simpleScrollSnap.Add(groupPrefabAddButton, i);
                 continue;
             }
 
@@ -53,10 +57,36 @@ public class GroupScrollHandler : MonoBehaviour
         ScaleFirstGroupToSelected();
     }
 
+    //Called from GroupItem if clicked
+    public void ShowContextMenu(Transform groupItem)
+    {
+        Debug.Log("SHOW CONTEXTMENU");
+        if(groupItem.GetSiblingIndex() == _currentTargetIndex)
+        {
+            groupContextMenu.SetActive(!groupContextMenu.activeSelf);
+            if(groupContextMenu.activeSelf)
+            {
+                EventSystem.current.SetSelectedGameObject(groupContextMenu.transform.GetChild(0).gameObject);//Child 0 hidden button as helper
+                StartCoroutine(CheckToHideContextMenu());
+            }
+        }
+    }
+    private IEnumerator CheckToHideContextMenu()
+    {
+        while (groupContextMenu.activeSelf)
+        {
+            if(EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.transform.parent != groupContextMenu.transform)
+            {
+                groupContextMenu.SetActive(false);
+            }
+            yield return null;
+        }
+    }
+
     // Called from PlayerInput
     public void OnGroupNavigate(InputAction.CallbackContext context)
     {
-        if (context.phase != InputActionPhase.Performed) return;
+        if (context.phase != InputActionPhase.Performed || modScrollHandler.modContextMenu.activeSelf || groupContextMenu.activeSelf) return;
 
         if (context.ReadValue<float>() > 0)
         {
@@ -82,6 +112,7 @@ public class GroupScrollHandler : MonoBehaviour
     // Called from SimpleScrollSnap when a panel is centered
     public void OnPanelCentered(int targetIndex, int previousIndex)
     {
+        _currentTargetIndex = targetIndex;
         ScaleGroupToSelected(targetIndex);
         ScaleGroupToDefault(previousIndex);
 
@@ -190,6 +221,31 @@ public class GroupScrollHandler : MonoBehaviour
         texture.Apply();
 
         return texture;
+    }
+    #endregion
+
+    #region ContextMenu
+    private void AddGroupButton()
+    {
+
+    }
+
+    private void ChangeIconGroupButton()
+    {
+
+    }
+
+    private void RemoveGroupButton()
+    {
+
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            
+        }
     }
     #endregion
 }

@@ -309,7 +309,7 @@ public class TabModFixManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
-            Debug.LogError("Error fetching file list: " + request.error);
+            textInfoAfterLoading = $"<color=red>{request.error}</color>";
         }
         else
         {

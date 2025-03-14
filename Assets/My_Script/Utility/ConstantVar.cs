@@ -35,5 +35,5 @@ public static class ConstantVar
     public const string PLAYERPERFKEY_WIDTH = "Width";
     public const float DEFAULT_WIDTH = 820f;
     public const string PLAYERPERFKEY_HEIGHT = "Height";
-    public const float DEFAULT_HEIGHT = 950f;
+    public const float DEFAULT_HEIGHT = 970f;
 }
