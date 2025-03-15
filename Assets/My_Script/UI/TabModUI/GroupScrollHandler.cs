@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using DanielLochner.Assets.SimpleScrollSnap;
 using DG.Tweening;
+using SFB;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,7 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class GroupScrollHandler : MonoBehaviour, IPointerClickHandler
+public class GroupScrollHandler : MonoBehaviour
 {
     private const int TitleTextChildIndex = 0;
     private const int ImageMaskIconChildIndex = 1;
@@ -55,32 +56,6 @@ public class GroupScrollHandler : MonoBehaviour, IPointerClickHandler
         InitializeSelectedGroup();
         ScaleAllGroupsToDefault();
         ScaleFirstGroupToSelected();
-    }
-
-    //Called from GroupItem if clicked
-    public void ShowContextMenu(Transform groupItem)
-    {
-        Debug.Log("SHOW CONTEXTMENU");
-        if(groupItem.GetSiblingIndex() == _currentTargetIndex)
-        {
-            groupContextMenu.SetActive(!groupContextMenu.activeSelf);
-            if(groupContextMenu.activeSelf)
-            {
-                EventSystem.current.SetSelectedGameObject(groupContextMenu.transform.GetChild(0).gameObject);//Child 0 hidden button as helper
-                StartCoroutine(CheckToHideContextMenu());
-            }
-        }
-    }
-    private IEnumerator CheckToHideContextMenu()
-    {
-        while (groupContextMenu.activeSelf)
-        {
-            if(EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.transform.parent != groupContextMenu.transform)
-            {
-                groupContextMenu.SetActive(false);
-            }
-            yield return null;
-        }
     }
 
     // Called from PlayerInput
@@ -178,7 +153,7 @@ public class GroupScrollHandler : MonoBehaviour, IPointerClickHandler
     {
         Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
-        titleInputField.text = Path.GetFileName(TabModManager.modData.groupDatas[groupIndex].groupPath);
+        titleInputField.text = Path.GetFileName(TabModManager.modData.groupDatas[groupIndex].groupPath).TrimEnd('_');
     }
 
     private async void SetGroupIcon(int groupIndex)
@@ -225,27 +200,142 @@ public class GroupScrollHandler : MonoBehaviour, IPointerClickHandler
     #endregion
 
     #region ContextMenu
-    private void AddGroupButton()
+    //Called from GroupItem if clicked
+    public void ShowContextMenu(Transform groupItem)
     {
-
-    }
-
-    private void ChangeIconGroupButton()
-    {
-
-    }
-
-    private void RemoveGroupButton()
-    {
-
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if(groupItem.GetSiblingIndex() == _currentTargetIndex && _currentTargetIndex != 0)
         {
-            
+            groupContextMenu.SetActive(!groupContextMenu.activeSelf);
+            if(groupContextMenu.activeSelf)
+            {
+                EventSystem.current.SetSelectedGameObject(groupContextMenu.transform.GetChild(0).gameObject);//Child 0 hidden button as helper
+                StartCoroutine(CheckToHideContextMenu());
+            }
         }
+    }
+    private IEnumerator CheckToHideContextMenu()
+    {
+        while (groupContextMenu.activeSelf)
+        {
+            if(EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.transform.parent != groupContextMenu.transform)
+            {
+                groupContextMenu.SetActive(false);
+            }
+            yield return null;
+        }
+    }
+
+    //Called from context menu buttons
+    public void AddGroupButton()
+    {
+        //Template default group
+        string groupPath = GetAvailableGroupPath(contentGroupTransform.childCount);
+        GroupData newGroupData = new()
+        {
+            groupPath = groupPath,
+            modPaths = new()
+            {
+                "NoneButton"
+            }
+        };
+
+        TabModManager.modData.groupDatas.Add(newGroupData);
+        ModManagerUtils.SaveManagedModData();
+        
+        simpleScrollSnap.AddToBack(groupPrefab);
+
+        Transform groupTransform = contentGroupTransform.GetChild(contentGroupTransform.childCount - 1);
+        RawImage imageIcon = groupTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
+        LoadDefaultImageIcon(imageIcon);
+        groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>().text = Path.GetFileName(groupPath).TrimEnd('_');
+
+        simpleScrollSnap.GoToLastPanel();
+    }
+
+    public void ChangeIconGroupButton()
+    {
+        var extensions = new []
+        {
+            new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
+        };
+        string[] inputPath = StandaloneFileBrowser.OpenFilePanel("Select image (1:1 ratio)", "", extensions, false);
+        if(inputPath.Length > 0)
+        {
+            ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(TabModManager.modData.groupDatas[_currentTargetIndex].groupPath, "icon.png"), true);
+        }
+        SetGroupIcon(_currentTargetIndex);
+    }
+
+    public void RenameGroupButton()
+    {
+        Transform groupTransform = contentGroupTransform.GetChild(_currentTargetIndex);
+        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+        titleInputField.interactable = true;
+        EventSystem.current.SetSelectedGameObject(titleInputField.gameObject);
+    }
+
+    public void RemoveGroupButton()
+    {
+        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName), ConstantVar.REMOVED_PATH);
+        string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
+        string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
+        if(!Directory.Exists(removedPath))
+        {
+            Directory.CreateDirectory(removedPath);
+        }
+
+        Directory.Move(targetGroupPath, targetGroupPathRemoved);
+        TabModManager.modData.groupDatas.RemoveAt(_currentTargetIndex);
+        ModManagerUtils.SaveManagedModData();
+        simpleScrollSnap.Remove(_currentTargetIndex);
+
+        //TO DO: REVERT INI FILES THAT HAVE BEEN MODIFIED, & Sometimes on removed folder already have same folder.
+    }
+
+    private string GetAvailableGroupPath(int index)
+    {
+        string groupPath = Path.Combine(
+            PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName),
+            ConstantVar.MANAGED_PATH,
+            $"Group {index}"
+        ) + '_';
+
+        while (Directory.Exists(groupPath))
+        {
+            index++;
+            groupPath = Path.Combine(
+                PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName),
+                ConstantVar.MANAGED_PATH,
+                $"Group {index}"
+            );
+        }
+        Directory.CreateDirectory(groupPath);
+        return groupPath;
+    }
+
+    //Called from group item inputfield
+    public void OnDoneRename(string text)
+    {
+        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName), ConstantVar.MANAGED_PATH);
+        string oldGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
+        string newGroupPath = Path.Combine(managedModPath, text) + '_';
+
+        Transform groupTransform = contentGroupTransform.GetChild(_currentTargetIndex);
+        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+
+        try
+        {
+            Directory.Move(oldGroupPath, newGroupPath);
+            TabModManager.modData.groupDatas[_currentTargetIndex].groupPath = newGroupPath;
+            ModManagerUtils.SaveManagedModData();
+            titleInputField.text = Path.GetFileName(newGroupPath).TrimEnd('_');
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
+        }
+        titleInputField.interactable = false;
     }
     #endregion
 }

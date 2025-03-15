@@ -45,7 +45,7 @@ public class ModScrollHandler : MonoBehaviour
     }
     public void ShowContextMenu(Transform modItem)
     {
-        if(modItem.GetSiblingIndex() == _currentTargetIndex)
+        if(modItem.GetSiblingIndex() == _currentTargetIndex && _currentTargetIndex != 0)
         {
             modContextMenu.SetActive(!modContextMenu.activeSelf);
             if(modContextMenu.activeSelf)
@@ -131,8 +131,14 @@ public class ModScrollHandler : MonoBehaviour
                 {
                     SetModTitle(selectedGroupData);
                     SetModIcon(selectedGroupData);
+                    GetComponent<CanvasGroup>().interactable = true;
+                }
+                else
+                {
+                    GetComponent<CanvasGroup>().interactable = false;
                 }
                 GetComponent<CanvasGroup>().DOFade(isAddButtonGroup ? 0 : 1, animationDuration/2);
+                EventSystem.current.SetSelectedGameObject(selectButton);
             }
         );
     }

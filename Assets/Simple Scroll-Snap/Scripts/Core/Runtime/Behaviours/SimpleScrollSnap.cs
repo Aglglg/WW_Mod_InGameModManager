@@ -621,6 +621,17 @@ namespace DanielLochner.Assets.SimpleScrollSnap
                 ScrollRect.inertia = false;
             }
         }
+
+        public void GoToFirstPanel()
+        {
+            GoToPanel(0);
+        }
+
+        public void GoToLastPanel()
+        {
+            GoToPanel(NumberOfPanels - 1);
+        }
+
         public void GoToPreviousPanel()
         {
             int nearestPanel = GetNearestPanel();
