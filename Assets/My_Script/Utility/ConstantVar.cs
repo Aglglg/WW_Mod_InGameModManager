@@ -18,7 +18,8 @@ public static class ConstantVar
     public const string Tag_ModFixManager = "ModFixManager";
     public const string Tag_InputSystem = "InputSystem";
 
-
+    public const int Total_MaxModPerGroup = 20;
+    public const int Total_MaxGroup = 100;
     public const string ModsFolder_ValidSuffix = "mi\\mods";
     public const string ModData_Json_File = "moddata.json";
     public const string ModData_Icon_File = "icon.dds";
@@ -35,7 +36,7 @@ public static class ConstantVar
     public const string PlayerPerfKey_Width = "Width";
     public const float Default_Width = 820f;
     public const string PlayerPrefKey_Height = "Height";
-    public const float Default_Height = 970f;
+    public const float Default_Height = 1015f;
 
     public const int Width_ModIcon = 216;
     public const int Height_ModIcon = 312;

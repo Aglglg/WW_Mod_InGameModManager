@@ -61,6 +61,13 @@ public class GroupScrollHandler : MonoBehaviour
     // Called from PlayerInput
     public void OnGroupNavigate(InputAction.CallbackContext context)
     {
+        GameObject selectedUIObject = EventSystem.current.currentSelectedGameObject;
+        if(selectedUIObject != null)
+        {
+            bool isSelectingInputField = selectedUIObject.TryGetComponent<TMP_InputField>(out var inputField);
+            if(isSelectingInputField) return;
+        }
+
         if (context.phase != InputActionPhase.Performed || modScrollHandler.modContextMenu.activeSelf || groupContextMenu.activeSelf) return;
 
         if (context.ReadValue<float>() > 0)
@@ -200,7 +207,7 @@ public class GroupScrollHandler : MonoBehaviour
     #endregion
 
     #region ContextMenu
-    //Called from GroupItem if clicked
+    //Called from GroupItem/ButtonRightClick if clicked
     public void ShowContextMenu(Transform groupItem)
     {
         if(groupItem.GetSiblingIndex() == _currentTargetIndex && _currentTargetIndex != 0)
@@ -225,7 +232,7 @@ public class GroupScrollHandler : MonoBehaviour
         }
     }
 
-    //Called from context menu buttons
+    //Called from context menu buttons & add group button
     public void AddGroupButton()
     {
         //Template default group
@@ -233,9 +240,29 @@ public class GroupScrollHandler : MonoBehaviour
         GroupData newGroupData = new()
         {
             groupPath = groupPath,
-            modPaths = new()
+            modPaths = new[]
             {
-                "NoneButton"
+                "NoneButton",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty"
             }
         };
 

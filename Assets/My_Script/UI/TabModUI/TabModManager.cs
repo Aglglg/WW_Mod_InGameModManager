@@ -124,7 +124,8 @@ public class TabModManager : MonoBehaviour
         GroupData addButtonGroupData = new GroupData
         {
             groupPath = "AddButton",
-            modPaths = new List<string>()
+            modPaths = new string[]
+            {}
         };
 
         modData = new ModData

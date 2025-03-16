@@ -11,5 +11,5 @@ public class ModData
 public class GroupData
 {
     public string groupPath;
-    public List<string> modPaths;
+    public string[] modPaths;
 }

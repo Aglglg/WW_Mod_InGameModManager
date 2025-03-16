@@ -167,7 +167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 632685034207212691}
   - component: {fileID: 4351016000997385194}
-  - component: {fileID: 5044197245259139960}
+  - component: {fileID: 4023882929111803375}
   m_Layer: 5
   m_Name: GroupItem (1)
   m_TagString: Untagged
@@ -205,7 +205,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 892935685152742681}
   m_CullTransparentMesh: 1
---- !u!114 &5044197245259139960
+--- !u!114 &4023882929111803375
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -214,7 +214,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 892935685152742681}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c0f9044154999a499d8cf5bcdeff2ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -226,11 +226,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.6509804}
     m_HighlightedColor: {r: 0.627451, g: 0.87058824, b: 1, a: 1}
     m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -249,6 +249,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  modScrollHandler: {fileID: 0}
 --- !u!1 &1602111604899372438
 GameObject:
   m_ObjectHideFlags: 0

@@ -78,6 +78,13 @@ public class ModScrollHandler : MonoBehaviour
     // Called from PlayerInput
     public void OnModNavigate(InputAction.CallbackContext context)
     {
+        GameObject selectedUIObject = EventSystem.current.currentSelectedGameObject;
+        if(selectedUIObject != null)
+        {
+            bool isSelectingInputField = selectedUIObject.TryGetComponent<TMP_InputField>(out var inputField);
+            if(isSelectingInputField) return;
+        }
+
         if (context.phase != InputActionPhase.Performed || modContextMenu.activeSelf) return;
 
         if (context.ReadValue<float>() > 0)
@@ -116,6 +123,7 @@ public class ModScrollHandler : MonoBehaviour
         foreach (Transform child in contentModTransform)
         {
             child.localScale = new Vector3(notSelectedScale, notSelectedScale, notSelectedScale);
+            child.GetComponent<ButtonRightClick>().modScrollHandler = this;
         }
 
         ScaleModToSelected(0); // Scale the first mod to selected state
@@ -166,9 +174,10 @@ public class ModScrollHandler : MonoBehaviour
             titleInputField.text = "Empty";
         }
 
-        for (int i = 0; i < selectedGroupData.modPaths.Count; i++)
+        for (int i = 0; i < selectedGroupData.modPaths.Length; i++)
         {
             if(i == 0) continue; //None Button
+            if(selectedGroupData.modPaths[i] == "Empty") continue; //Empty
             Transform modTransform = contentModTransform.GetChild(i);
             TMP_InputField titleInputField = modTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
             titleInputField.text = Path.GetFileName(selectedGroupData.modPaths[i]);
@@ -185,9 +194,10 @@ public class ModScrollHandler : MonoBehaviour
             imageIcon.gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < selectedGroupData.modPaths.Count; i++)
+        for (int i = 0; i < selectedGroupData.modPaths.Length; i++)
         {
             if(i == 0) continue; //None Button
+            if(selectedGroupData.modPaths[i] == "Empty") continue; //Empty
             string iconPath = Path.Combine(selectedGroupData.modPaths[i], ConstantVar.ModData_Icon_File);
             Transform modTransform = contentModTransform.GetChild(i);
             RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -95,6 +96,13 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
     //Called from PlayerInput component
     public void OnTabNavigate(InputAction.CallbackContext context)
     {
+        GameObject selectedUIObject = EventSystem.current.currentSelectedGameObject;
+        if(selectedUIObject != null)
+        {
+            bool isSelectingInputField = selectedUIObject.TryGetComponent<TMP_InputField>(out var inputField);
+            if(isSelectingInputField) return;
+        }
+        
         if(context.phase != InputActionPhase.Performed) return;
         ChangeTab(Mathf.Clamp((int)CurrentTabState + Mathf.RoundToInt(context.ReadValue<float>()), 0, Enum.GetValues(typeof(TabState)).Length - 1));// - 1, index start with 0, length 4 (0 - 3)
     }
