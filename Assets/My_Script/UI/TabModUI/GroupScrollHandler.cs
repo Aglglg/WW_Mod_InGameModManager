@@ -158,7 +158,7 @@ public class GroupScrollHandler : MonoBehaviour
 
     private async void SetGroupIcon(int groupIndex)
     {
-        string iconPath = Path.Combine(TabModManager.modData.groupDatas[groupIndex].groupPath, ConstantVar.MODDATA_ICON_FILE);
+        string iconPath = Path.Combine(TabModManager.modData.groupDatas[groupIndex].groupPath, ConstantVar.ModData_Icon_File);
         Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
         RawImage imageIcon = groupTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
         if(File.Exists(iconPath))
@@ -258,7 +258,7 @@ public class GroupScrollHandler : MonoBehaviour
         {
             new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
         };
-        string[] inputPath = StandaloneFileBrowser.OpenFilePanel("Select image (1:1 ratio)", "", extensions, false);
+        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.WidthHeight_GroupIcon}:{ConstantVar.WidthHeight_GroupIcon})", "", extensions, false);
         if(inputPath.Length > 0)
         {
             ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(TabModManager.modData.groupDatas[_currentTargetIndex].groupPath, "icon.png"), true);
@@ -276,18 +276,24 @@ public class GroupScrollHandler : MonoBehaviour
 
     public void RemoveGroupButton()
     {
-        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName), ConstantVar.REMOVED_PATH);
+        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
         string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
         string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
         if(!Directory.Exists(removedPath))
         {
             Directory.CreateDirectory(removedPath);
         }
+        while(Directory.Exists(targetGroupPathRemoved))
+        {
+            targetGroupPathRemoved += '_';
+        }
 
         Directory.Move(targetGroupPath, targetGroupPathRemoved);
         TabModManager.modData.groupDatas.RemoveAt(_currentTargetIndex);
         ModManagerUtils.SaveManagedModData();
         simpleScrollSnap.Remove(_currentTargetIndex);
+        simpleScrollSnap.GoToPanel(_currentTargetIndex - 1);
+        OnPanelCentered(_currentTargetIndex - 1, _currentTargetIndex);
 
         //TO DO: REVERT INI FILES THAT HAVE BEEN MODIFIED, & Sometimes on removed folder already have same folder.
     }
@@ -295,8 +301,8 @@ public class GroupScrollHandler : MonoBehaviour
     private string GetAvailableGroupPath(int index)
     {
         string groupPath = Path.Combine(
-            PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName),
-            ConstantVar.MANAGED_PATH,
+            PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+            ConstantVar.Managed_Path,
             $"Group {index}"
         ) + '_';
 
@@ -304,10 +310,10 @@ public class GroupScrollHandler : MonoBehaviour
         {
             index++;
             groupPath = Path.Combine(
-                PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName),
-                ConstantVar.MANAGED_PATH,
+                PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+                ConstantVar.Managed_Path,
                 $"Group {index}"
-            );
+            ) + '_';
         }
         Directory.CreateDirectory(groupPath);
         return groupPath;
@@ -316,7 +322,7 @@ public class GroupScrollHandler : MonoBehaviour
     //Called from group item inputfield
     public void OnDoneRename(string text)
     {
-        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName), ConstantVar.MANAGED_PATH);
+        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Path);
         string oldGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
         string newGroupPath = Path.Combine(managedModPath, text) + '_';
 

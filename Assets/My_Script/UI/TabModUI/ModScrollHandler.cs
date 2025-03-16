@@ -188,7 +188,7 @@ public class ModScrollHandler : MonoBehaviour
         for (int i = 0; i < selectedGroupData.modPaths.Count; i++)
         {
             if(i == 0) continue; //None Button
-            string iconPath = Path.Combine(selectedGroupData.modPaths[i], ConstantVar.MODDATA_ICON_FILE);
+            string iconPath = Path.Combine(selectedGroupData.modPaths[i], ConstantVar.ModData_Icon_File);
             Transform modTransform = contentModTransform.GetChild(i);
             RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
             imageIcon.gameObject.SetActive(true);

@@ -258,7 +258,7 @@ public static class ModFixer
         string stem = Path.GetFileNameWithoutExtension(filePath);
         if (stem != null)
         {
-            string backupPath = Path.ChangeExtension(filePath, ConstantVar.FIX_BACKUP_SUFFIX);
+            string backupPath = Path.ChangeExtension(filePath, ConstantVar.Fix_Backup_Extension);
 
             if (!File.Exists(backupPath))
             {

@@ -13,7 +13,7 @@ public class LinkTextHandler : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         textMeshProUGUI = GetComponent<TextMeshProUGUI>();
-        tabModFixManager = GameObject.FindGameObjectWithTag(ConstantVar.TAG_MODFIXMANAGER).GetComponent<TabModFixManager>();
+        tabModFixManager = GameObject.FindGameObjectWithTag(ConstantVar.Tag_ModFixManager).GetComponent<TabModFixManager>();
     }
     public void OnPointerClick(PointerEventData eventData)
     {

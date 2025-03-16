@@ -6,17 +6,13 @@ public static class ModManagerUtils
 {
     [DllImport("dds_converter_from_mod_manager", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool convert_to_dds(string input_path, string output_path);
-
-    private const int WidthModIcon = 216;
-    private const int HeightModIcon = 312;
-    private const int WidthHeightGroupIcon = 160;
     
     public static void SaveManagedModData()
     {
         string pathJson = Path.Combine(
-            PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName),
-            ConstantVar.MANAGED_PATH,
-            ConstantVar.MODDATA_JSON_FILE
+            PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+            ConstantVar.Managed_Path,
+            ConstantVar.ModData_Json_File
         );
         string json = JsonUtility.ToJson(TabModManager.modData, true);
         File.WriteAllText(pathJson, json);
@@ -26,8 +22,8 @@ public static class ModManagerUtils
     {
         Texture2D originalImage = LoadImage(inputPath);
         
-        int targetWidth = isGroupIcon ? WidthHeightGroupIcon : WidthModIcon;
-        int targetHeight = isGroupIcon ? WidthHeightGroupIcon : HeightModIcon;
+        int targetWidth = isGroupIcon ? ConstantVar.WidthHeight_GroupIcon : ConstantVar.Width_ModIcon;
+        int targetHeight = isGroupIcon ? ConstantVar.WidthHeight_GroupIcon : ConstantVar.Height_ModIcon;
         float ratio = isGroupIcon ? 1/1 : 2/3;
 
         Texture2D modifiedImage = CropAndResize(originalImage, ratio, targetWidth, targetHeight);

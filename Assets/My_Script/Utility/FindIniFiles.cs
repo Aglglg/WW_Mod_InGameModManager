@@ -15,7 +15,7 @@ public static class FindIniFiles
 
     public static string[] FindIniFilesFixBackupRecursive(string mainFolder)
     {
-        string[] iniFilesFixBackup = Directory.GetFiles(mainFolder, $"*.{ConstantVar.FIX_BACKUP_SUFFIX}", SearchOption.AllDirectories);
+        string[] iniFilesFixBackup = Directory.GetFiles(mainFolder, $"*.{ConstantVar.Fix_Backup_Extension}", SearchOption.AllDirectories);
         return iniFilesFixBackup;
     }
 }

@@ -33,7 +33,7 @@ public class TabModManager : MonoBehaviour
 
     private void InitializeTabMod()
     {
-        string modPathKey = ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName;
+        string modPathKey = ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName;
 
         if (IsValidModPath(modPathKey))
         {
@@ -51,7 +51,7 @@ public class TabModManager : MonoBehaviour
     {
         return PlayerPrefs.HasKey(modPathKey)
                && Directory.Exists(PlayerPrefs.GetString(modPathKey))
-               && PlayerPrefs.GetString(modPathKey).TrimEnd('\\').ToLower().EndsWith(ConstantVar.MODFOLDER_VALIDSUFFIX);
+               && PlayerPrefs.GetString(modPathKey).TrimEnd('\\').ToLower().EndsWith(ConstantVar.ModsFolder_ValidSuffix);
     }
 
     private void UpdateCurrentModPath(string modPathKey)
@@ -86,9 +86,9 @@ public class TabModManager : MonoBehaviour
     {
         if (_modDataWasLoaded) return;
 
-        string modPathKey = ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName;
-        string managedPath = Path.Combine(PlayerPrefs.GetString(modPathKey), ConstantVar.MANAGED_PATH);
-        string jsonPath = Path.Combine(managedPath, ConstantVar.MODDATA_JSON_FILE);
+        string modPathKey = ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName;
+        string managedPath = Path.Combine(PlayerPrefs.GetString(modPathKey), ConstantVar.Managed_Path);
+        string jsonPath = Path.Combine(managedPath, ConstantVar.ModData_Json_File);
 
         EnsureManagedDirectoryExists(managedPath);
 

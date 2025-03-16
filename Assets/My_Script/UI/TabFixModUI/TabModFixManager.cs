@@ -274,7 +274,7 @@ public class TabModFixManager : MonoBehaviour
         //Back/close button
         expandedGames[(int)selectedGame].GetComponentInChildren<Button>().interactable = false;
 
-        string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES, selectedGame.ToString());
+        string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.Path_Cached_Fixes, selectedGame.ToString());
 
         if (Directory.Exists(cachedDir))
         {
@@ -292,7 +292,7 @@ public class TabModFixManager : MonoBehaviour
         {
             // Download JSON files from GitHub
             textModFixLoadingInfo.text = "Downloading";
-            await DownloadJsonFiles(ConstantVar.LINK_PATH_MODFIXES[(int)selectedGame]);
+            await DownloadJsonFiles(ConstantVar.Link_PathModFixes[(int)selectedGame]);
             textModFixLoadingInfo.text = textInfoAfterLoading;
             InstantiateModFixPrefabs();
         }
@@ -347,7 +347,7 @@ public class TabModFixManager : MonoBehaviour
         else
         {
             string jsonContent = request.downloadHandler.text;
-            string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES, selectedGame.ToString());
+            string cachedDir = Path.Join(Application.persistentDataPath, ConstantVar.Path_Cached_Fixes, selectedGame.ToString());
 
             if (!Directory.Exists(cachedDir))
             {
@@ -373,7 +373,7 @@ public class TabModFixManager : MonoBehaviour
     private async Task LoadModFixAsync(string file)
     {
         string jsonData = await ReadFileAsync(file);
-        if (file.EndsWith(ConstantVar.FILE_FIX_LOG))
+        if (file.EndsWith(ConstantVar.File_Fixes_Log))
         {
             textInfoAfterLoading = jsonData;
         }
@@ -417,9 +417,9 @@ public class TabModFixManager : MonoBehaviour
     #region Delete mod fix cache
     private void DeleteModFixCache()
     {
-        if(Directory.Exists(Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES)))
+        if(Directory.Exists(Path.Join(Application.persistentDataPath, ConstantVar.Path_Cached_Fixes)))
         {
-            Directory.Delete(Path.Join(Application.persistentDataPath, ConstantVar.PATH_CACHED_FIXES), recursive: true);
+            Directory.Delete(Path.Join(Application.persistentDataPath, ConstantVar.Path_Cached_Fixes), recursive: true);
         }
     }
     #endregion

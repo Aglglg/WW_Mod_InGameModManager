@@ -109,7 +109,7 @@ public class UIManager : MonoBehaviour, IDragHandler, IBeginDragHandler
     //Called from button
     public void GoToLinkValidKey()
     {
-        Application.OpenURL(ConstantVar.LINK_VALIDKEYS);
+        Application.OpenURL(ConstantVar.Link_ValidKeys);
     }
     #endregion
 

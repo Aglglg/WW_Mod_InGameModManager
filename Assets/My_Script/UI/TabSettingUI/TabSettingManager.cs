@@ -49,40 +49,40 @@ public class TabSettingManager : MonoBehaviour
     //Called from UIManager
     public void LoadSetting()
     {
-        if(PlayerPrefs.HasKey(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName))
+        if(PlayerPrefs.HasKey(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName))
         {
-            modPathField.text = PlayerPrefs.GetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName);
+            modPathField.text = PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName);
             SaveModPath();
         }
 
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_OPACITY))
+        if(PlayerPrefs.HasKey(ConstantVar.PlayerPrefKey_Opacity))
         {
             Color fillColor = backgroundFillImage.color;
-            fillColor.a = PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_OPACITY);
+            fillColor.a = PlayerPrefs.GetFloat(ConstantVar.PlayerPrefKey_Opacity);
             backgroundFillImage.color = fillColor;
             opacitySlider.value = fillColor.a;
         }
         else
         {
             Color fillColor = backgroundFillImage.color;
-            fillColor.a = ConstantVar.DEFAULT_OPACITY;
+            fillColor.a = ConstantVar.Default_Opacity;
             backgroundFillImage.color = fillColor;
             opacitySlider.value = fillColor.a;
-            PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_OPACITY, fillColor.a);
+            PlayerPrefs.SetFloat(ConstantVar.PlayerPrefKey_Opacity, fillColor.a);
         }
 
-        if(PlayerPrefs.HasKey(ConstantVar.PLAYERPERFKEY_SCALE))
+        if(PlayerPrefs.HasKey(ConstantVar.PlayerPrefKey_Scale))
         {
-            float panelScale = PlayerPrefs.GetFloat(ConstantVar.PLAYERPERFKEY_SCALE);
+            float panelScale = PlayerPrefs.GetFloat(ConstantVar.PlayerPrefKey_Scale);
             backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
             scaleSlider.value = panelScale;
         }
         else
         {
-            float panelScale = ConstantVar.DEFAULT_SCALE;
+            float panelScale = ConstantVar.Default_Scale;
             backgroundPanel.localScale = new Vector3(panelScale, panelScale, panelScale);
             scaleSlider.value = panelScale;
-            PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, panelScale);
+            PlayerPrefs.SetFloat(ConstantVar.PlayerPrefKey_Scale, panelScale);
         }
     }
 
@@ -100,7 +100,7 @@ public class TabSettingManager : MonoBehaviour
 
     private void SaveModPath()
     {
-        PlayerPrefs.SetString(ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName, modPathField.text);
+        PlayerPrefs.SetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName, modPathField.text);
     }
     #endregion
 
@@ -111,12 +111,12 @@ public class TabSettingManager : MonoBehaviour
         Color fillColor = backgroundFillImage.color;
         fillColor.a = value;
         backgroundFillImage.color = fillColor;
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_OPACITY, value);
+        PlayerPrefs.SetFloat(ConstantVar.PlayerPrefKey_Opacity, value);
     }
     public void ValueChangedScaleSlider(float value)
     {
         backgroundPanel.localScale = new Vector3(value, value, value);
-        PlayerPrefs.SetFloat(ConstantVar.PLAYERPERFKEY_SCALE, value);
+        PlayerPrefs.SetFloat(ConstantVar.PlayerPrefKey_Scale, value);
     }
     #endregion
 
@@ -128,12 +128,12 @@ public class TabSettingManager : MonoBehaviour
     }
     public void ProfileButton()
     {
-        Application.OpenURL(ConstantVar.LINK_GAMEBANANA);
+        Application.OpenURL(ConstantVar.Link_GameBanana);
     }
 
     private IEnumerator LoadSupportImage()
     {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(ConstantVar.LINK_GETSUPPORTICON);
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(ConstantVar.Link_GetSupportIcon);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -148,7 +148,7 @@ public class TabSettingManager : MonoBehaviour
     }
     IEnumerator LoadSupportLink()
     {
-        UnityWebRequest request = UnityWebRequest.Get(ConstantVar.LINK_GETSUPPORTLINK);
+        UnityWebRequest request = UnityWebRequest.Get(ConstantVar.Link_GetSupportLink);
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -169,7 +169,7 @@ public class TabSettingManager : MonoBehaviour
         //Make sure it's only when performed not started/ended(on hold 1 sec only)
         if(context.phase != InputActionPhase.Performed) return;
         Debug.Log("RESET SCALE & POS");
-        float panelScale = ConstantVar.DEFAULT_SCALE;
+        float panelScale = ConstantVar.Default_Scale;
         scaleSlider.value = panelScale;
         
 
