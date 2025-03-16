@@ -47,6 +47,8 @@ public class ModScrollHandler : MonoBehaviour
     {
         if(modItem.GetSiblingIndex() == _currentTargetIndex && _currentTargetIndex != 0)
         {
+            modContextMenu.GetComponent<CanvasGroup>().alpha = 0;
+            modContextMenu.GetComponent<CanvasGroup>().DOFade(1, animationDuration);
             modContextMenu.SetActive(!modContextMenu.activeSelf);
             if(modContextMenu.activeSelf)
             {
@@ -78,12 +80,16 @@ public class ModScrollHandler : MonoBehaviour
     // Called from PlayerInput
     public void OnModNavigate(InputAction.CallbackContext context)
     {
+        //If typing
         GameObject selectedUIObject = EventSystem.current.currentSelectedGameObject;
         if(selectedUIObject != null)
         {
             bool isSelectingInputField = selectedUIObject.TryGetComponent<TMP_InputField>(out var inputField);
             if(isSelectingInputField) return;
         }
+
+        //If not on Mod tab
+        if(UIManager.CurrentTabState != TabState.Mod) return;
 
         if (context.phase != InputActionPhase.Performed || modContextMenu.activeSelf) return;
 

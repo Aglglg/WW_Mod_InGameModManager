@@ -25,7 +25,7 @@ public static class ConstantVar
     public const string ModData_Icon_File = "icon.dds";
     public const string Managed_Path = "MANAGED_DO-NOT-EDIT";
     public const string Removed_Path = "DISABLED_MANAGED_REMOVED";
-    public const string Managed_Backup_Suffix = "ini_managed_backup";
+    public const string Managed_Backup_Extension = "ini_managed_backup";
 
     //suffix only, the usage will be ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
     public const string Prefix_PlayerPrefKey_ModPath = "Mod Path "; 

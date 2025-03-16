@@ -18,6 +18,20 @@ public static class ModManagerUtils
         File.WriteAllText(pathJson, json);
     }
 
+    public static void RevertManagedMod(string folder)
+    {
+        string[] filesBackup = FindIniFiles.FindIniFilesManagedBackupRecursive(folder);
+        foreach (string backupFile in filesBackup)
+        {
+            string originalFile = Path.ChangeExtension(backupFile, ".ini");
+            if (File.Exists(backupFile))
+            {
+                File.Copy(backupFile, originalFile, true);
+                File.Delete(backupFile);
+            }
+        }
+    }
+
     public static void CreateIcon(string inputPath, string outputPath, bool isGroupIcon)
     {
         Texture2D originalImage = LoadImage(inputPath);

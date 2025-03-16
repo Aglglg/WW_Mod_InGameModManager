@@ -11269,7 +11269,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3595018657808972356
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11287,7 +11287,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 15}
+  m_AnchoredPosition: {x: 0, y: -0.3000017}
   m_SizeDelta: {x: 820, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5208714948025034180
@@ -11328,7 +11328,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 1, g: 0.96456075, b: 0.41037738, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18366,6 +18366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac9ad504ed36db1418a262165fd0f41f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reloadInfo: {fileID: 2169505127618012926}
+  operationInfo: {fileID: 7987803027527493331}
   groupContextMenu: {fileID: 6582011709807848254}
   groupDefaultIcon: {fileID: 2800000, guid: e2b165a37cac68246927a4ecd1937a2c, type: 3}
   modScrollHandler: {fileID: 620862697991756162}
@@ -20482,9 +20484,9 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 0.9647059, b: 0.4117647, a: 1}
     m_HighlightedColor: {r: 0.23137255, g: 0.73333335, b: 1, a: 1}
-    m_PressedColor: {r: 0.23137255, g: 0.73333335, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 0.9647059, b: 0.4117647, a: 1}
     m_SelectedColor: {r: 0.23137255, g: 0.73333335, b: 1, a: 1}
     m_DisabledColor: {r: 0.23137255, g: 0.73333335, b: 1, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -32096,6 +32098,7 @@ GameObject:
   - component: {fileID: 1586172020847933929}
   - component: {fileID: 1142673775727266527}
   - component: {fileID: 6193516306446037990}
+  - component: {fileID: 4336759802399139654}
   m_Layer: 5
   m_Name: GroupContextMenu
   m_TagString: Untagged
@@ -32150,7 +32153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6509804}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -32180,6 +32183,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
+--- !u!225 &4336759802399139654
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582011709807848254}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6584338824063328961
 GameObject:
   m_ObjectHideFlags: 0
@@ -39758,7 +39773,7 @@ GameObject:
   - component: {fileID: 5470951117322615006}
   - component: {fileID: 4348639628359719614}
   m_Layer: 5
-  m_Name: TextInfo ModModif
+  m_Name: TextInfo Operation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39780,7 +39795,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 15}
+  m_AnchoredPosition: {x: 0, y: 31.4}
   m_SizeDelta: {x: 611.424, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5470951117322615006
@@ -39854,7 +39869,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 3
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -40044,6 +40059,7 @@ GameObject:
   - component: {fileID: 275074699217470843}
   - component: {fileID: 2528977868918208081}
   - component: {fileID: 612183911898715055}
+  - component: {fileID: 3152551368893052174}
   m_Layer: 5
   m_Name: ModContextMenu
   m_TagString: Untagged
@@ -40100,7 +40116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6509804}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -40130,6 +40146,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
+--- !u!225 &3152551368893052174
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8040063241443372596}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8055614592938775536
 GameObject:
   m_ObjectHideFlags: 0
@@ -41982,7 +42010,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 16777215
   m_fontColor: {r: 1, g: 1, b: 1, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3

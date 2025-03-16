@@ -42,7 +42,6 @@ public class TabSettingManager : MonoBehaviour
 
     private void ModPathOnSubmit(string arg0)
     {
-        Debug.Log("SUBMIT");
         SaveModPath();
     }
 

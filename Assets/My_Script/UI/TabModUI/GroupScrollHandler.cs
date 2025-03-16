@@ -19,6 +19,9 @@ public class GroupScrollHandler : MonoBehaviour
     private const float GroupImageIconDefaultWidth = 160;
     private const float GroupImageIconDefaultHeight = 160;
 
+    [SerializeField] private GameObject reloadInfo;
+    [SerializeField] private GameObject operationInfo;
+
     [SerializeField] private GameObject groupContextMenu;
     [SerializeField] private Texture2D groupDefaultIcon;
     [SerializeField] private ModScrollHandler modScrollHandler;
@@ -61,12 +64,16 @@ public class GroupScrollHandler : MonoBehaviour
     // Called from PlayerInput
     public void OnGroupNavigate(InputAction.CallbackContext context)
     {
+        //If typing
         GameObject selectedUIObject = EventSystem.current.currentSelectedGameObject;
         if(selectedUIObject != null)
         {
             bool isSelectingInputField = selectedUIObject.TryGetComponent<TMP_InputField>(out var inputField);
             if(isSelectingInputField) return;
         }
+
+        //If not on Mod tab
+        if(UIManager.CurrentTabState != TabState.Mod) return;
 
         if (context.phase != InputActionPhase.Performed || modScrollHandler.modContextMenu.activeSelf || groupContextMenu.activeSelf) return;
 
@@ -206,12 +213,14 @@ public class GroupScrollHandler : MonoBehaviour
     }
     #endregion
 
-    #region ContextMenu
+    #region CONTEXT MENU
     //Called from GroupItem/ButtonRightClick if clicked
     public void ShowContextMenu(Transform groupItem)
     {
         if(groupItem.GetSiblingIndex() == _currentTargetIndex && _currentTargetIndex != 0)
         {
+            groupContextMenu.GetComponent<CanvasGroup>().alpha = 0;
+            groupContextMenu.GetComponent<CanvasGroup>().DOFade(1, animationDuration);
             groupContextMenu.SetActive(!groupContextMenu.activeSelf);
             if(groupContextMenu.activeSelf)
             {
@@ -235,6 +244,11 @@ public class GroupScrollHandler : MonoBehaviour
     //Called from context menu buttons & add group button
     public void AddGroupButton()
     {
+        if(TabModManager.modData.groupDatas.Count >= ConstantVar.Total_MaxGroup)
+        {
+            ToggleOperationInfo("Max group reached.");
+            return;
+        }
         //Template default group
         string groupPath = GetAvailableGroupPath(contentGroupTransform.childCount);
         GroupData newGroupData = new()
@@ -306,22 +320,46 @@ public class GroupScrollHandler : MonoBehaviour
         string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
         string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
         string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
-        if(!Directory.Exists(removedPath))
+        
+        try
         {
-            Directory.CreateDirectory(removedPath);
+            if(!Directory.Exists(removedPath))
+            {
+                Directory.CreateDirectory(removedPath);
+            }
+            while(Directory.Exists(targetGroupPathRemoved))
+            {
+                targetGroupPathRemoved += '_';
+            }
+
+            Directory.Move(targetGroupPath, targetGroupPathRemoved);
+            TabModManager.modData.groupDatas.RemoveAt(_currentTargetIndex);
+            ModManagerUtils.SaveManagedModData();
+            simpleScrollSnap.Remove(_currentTargetIndex);
+            simpleScrollSnap.GoToPanel(_currentTargetIndex - 1);
+            OnPanelCentered(_currentTargetIndex - 1, _currentTargetIndex);
+            ModManagerUtils.RevertManagedMod(targetGroupPathRemoved);
+            ToggleOperationInfo($"Group removed and moved to <color=yellow>{ConstantVar.Removed_Path}</color>");
         }
-        while(Directory.Exists(targetGroupPathRemoved))
+        catch(IOException ex)
         {
-            targetGroupPathRemoved += '_';
+            string errorMessage;
+            if(ex.Message.Contains("denied"))
+            {
+                errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher)";
+            }
+            else if(ex.Message.Contains("in use"))
+            {
+                errorMessage = "Folder of the group in use. Close File Explorer or another apps.";
+            }
+            else
+            {
+                errorMessage = ex.Message;
+            }
+
+            ToggleOperationInfo(errorMessage);
         }
-
-        Directory.Move(targetGroupPath, targetGroupPathRemoved);
-        TabModManager.modData.groupDatas.RemoveAt(_currentTargetIndex);
-        ModManagerUtils.SaveManagedModData();
-        simpleScrollSnap.Remove(_currentTargetIndex);
-        simpleScrollSnap.GoToPanel(_currentTargetIndex - 1);
-        OnPanelCentered(_currentTargetIndex - 1, _currentTargetIndex);
-
+        
         //TO DO: REVERT INI FILES THAT HAVE BEEN MODIFIED, & Sometimes on removed folder already have same folder.
     }
 
@@ -356,19 +394,66 @@ public class GroupScrollHandler : MonoBehaviour
         Transform groupTransform = contentGroupTransform.GetChild(_currentTargetIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
 
-        try
+        if(oldGroupPath != newGroupPath)
         {
-            Directory.Move(oldGroupPath, newGroupPath);
-            TabModManager.modData.groupDatas[_currentTargetIndex].groupPath = newGroupPath;
-            ModManagerUtils.SaveManagedModData();
-            titleInputField.text = Path.GetFileName(newGroupPath).TrimEnd('_');
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
+            try
+            {
+                Directory.Move(oldGroupPath, newGroupPath);
+                TabModManager.modData.groupDatas[_currentTargetIndex].groupPath = newGroupPath;
+                ModManagerUtils.SaveManagedModData();
+                titleInputField.text = Path.GetFileName(newGroupPath).TrimEnd('_');
+            }
+            catch (IOException ex)
+            {
+                titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
+                string errorMessage;
+
+                if(ex.Message.Contains("exist"))
+                {
+                    errorMessage = "Group name or folder name already exists.";
+                }
+                else if(ex.Message.Contains("denied"))
+                {
+                    errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher)";
+                }
+                else if(ex.Message.Contains("in use"))
+                {
+                    errorMessage = "Folder of the group in use. Close File Explorer or another apps.";
+                }
+                else
+                {
+                    errorMessage = ex.Message;
+                }
+
+                ToggleOperationInfo(errorMessage);
+            }
         }
         titleInputField.interactable = false;
+    }
+    #endregion
+
+    #region OPERATION INFO & RELOAD INFO
+    private Coroutine infoTextCoroutine;
+    private const int infoTimeout = 5;
+    private void ToggleOperationInfo(string info)
+    {
+        if(infoTextCoroutine != null) StopCoroutine(infoTextCoroutine);
+        infoTextCoroutine = StartCoroutine(ToggleOperationInfoCoroutine(info));
+    }
+    private IEnumerator ToggleOperationInfoCoroutine(string info)
+    {
+        operationInfo.SetActive(false);
+        yield return new WaitForSeconds(0.1f);
+        operationInfo.GetComponent<TextMeshProUGUI>().text = info;
+        operationInfo.SetActive(true);
+        yield return new WaitForSeconds(infoTimeout);
+        operationInfo.SetActive(false);
+        infoTextCoroutine = null;
+    }
+
+    private void ToggleReloadInfo()
+    {
+
     }
     #endregion
 }
