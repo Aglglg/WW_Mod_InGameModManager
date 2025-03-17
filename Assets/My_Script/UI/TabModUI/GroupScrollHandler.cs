@@ -353,7 +353,7 @@ public class GroupScrollHandler : MonoBehaviour
             string errorMessage;
             if(ex.Message.Contains("denied"))
             {
-                errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
+                errorMessage = "Access denied. Close File Explorer or another apps.";
             }
             else if(ex.Message.Contains("in use"))
             {
@@ -419,7 +419,7 @@ public class GroupScrollHandler : MonoBehaviour
                 }
                 else if(ex.Message.Contains("denied"))
                 {
-                    errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
+                    errorMessage = "Access denied. Close File Explorer or another apps.";
                 }
                 else if(ex.Message.Contains("in use"))
                 {

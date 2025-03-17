@@ -327,9 +327,72 @@ public class ModScrollHandler : MonoBehaviour
         }
     }
 
-    public void AddGroupButton()
+    public void AddModButton()
     {
-        reloadInfo.SetActive(true);
+        string[] selectedModFolder = StandaloneFileBrowser.OpenFolderPanel("Select mod folder", "", false);
+        if(selectedModFolder.Length <= 0) return;
+        if(FindIniFiles.FindIniFilesRecursive(selectedModFolder[0]).Length  == 0)
+        {
+            ToggleOperationInfo("No ini files detected, operation canceled.");
+            return;
+        }
+
+        string destinationModFolder = Path.Combine(_currentSelectedGroup.groupPath, Path.GetFileName(selectedModFolder[0])) + '_';
+
+        try
+        {
+            if(selectedModFolder[0].Contains(ConstantVar.Managed_Path))
+            {
+                ToggleOperationInfo("Selected mod already on Managed folder, operation canceled");
+                return;
+            }
+            //if selected mod folder already on "Mods" folder, move it, else, copy it.
+            else if(selectedModFolder[0].Contains(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName)))
+            {
+                Directory.Move(selectedModFolder[0], destinationModFolder);
+            }
+            else
+            {
+                CopyDirectory(selectedModFolder[0], destinationModFolder, true);
+            }
+            ModManagerUtils.ManageMod(destinationModFolder, TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup), _currentTargetIndex);
+            _currentSelectedGroup.modNames[_currentTargetIndex] = Path.GetFileName(destinationModFolder);
+            ModManagerUtils.SaveManagedModData();
+
+            Transform modTransform = contentModTransform.GetChild(_currentTargetIndex);
+            TMP_InputField titleInputField = modTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+            RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
+
+            imageIcon.gameObject.SetActive(true);
+            LoadDefaultImageIcon(imageIcon);
+            imageIcon.transform.localScale = Vector3.one;
+            titleInputField.text = _currentSelectedGroup.modNames[_currentTargetIndex].TrimEnd('_');
+
+            reloadInfo.SetActive(true);
+        }
+        catch (IOException ex)
+        {
+            string errorMessage;
+
+            if(ex.Message.Contains("exist"))
+            {
+                errorMessage = "Mod name or folder name already exists.";
+            }
+            else if(ex.Message.Contains("denied"))
+            {
+                errorMessage = "Access denied. Close File Explorer or another apps.";
+            }
+            else if(ex.Message.Contains("in use"))
+            {
+                errorMessage = "Folder of the mod in use. Close File Explorer or another apps.";
+            }
+            else
+            {
+                errorMessage = ex.Message;
+            }
+
+            ToggleOperationInfo(errorMessage);
+        }
     }
 
     public void ChangeIconModButton()
@@ -398,11 +461,11 @@ public class ModScrollHandler : MonoBehaviour
             string errorMessage;
             if(ex.Message.Contains("denied"))
             {
-                errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
+                errorMessage = "Access denied. Close File Explorer or another apps.";
             }
             else if(ex.Message.Contains("in use"))
             {
-                errorMessage = "Folder of the group in use. Close File Explorer or another apps.";
+                errorMessage = "Folder of the mod in use. Close File Explorer or another apps.";
             }
             else
             {
@@ -441,11 +504,11 @@ public class ModScrollHandler : MonoBehaviour
 
                 if(ex.Message.Contains("exist"))
                 {
-                    errorMessage = "Group name or folder name already exists.";
+                    errorMessage = "Mod name or folder name already exists.";
                 }
                 else if(ex.Message.Contains("denied"))
                 {
-                    errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
+                    errorMessage = "Access denied. Close File Explorer or another apps.";
                 }
                 else if(ex.Message.Contains("in use"))
                 {
@@ -480,6 +543,41 @@ public class ModScrollHandler : MonoBehaviour
         yield return new WaitForSeconds(infoTimeout);
         operationInfo.SetActive(false);
         infoTextCoroutine = null;
+    }
+    #endregion
+
+    #region COPY DIRECTORY HELPER
+    private void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+    {
+        // Get information about the source directory
+        var dir = new DirectoryInfo(sourceDir);
+
+        // Check if the source directory exists
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+        // Cache directories before we start copying
+        DirectoryInfo[] dirs = dir.GetDirectories();
+
+        // Create the destination directory
+        Directory.CreateDirectory(destinationDir);
+
+        // Get the files in the source directory and copy to the destination directory
+        foreach (FileInfo file in dir.GetFiles())
+        {
+            string targetFilePath = Path.Combine(destinationDir, file.Name);
+            file.CopyTo(targetFilePath);
+        }
+
+        // If recursive and copying subdirectories, recursively call this method
+        if (recursive)
+        {
+            foreach (DirectoryInfo subDir in dirs)
+            {
+                string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                CopyDirectory(subDir.FullName, newDestinationDir, true);
+            }
+        }
     }
     #endregion
 }
