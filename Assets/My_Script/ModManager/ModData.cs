@@ -11,5 +11,5 @@ public class ModData
 public class GroupData
 {
     public string groupPath;
-    public string[] modPaths;
+    public string[] modNames;
 }

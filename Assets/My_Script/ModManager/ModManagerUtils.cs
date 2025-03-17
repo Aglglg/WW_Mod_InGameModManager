@@ -18,7 +18,7 @@ public static class ModManagerUtils
         File.WriteAllText(pathJson, json);
     }
 
-    public static void RevertManagedMod(string folder)
+    public static bool RevertManagedMod(string folder)
     {
         string[] filesBackup = FindIniFiles.FindIniFilesManagedBackupRecursive(folder);
         foreach (string backupFile in filesBackup)
@@ -30,6 +30,7 @@ public static class ModManagerUtils
                 File.Delete(backupFile);
             }
         }
+        return filesBackup.Length > 0;
     }
 
     public static void CreateIcon(string inputPath, string outputPath, bool isGroupIcon)
@@ -38,7 +39,7 @@ public static class ModManagerUtils
         
         int targetWidth = isGroupIcon ? ConstantVar.WidthHeight_GroupIcon : ConstantVar.Width_ModIcon;
         int targetHeight = isGroupIcon ? ConstantVar.WidthHeight_GroupIcon : ConstantVar.Height_ModIcon;
-        float ratio = isGroupIcon ? 1/1 : 2/3;
+        float ratio = (float)targetWidth/targetHeight;
 
         Texture2D modifiedImage = CropAndResize(originalImage, ratio, targetWidth, targetHeight);
         SaveResizedImage(modifiedImage, outputPath);
@@ -95,7 +96,6 @@ public static class ModManagerUtils
         int startY = (originalHeight - cropHeight) / 2;
 
         Color[] pixels = texture.GetPixels(startX, startY, cropWidth, cropHeight);
-
         Texture2D croppedTexture = new Texture2D(cropWidth, cropHeight);
         croppedTexture.SetPixels(pixels);
         croppedTexture.Apply();

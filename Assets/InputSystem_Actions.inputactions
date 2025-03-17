@@ -631,6 +631,15 @@
                     "processors": "",
                     "interactions": "Hold(duration=1)",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "F10",
+                    "type": "Button",
+                    "id": "f5975c19-3f38-4556-b1a9-62f4a6aa6def",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1467,6 +1476,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "EscHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e37409a3-4f98-472c-910a-28a25eaf867d",
+                    "path": "<Keyboard>/f10",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "F10",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

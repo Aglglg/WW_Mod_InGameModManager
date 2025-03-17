@@ -9,11 +9,11 @@ public class TabModManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GroupScrollHandler groupScrollHandler;
     [SerializeField] private GameObject textInfo;
+    [SerializeField] private GameObject reloadInfo;
     [SerializeField] private GameObject modSelectionObject;
 
     private string _currentModPath;
     private bool _modDataWasLoaded = false;
-    private int _selectedModSlot = 0;
 
     // Called from a button click
     public void GoToSetting()
@@ -21,9 +21,15 @@ public class TabModManager : MonoBehaviour
         uiManager.ChangeTab((int)TabState.Setting);
     }
 
-    private void SelectMod(int modSlot)
+    // Called from PlayerInput, if f10 presssed
+    public void HideReloadInfo()
     {
-        _selectedModSlot = modSlot;
+        reloadInfo.SetActive(false);
+    }
+    // Called from reloadInfo button
+    public void ReloadMod()
+    {
+        KeyPressSimulator.SimulateKey(WindowsInput.VirtualKeyCode.F10);
     }
 
     private void OnEnable()
@@ -124,7 +130,7 @@ public class TabModManager : MonoBehaviour
         GroupData addButtonGroupData = new GroupData
         {
             groupPath = "AddButton",
-            modPaths = new string[]
+            modNames = new string[]
             {}
         };
 

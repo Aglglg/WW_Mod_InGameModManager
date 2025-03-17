@@ -254,7 +254,7 @@ public class GroupScrollHandler : MonoBehaviour
         GroupData newGroupData = new()
         {
             groupPath = groupPath,
-            modPaths = new[]
+            modNames = new[]
             {
                 "NoneButton",
                 "Empty",
@@ -299,7 +299,7 @@ public class GroupScrollHandler : MonoBehaviour
         {
             new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
         };
-        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.WidthHeight_GroupIcon}:{ConstantVar.WidthHeight_GroupIcon})", "", extensions, false);
+        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.WidthHeight_GroupIcon}px:{ConstantVar.WidthHeight_GroupIcon}px)", "", extensions, false);
         if(inputPath.Length > 0)
         {
             ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(TabModManager.modData.groupDatas[_currentTargetIndex].groupPath, "icon.png"), true);
@@ -338,15 +338,22 @@ public class GroupScrollHandler : MonoBehaviour
             simpleScrollSnap.Remove(_currentTargetIndex);
             simpleScrollSnap.GoToPanel(_currentTargetIndex - 1);
             OnPanelCentered(_currentTargetIndex - 1, _currentTargetIndex);
-            ModManagerUtils.RevertManagedMod(targetGroupPathRemoved);
-            ToggleOperationInfo($"Group removed and moved to <color=yellow>{ConstantVar.Removed_Path}</color>");
+            if(ModManagerUtils.RevertManagedMod(targetGroupPathRemoved))
+            {
+                reloadInfo.SetActive(true);
+                ToggleOperationInfo($"Group removed and moved to <color=yellow>{ConstantVar.Removed_Path}</color>");
+            }
+            else
+            {
+                ToggleOperationInfo($"Group removed.");
+            }
         }
         catch(IOException ex)
         {
             string errorMessage;
             if(ex.Message.Contains("denied"))
             {
-                errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher)";
+                errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
             }
             else if(ex.Message.Contains("in use"))
             {
@@ -359,8 +366,6 @@ public class GroupScrollHandler : MonoBehaviour
 
             ToggleOperationInfo(errorMessage);
         }
-        
-        //TO DO: REVERT INI FILES THAT HAVE BEEN MODIFIED, & Sometimes on removed folder already have same folder.
     }
 
     private string GetAvailableGroupPath(int index)
@@ -414,7 +419,7 @@ public class GroupScrollHandler : MonoBehaviour
                 }
                 else if(ex.Message.Contains("denied"))
                 {
-                    errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher)";
+                    errorMessage = "Access denied. Close File Explorer or another apps. Or run with admin privillege(or XXMI Launcher).";
                 }
                 else if(ex.Message.Contains("in use"))
                 {
@@ -432,7 +437,7 @@ public class GroupScrollHandler : MonoBehaviour
     }
     #endregion
 
-    #region OPERATION INFO & RELOAD INFO
+    #region OPERATION INFO
     private Coroutine infoTextCoroutine;
     private const int infoTimeout = 5;
     private void ToggleOperationInfo(string info)
@@ -449,11 +454,6 @@ public class GroupScrollHandler : MonoBehaviour
         yield return new WaitForSeconds(infoTimeout);
         operationInfo.SetActive(false);
         infoTextCoroutine = null;
-    }
-
-    private void ToggleReloadInfo()
-    {
-
     }
     #endregion
 }
