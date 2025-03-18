@@ -18,6 +18,10 @@ public class ItemFixHandler : MonoBehaviour
         titleText.text = modFixData.title + $"\n<align=center>{modFixData.modifiedDate}\n</align>";
         noteText.text = "\n\n" + modFixData.note;
         noteText.alpha = 1;
+        foreach (var kvp in modFixData.hashpair)
+        {
+            Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
+        }
     }
 
     public void ButtonFixShowConfirm()

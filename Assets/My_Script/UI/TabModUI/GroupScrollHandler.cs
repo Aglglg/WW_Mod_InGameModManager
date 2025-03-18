@@ -23,7 +23,6 @@ public class GroupScrollHandler : MonoBehaviour
     [SerializeField] private GameObject operationInfo;
 
     [SerializeField] private TextAsset groupManagerIniTemplate;
-    [SerializeField] private TextAsset backgroundKeypressIniTemplate;
 
     [SerializeField] private GameObject groupContextMenu;
     [SerializeField] private Texture2D groupDefaultIcon;
@@ -170,7 +169,7 @@ public class GroupScrollHandler : MonoBehaviour
     {
         Transform groupTransform = contentGroupTransform.GetChild(groupIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
-        titleInputField.text = Path.GetFileName(TabModManager.modData.groupDatas[groupIndex].groupPath).TrimEnd('_');
+        titleInputField.text = TabModManager.modData.groupDatas[groupIndex].groupName;
     }
 
     private async void SetGroupIcon(int groupIndex)
@@ -187,7 +186,6 @@ public class GroupScrollHandler : MonoBehaviour
         else
         {
             LoadDefaultImageIcon(imageIcon);
-            imageIcon.transform.localScale = Vector3.one;
         }
     }
 
@@ -195,6 +193,7 @@ public class GroupScrollHandler : MonoBehaviour
     {
         imageIcon.texture = groupDefaultIcon;
         imageIcon.rectTransform.sizeDelta = new Vector2(GroupImageIconDefaultWidth, GroupImageIconDefaultHeight);
+        imageIcon.transform.localScale = Vector3.one;
     }
 
     //DDS is faster, I think, jpg/png slow and unity can only load texture on main thread, so it will freeze/stutter if use png/jpg
@@ -253,17 +252,43 @@ public class GroupScrollHandler : MonoBehaviour
             return;
         }
 
-        CheckAndCreateGroupIni();
-        CheckAndCreateBackgroundKeypressIni();
+        CheckAndCreateGroupManagerIni();
 
-        string groupPath = GetAvailableGroupPath(contentGroupTransform.childCount);
+        string groupPath = GetAvailableGroupPath();
+        string groupName = Path.GetFileName(groupPath);
+
         Directory.CreateDirectory(groupPath);
 
         //Template default group data
         GroupData newGroupData = new()
         {
+            groupName = groupName,
             groupPath = groupPath,
             modNames = new[]
+            {
+                "NoneButton",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty",
+                "Empty"
+            },
+            modFolders = new[]
             {
                 "NoneButton",
                 "Empty",
@@ -297,7 +322,7 @@ public class GroupScrollHandler : MonoBehaviour
         Transform groupTransform = contentGroupTransform.GetChild(contentGroupTransform.childCount - 1);
         RawImage imageIcon = groupTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
         LoadDefaultImageIcon(imageIcon);
-        groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>().text = Path.GetFileName(groupPath).TrimEnd('_');
+        groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>().text = groupName;
 
         simpleScrollSnap.GoToLastPanel();
     }
@@ -328,7 +353,7 @@ public class GroupScrollHandler : MonoBehaviour
     {
         string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
         string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
-        string targetGroupPathRemoved = Path.Combine(removedPath, "Group-" + Path.GetFileName(targetGroupPath));
+        string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
         
         try
         {
@@ -377,22 +402,23 @@ public class GroupScrollHandler : MonoBehaviour
         }
     }
 
-    private string GetAvailableGroupPath(int index)
+    private string GetAvailableGroupPath()
     {
+        int startingIndex = 1; //0 is Add group button, so it's 1
         string groupPath = Path.Combine(
             PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
             ConstantVar.Managed_Path,
-            $"Group {index}"
-        ) + '_';
+            $"group_{startingIndex}"
+        );
 
         while (Directory.Exists(groupPath))
         {
-            index++;
+            startingIndex++;
             groupPath = Path.Combine(
                 PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
                 ConstantVar.Managed_Path,
-                $"Group {index}"
-            ) + '_';
+                $"group_{startingIndex}"
+            );
         }
         return groupPath;
     }
@@ -403,63 +429,15 @@ public class GroupScrollHandler : MonoBehaviour
         Transform groupTransform = contentGroupTransform.GetChild(_currentTargetIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
 
-        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Path);
-        string oldGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
-        string newGroupPath;
 
-        try
-        {
-            newGroupPath = Path.Combine(managedModPath, text) + '_';
-        }
-        catch (ArgumentException ex)
-        {
-            Debug.Log(ex.Message);
-            ToggleOperationInfo("Name contains illegal characters, operation cancelled.");
-            titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
-            titleInputField.interactable = false;
-            return;
-        }
+        TabModManager.modData.groupDatas[_currentTargetIndex].groupName = text;
+        ModManagerUtils.SaveManagedModData();
 
-        if(oldGroupPath != newGroupPath)
-        {
-            try
-            {
-                Directory.Move(oldGroupPath, newGroupPath);
-                TabModManager.modData.groupDatas[_currentTargetIndex].groupPath = newGroupPath;
-                ModManagerUtils.SaveManagedModData();
-                titleInputField.text = Path.GetFileName(newGroupPath).TrimEnd('_');
-            }
-            catch (IOException ex)
-            {
-                titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
-                string errorMessage;
-
-                if(ex.Message.Contains("exist"))
-                {
-                    errorMessage = "Group name or folder name already exists.";
-                }
-                else if(ex.Message.Contains("denied"))
-                {
-                    errorMessage = "Access denied. Close File Explorer or another apps.";
-                }
-                else if(ex.Message.Contains("in use"))
-                {
-                    errorMessage = "Folder of the group in use. Close File Explorer or another apps.";
-                }
-                else
-                {
-                    errorMessage = ex.Message;
-                }
-
-                ToggleOperationInfo(errorMessage);
-            }
-        }
-        
-        titleInputField.text = titleInputField.text.TrimEnd('_');
+        titleInputField.text = text;
         titleInputField.interactable = false;
     }
 
-    private void CheckAndCreateGroupIni()
+    private void CheckAndCreateGroupManagerIni()
     {
         string groupManagerIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
                                     ConstantVar.Managed_Path, ConstantVar.IniFile_GroupManager);
@@ -467,17 +445,6 @@ public class GroupScrollHandler : MonoBehaviour
         {
             string content = groupManagerIniTemplate.text;
             File.WriteAllText(groupManagerIniPath, content);
-            reloadInfo.SetActive(true);
-        }
-    }
-    private void CheckAndCreateBackgroundKeypressIni()
-    {
-        string backgroundKeypressIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-                                    ConstantVar.Managed_Path, ConstantVar.IniFile_BackgroundKeypress);
-        if(!File.Exists(backgroundKeypressIniPath))
-        {
-            string content = backgroundKeypressIniTemplate.text;
-            File.WriteAllText(backgroundKeypressIniPath, content);
             reloadInfo.SetActive(true);
         }
     }

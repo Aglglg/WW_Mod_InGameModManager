@@ -10,7 +10,9 @@ public class ModData
 [Serializable]
 public class GroupData
 {
+    public string groupName;
     public string groupPath;
     public string[] modNames;
+    public string[] modFolders;
     public int selectedModIndex = 0;
 }

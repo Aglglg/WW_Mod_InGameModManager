@@ -10,6 +10,8 @@ public class TabModManager : MonoBehaviour
     [SerializeField] private GroupScrollHandler groupScrollHandler;
     [SerializeField] private GameObject textInfo;
     [SerializeField] private GameObject reloadInfo;
+    [SerializeField] private GameObject reloadManualInfo;
+    [SerializeField] private TextAsset templateBackgroundKeypress;
     [SerializeField] private GameObject modSelectionObject;
 
     private string _currentModPath;
@@ -31,6 +33,10 @@ public class TabModManager : MonoBehaviour
     {
         KeyPressSimulator.SimulateKey(WindowsInput.VirtualKeyCode.F10);
     }
+    public void ReloadManualInfoConfirmedButton()
+    {
+        InitializeTabMod();
+    }
 
     private void OnEnable()
     {
@@ -43,12 +49,21 @@ public class TabModManager : MonoBehaviour
 
         if (IsValidModPath(modPathKey))
         {
-            UpdateCurrentModPath(modPathKey);
-            HandleValidModPath();
-            LoadModData();
+            if(ModManagerUtils.CheckAndCreateBackgroundKeypressIni(templateBackgroundKeypress))
+            {
+                Debug.Log("VALID BUT NEED RELOAD");
+                SetObjectsActiveState(false);
+                reloadManualInfo.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("VALID");
+                HandleValidModPath(modPathKey);
+            }
         }
         else
         {
+            Debug.Log("INVALID");
             HandleInvalidModPath();
         }
     }
@@ -71,10 +86,15 @@ public class TabModManager : MonoBehaviour
         }
     }
 
-    private void HandleValidModPath()
+    private void HandleValidModPath(string modPathKey)
     {
+        reloadManualInfo.SetActive(false);
+        UpdateCurrentModPath(modPathKey);
+
         textInfo.SetActive(false);
         SetObjectsActiveState(true);
+
+        LoadModData();
     }
 
     private void HandleInvalidModPath()
@@ -129,9 +149,10 @@ public class TabModManager : MonoBehaviour
     {
         GroupData addButtonGroupData = new GroupData
         {
+            groupName = "AddButton",
             groupPath = "AddButton",
-            modNames = new string[]
-            {}
+            modNames = new string[]{},
+            modFolders = new string[]{},
         };
 
         modData = new ModData

@@ -28,7 +28,7 @@ public static class ConstantVar
     public const string Managed_Backup_Extension = "ini_managed_backup";
     public const string IniFile_GroupManager = "manager_group.ini";
     public const string IniFile_BackgroundKeypress = "background_keypress.ini";
-    public const string IniFile_Group = "group_{x}.ini";
+    public const string IniFile_Group = "{group_x}.ini";
 
     //suffix only, the usage will be ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
     public const string Prefix_PlayerPrefKey_ModPath = "Mod Path "; 

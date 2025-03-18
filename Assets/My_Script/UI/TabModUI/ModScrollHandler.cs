@@ -214,13 +214,13 @@ public class ModScrollHandler : MonoBehaviour
             titleInputField.text = "Empty";
         }
 
-        for (int i = 0; i < _currentSelectedGroup.modNames.Length; i++)
+        for (int i = 0; i < _currentSelectedGroup.modFolders.Length; i++)
         {
             if(i == 0) continue; //None Button
-            if(_currentSelectedGroup.modNames[i] == "Empty") continue; //Empty
+            if(_currentSelectedGroup.modFolders[i] == "Empty") continue; //Empty
             Transform modTransform = contentModTransform.GetChild(i);
             TMP_InputField titleInputField = modTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
-            titleInputField.text = _currentSelectedGroup.modNames[i].TrimEnd('_');
+            titleInputField.text = _currentSelectedGroup.modNames[i];
         }
     }
     private async void SetModIcon()
@@ -234,11 +234,11 @@ public class ModScrollHandler : MonoBehaviour
             imageIcon.gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < _currentSelectedGroup.modNames.Length; i++)
+        for (int i = 0; i < _currentSelectedGroup.modFolders.Length; i++)
         {
             if(i == 0) continue; //None Button
-            if(_currentSelectedGroup.modNames[i] == "Empty") continue; //Empty
-            string iconPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[i], ConstantVar.ModData_Icon_File);
+            if(_currentSelectedGroup.modFolders[i] == "Empty") continue; //Empty
+            string iconPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[i], ConstantVar.ModData_Icon_File);
             Transform modTransform = contentModTransform.GetChild(i);
             RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
             imageIcon.gameObject.SetActive(true);
@@ -251,13 +251,12 @@ public class ModScrollHandler : MonoBehaviour
             else
             {
                 LoadDefaultImageIcon(imageIcon);
-                imageIcon.transform.localScale = Vector3.one;
             }
         }
     }
     private async void SetModIconIndividual(int selectedIndex)
     {
-        string iconPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[selectedIndex], ConstantVar.ModData_Icon_File);
+        string iconPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[selectedIndex], ConstantVar.ModData_Icon_File);
         Transform modTransform = contentModTransform.GetChild(selectedIndex);
         RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
         if(File.Exists(iconPath))
@@ -269,13 +268,13 @@ public class ModScrollHandler : MonoBehaviour
         else
         {
             LoadDefaultImageIcon(imageIcon);
-            imageIcon.transform.localScale = Vector3.one;
         }
     }
     private void LoadDefaultImageIcon(RawImage imageIcon)
     {
         imageIcon.texture = modDefaultIcon;
         imageIcon.rectTransform.sizeDelta = new Vector2(ModImageIconDefaultWidth, ModImageIconDefaultHeight);
+        imageIcon.transform.localScale = Vector3.one;
     }
 
     //DDS is faster, I think, jpg/png slow and unity can only load texture on main thread, so it will freeze/stutter if use png/jpg
@@ -348,7 +347,7 @@ public class ModScrollHandler : MonoBehaviour
         contextMenuRemoveButton.interactable = true;
         contextMenuRemoveButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = whiteColorInteractible;
 
-        if(_currentSelectedGroup.modNames[_currentTargetIndex] == "Empty")
+        if(_currentSelectedGroup.modFolders[_currentTargetIndex] == "Empty")
         {
             contextMenuChangeIconButton.interactable = false;
             contextMenuChangeIconButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = whiteColorNotInteractible;
@@ -382,9 +381,14 @@ public class ModScrollHandler : MonoBehaviour
             return;
         }
 
-        CheckAndCreateGroupIni(TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup));
+        CheckAndCreateGroupIni();
 
-        string destinationModFolder = Path.Combine(_currentSelectedGroup.groupPath, Path.GetFileName(selectedModFolder[0])) + '_';
+        string destinationModFolder = Path.Combine(_currentSelectedGroup.groupPath, Path.GetFileName(selectedModFolder[0]));
+
+        while(Directory.Exists(destinationModFolder))
+        {
+            destinationModFolder += '_';
+        }
 
         try
         {
@@ -402,7 +406,8 @@ public class ModScrollHandler : MonoBehaviour
             {
                 CopyDirectory(selectedModFolder[0], destinationModFolder, true);
             }
-            ModManagerUtils.ManageMod(destinationModFolder, TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup), _currentTargetIndex);
+            ModManagerUtils.ManageMod(destinationModFolder, Path.GetFileName(_currentSelectedGroup.groupPath), _currentTargetIndex);
+            _currentSelectedGroup.modFolders[_currentTargetIndex] = Path.GetFileName(destinationModFolder);
             _currentSelectedGroup.modNames[_currentTargetIndex] = Path.GetFileName(destinationModFolder);
             ModManagerUtils.SaveManagedModData();
 
@@ -412,8 +417,7 @@ public class ModScrollHandler : MonoBehaviour
 
             imageIcon.gameObject.SetActive(true);
             LoadDefaultImageIcon(imageIcon);
-            imageIcon.transform.localScale = Vector3.one;
-            titleInputField.text = _currentSelectedGroup.modNames[_currentTargetIndex].TrimEnd('_');
+            titleInputField.text = _currentSelectedGroup.modNames[_currentTargetIndex];
 
             reloadInfo.SetActive(true);
         }
@@ -421,11 +425,7 @@ public class ModScrollHandler : MonoBehaviour
         {
             string errorMessage;
 
-            if(ex.Message.Contains("exist"))
-            {
-                errorMessage = "Mod name or folder name already exists.";
-            }
-            else if(ex.Message.Contains("denied"))
+            if(ex.Message.Contains("denied"))
             {
                 errorMessage = "Access denied. Close File Explorer or another apps.";
             }
@@ -451,7 +451,7 @@ public class ModScrollHandler : MonoBehaviour
         string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.Width_ModIcon}:{ConstantVar.Height_ModIcon}px)", "", extensions, false);
         if(inputPath.Length > 0)
         {
-            ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[_currentTargetIndex], "icon.png"), false);
+            ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex], "icon.png"), false);
         }
         SetModIconIndividual(_currentTargetIndex);
     }
@@ -466,14 +466,14 @@ public class ModScrollHandler : MonoBehaviour
 
     public void TryFixModButton()
     {
-        tabModFixManager.modPathField.text = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[_currentTargetIndex]);
+        tabModFixManager.modPathField.text = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex]);
         uiManager.ChangeTab((int)TabState.ModFix);
     }
 
     public void RemoveModButton()
     {
         string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
-        string targetModPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[_currentTargetIndex]);
+        string targetModPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex]);
         string targetModPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetModPath));
         
         try
@@ -489,6 +489,7 @@ public class ModScrollHandler : MonoBehaviour
 
             Directory.Move(targetModPath, targetModPathRemoved);
 
+            _currentSelectedGroup.modFolders[_currentTargetIndex] = "Empty";
             _currentSelectedGroup.modNames[_currentTargetIndex] = "Empty";
             ModManagerUtils.SaveManagedModData();
 
@@ -497,7 +498,7 @@ public class ModScrollHandler : MonoBehaviour
             RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
 
             imageIcon.gameObject.SetActive(false);
-            titleInputField.text = _currentSelectedGroup.modNames[_currentTargetIndex];
+            titleInputField.text = _currentSelectedGroup.modFolders[_currentTargetIndex];
 
             if(ModManagerUtils.RevertManagedMod(targetModPathRemoved))
             {
@@ -535,69 +536,20 @@ public class ModScrollHandler : MonoBehaviour
         Transform groupTransform = contentModTransform.GetChild(_currentTargetIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
 
-        string oldModName = _currentSelectedGroup.modNames[_currentTargetIndex];
-        string newModName = text + '_';
+        _currentSelectedGroup.modNames[_currentTargetIndex] = text;
+        ModManagerUtils.SaveManagedModData();
 
-        string oldModPath = Path.Combine(_currentSelectedGroup.groupPath, oldModName);
-        string newModPath;
-
-        try
-        {
-            newModPath = Path.Combine(_currentSelectedGroup.groupPath, newModName);
-        }
-        catch (ArgumentException ex)
-        {
-            Debug.Log(ex.Message);
-            ToggleOperationInfo("Name contains illegal characters, operation cancelled.");
-            titleInputField.text = oldModName.TrimEnd('_');
-            titleInputField.interactable = false;
-            return;
-        }
-
-        if(oldModName != newModName)
-        {
-            try
-            {
-                Directory.Move(oldModPath, newModPath);
-                _currentSelectedGroup.modNames[_currentTargetIndex] = newModName;
-                ModManagerUtils.SaveManagedModData();
-                titleInputField.text = newModName.TrimEnd('_');
-            }
-            catch (IOException ex)
-            {
-                titleInputField.text = oldModName.TrimEnd('_');
-                string errorMessage;
-
-                if(ex.Message.Contains("exist"))
-                {
-                    errorMessage = "Mod name or folder name already exists.";
-                }
-                else if(ex.Message.Contains("denied"))
-                {
-                    errorMessage = "Access denied. Close File Explorer or another apps.";
-                }
-                else if(ex.Message.Contains("in use"))
-                {
-                    errorMessage = "Folder of the group in use. Close File Explorer or another apps.";
-                }
-                else
-                {
-                    errorMessage = ex.Message;
-                }
-
-                ToggleOperationInfo(errorMessage);
-            }
-        }
-        titleInputField.text = titleInputField.text.TrimEnd('_');
+        titleInputField.text = text;
         titleInputField.interactable = false;
     }
 
-    private void CheckAndCreateGroupIni(int groupIndex)
+    private void CheckAndCreateGroupIni()
     {
-        string groupIniPath = Path.Combine(_currentSelectedGroup.groupPath, ConstantVar.IniFile_Group.Replace("{x}", groupIndex.ToString()));
+        string groupIniPath = Path.Combine(_currentSelectedGroup.groupPath, ConstantVar.IniFile_Group.Replace("{group_x}", Path.GetFileName(_currentSelectedGroup.groupPath)));
         if(!File.Exists(groupIniPath))
         {
-            string content = groupIniTemplate.text.Replace("{x}", groupIndex.ToString()).Replace("{group_x}", $"group_{groupIndex}");
+            string content = groupIniTemplate.text.Replace("{x}", Path.GetFileName(_currentSelectedGroup.groupPath).TrimStart("group_".ToCharArray())).
+                            Replace("{group_x}", Path.GetFileName(_currentSelectedGroup.groupPath));
             File.WriteAllText(groupIniPath, content);
         }
     }

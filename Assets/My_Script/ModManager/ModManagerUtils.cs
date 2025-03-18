@@ -11,6 +11,20 @@ public static class ModManagerUtils
 {
     [DllImport("dds_converter_from_mod_manager", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool convert_to_dds(string input_path, string output_path);
+
+    public static bool CheckAndCreateBackgroundKeypressIni(TextAsset backgroundKeypressIniTemplate)
+    {
+        string backgroundKeypressIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+                                    ConstantVar.Managed_Path, ConstantVar.IniFile_BackgroundKeypress);
+        if(!File.Exists(backgroundKeypressIniPath))
+        {
+            string content = backgroundKeypressIniTemplate.text;
+            File.WriteAllText(backgroundKeypressIniPath, content);
+            return true;
+        }
+
+        return false;
+    }
     
     public static void SaveManagedModData()
     {
@@ -23,17 +37,16 @@ public static class ModManagerUtils
         File.WriteAllText(pathJson, json);
     }
 
-    public static void ManageMod(string folder, int groupIndex, int modIndex)
+    public static void ManageMod(string modFolder, string groupFolderName, int modIndex)
     {
-        string[] iniFiles = FindIniFiles.FindIniFilesRecursive(folder);
-        string groupName = $"group_{groupIndex}";
+        string[] iniFiles = FindIniFiles.FindIniFilesRecursive(modFolder);
         foreach (string iniFile in iniFiles)
         {
             string backupFile = Path.ChangeExtension(iniFile, ConstantVar.Managed_Backup_Extension);
             File.Copy(iniFile, backupFile);
 
-            ModifyIniFile(iniFile, groupName, modIndex);
-            ModifyIniFileKey(iniFile, groupName);
+            ModifyIniFile(iniFile, groupFolderName, modIndex);
+            ModifyIniFileKey(iniFile, groupFolderName);
         }
     }
 
@@ -168,12 +181,12 @@ public static class ModManagerUtils
     #endregion
 
 
-    private const string managedSlotCondition = "$managed_slot_id == $\\modmanageragl\\{groupName}\\active_slot";
+    private const string managedSlotCondition = "$managed_slot_id == $\\modmanageragl\\{groupFolderName}\\active_slot";
     #region Modify Ini File
-    private static void ModifyIniFile(string filePath, string groupName, int slotId)
+    private static void ModifyIniFile(string filePath, string groupFolderName, int slotId)
     {
-        // Define the condition with the groupName
-        string modifiedManagedSlotCondition = managedSlotCondition.Replace("{groupName}", groupName);
+        // Define the condition with the groupFolderName
+        string modifiedManagedSlotCondition = managedSlotCondition.Replace("{groupFolderName}", groupFolderName);
 
         // Read all lines from the file
         var lines = File.ReadAllLines(filePath);
@@ -263,7 +276,7 @@ public static class ModManagerUtils
         StringBuilder newContent = new StringBuilder();
         bool insideKeySection = false;
         bool conditionExists = false;
-        string conditionToAdd = managedSlotCondition.Replace("{groupName}", groupName);
+        string conditionToAdd = managedSlotCondition.Replace("{groupFolderName}", groupName);
 
         string[] lines = File.ReadAllLines(filePath);
         for (int i = 0; i < lines.Length; i++)
