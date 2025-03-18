@@ -17,15 +17,18 @@ public static class ConstantVar
     public const string Fix_Backup_Extension = "ini_managed_fix_backup";
     public const string Tag_ModFixManager = "ModFixManager";
     public const string Tag_InputSystem = "InputSystem";
+    public const string Tag_Panel = "Panel";
 
-    public const int Total_MaxModPerGroup = 20;
-    public const int Total_MaxGroup = 100;
+    public const int Total_MaxGroup = 49; //Actually 48, but 0 index is reserved for Add group button
     public const string ModsFolder_ValidSuffix = "mi\\mods";
     public const string ModData_Json_File = "moddata.json";
     public const string ModData_Icon_File = "icon.dds";
     public const string Managed_Path = "MANAGED_DO-NOT-EDIT";
     public const string Removed_Path = "DISABLED_MANAGED_REMOVED";
     public const string Managed_Backup_Extension = "ini_managed_backup";
+    public const string IniFile_GroupManager = "manager_group.ini";
+    public const string IniFile_BackgroundKeypress = "background_keypress.ini";
+    public const string IniFile_Group = "group_{x}.ini";
 
     //suffix only, the usage will be ConstantVar.PREFIX_PLAYERPERFKEY_MODPATH + Initialization.gameName (Mod Path Wuthering Waves)
     public const string Prefix_PlayerPrefKey_ModPath = "Mod Path "; 

@@ -1,0 +1,124 @@
+;dynamic
+;e.g: group_1
+namespace = modmanageragl\{group_x}
+
+[Constants]
+persist global $active_slot = 0
+;dynamic
+;e.g: group_1 that means group_id = 1
+global $group_id = {x}
+
+
+;KEYS
+[KeySlot0]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR VK_ESCAPE
+$active_slot = 0
+
+
+
+[KeySlot1]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL NO_TAB VK_CLEAR 1
+$active_slot = 1
+
+[KeySlot2]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL NO_TAB VK_CLEAR 2
+$active_slot = 2
+
+[KeySlot3]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL NO_TAB VK_CLEAR 3
+$active_slot = 3
+
+[KeySlot4]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL NO_TAB VK_CLEAR 4
+$active_slot = 4
+
+[KeySlot5]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL NO_TAB VK_CLEAR 5
+$active_slot = 5
+
+
+
+[KeySlot6]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_TAB VK_CLEAR RCONTROL 1
+$active_slot = 6
+
+[KeySlot7]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_TAB VK_CLEAR RCONTROL 2
+$active_slot = 7
+
+[KeySlot8]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_TAB VK_CLEAR RCONTROL 3
+$active_slot = 8
+
+[KeySlot9]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_TAB VK_CLEAR RCONTROL 4
+$active_slot = 9
+
+[KeySlot10]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_TAB VK_CLEAR RCONTROL 5
+$active_slot = 10
+
+
+
+[KeySlot11]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL VK_CLEAR TAB 1
+$active_slot = 11
+
+[KeySlot12]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL VK_CLEAR TAB 2
+$active_slot = 12
+
+[KeySlot13]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL VK_CLEAR TAB 3
+$active_slot = 13
+
+[KeySlot14]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL VK_CLEAR TAB 4
+$active_slot = 14
+
+[KeySlot15]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = NO_RCONTROL VK_CLEAR TAB 5
+$active_slot = 15
+
+
+
+[KeySlot16]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR RCONTROL TAB 1
+$active_slot = 16
+
+[KeySlot17]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR RCONTROL TAB 2
+$active_slot = 17
+
+[KeySlot18]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR RCONTROL TAB 3
+$active_slot = 18
+
+[KeySlot19]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR RCONTROL TAB 4
+$active_slot = 19
+
+[KeySlot20]
+condition = $group_id == $\modmanageragl\group_manager\active_group_id
+key = VK_CLEAR RCONTROL TAB 5
+$active_slot = 20

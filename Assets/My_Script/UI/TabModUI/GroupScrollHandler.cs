@@ -22,6 +22,9 @@ public class GroupScrollHandler : MonoBehaviour
     [SerializeField] private GameObject reloadInfo;
     [SerializeField] private GameObject operationInfo;
 
+    [SerializeField] private TextAsset groupManagerIniTemplate;
+    [SerializeField] private TextAsset backgroundKeypressIniTemplate;
+
     [SerializeField] private GameObject groupContextMenu;
     [SerializeField] private Texture2D groupDefaultIcon;
     [SerializeField] private ModScrollHandler modScrollHandler;
@@ -249,8 +252,14 @@ public class GroupScrollHandler : MonoBehaviour
             ToggleOperationInfo("Max group reached.");
             return;
         }
-        //Template default group
+
+        CheckAndCreateGroupIni();
+        CheckAndCreateBackgroundKeypressIni();
+
         string groupPath = GetAvailableGroupPath(contentGroupTransform.childCount);
+        Directory.CreateDirectory(groupPath);
+
+        //Template default group data
         GroupData newGroupData = new()
         {
             groupPath = groupPath,
@@ -299,7 +308,7 @@ public class GroupScrollHandler : MonoBehaviour
         {
             new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
         };
-        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.WidthHeight_GroupIcon}px:{ConstantVar.WidthHeight_GroupIcon}px)", "", extensions, false);
+        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.WidthHeight_GroupIcon}:{ConstantVar.WidthHeight_GroupIcon}px)", "", extensions, false);
         if(inputPath.Length > 0)
         {
             ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(TabModManager.modData.groupDatas[_currentTargetIndex].groupPath, "icon.png"), true);
@@ -319,7 +328,7 @@ public class GroupScrollHandler : MonoBehaviour
     {
         string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
         string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
-        string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
+        string targetGroupPathRemoved = Path.Combine(removedPath, "Group-" + Path.GetFileName(targetGroupPath));
         
         try
         {
@@ -385,19 +394,31 @@ public class GroupScrollHandler : MonoBehaviour
                 $"Group {index}"
             ) + '_';
         }
-        Directory.CreateDirectory(groupPath);
         return groupPath;
     }
 
     //Called from group item inputfield
     public void OnDoneRename(string text)
     {
-        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Path);
-        string oldGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
-        string newGroupPath = Path.Combine(managedModPath, text) + '_';
-
         Transform groupTransform = contentGroupTransform.GetChild(_currentTargetIndex);
         TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+
+        string managedModPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Path);
+        string oldGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
+        string newGroupPath;
+
+        try
+        {
+            newGroupPath = Path.Combine(managedModPath, text) + '_';
+        }
+        catch (ArgumentException ex)
+        {
+            Debug.Log(ex.Message);
+            ToggleOperationInfo("Name contains illegal characters, operation cancelled.");
+            titleInputField.text = Path.GetFileName(oldGroupPath).TrimEnd('_');
+            titleInputField.interactable = false;
+            return;
+        }
 
         if(oldGroupPath != newGroupPath)
         {
@@ -433,7 +454,32 @@ public class GroupScrollHandler : MonoBehaviour
                 ToggleOperationInfo(errorMessage);
             }
         }
+        
+        titleInputField.text = titleInputField.text.TrimEnd('_');
         titleInputField.interactable = false;
+    }
+
+    private void CheckAndCreateGroupIni()
+    {
+        string groupManagerIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+                                    ConstantVar.Managed_Path, ConstantVar.IniFile_GroupManager);
+        if(!File.Exists(groupManagerIniPath))
+        {
+            string content = groupManagerIniTemplate.text;
+            File.WriteAllText(groupManagerIniPath, content);
+            reloadInfo.SetActive(true);
+        }
+    }
+    private void CheckAndCreateBackgroundKeypressIni()
+    {
+        string backgroundKeypressIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+                                    ConstantVar.Managed_Path, ConstantVar.IniFile_BackgroundKeypress);
+        if(!File.Exists(backgroundKeypressIniPath))
+        {
+            string content = backgroundKeypressIniTemplate.text;
+            File.WriteAllText(backgroundKeypressIniPath, content);
+            reloadInfo.SetActive(true);
+        }
     }
     #endregion
 

@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
 using DG.Tweening;
 using SFB;
@@ -11,20 +8,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ModScrollHandler : MonoBehaviour
 {
     private const int TitleTextChildIndex = 0;
+    private const int BorderChildIndex = 2;
     private const int ImageMaskIconChildIndex = 1;
     private const int ImageIconChildIndexInMaskTransform = 0;
     private const float ModImageIconDefaultWidth = 215;
     private const float ModImageIconDefaultHeight = 309;
     
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private TabModFixManager tabModFixManager;
+    
     [SerializeField] private GameObject reloadInfo;
     [SerializeField] private GameObject operationInfo;
 
+    [SerializeField] private TextAsset groupIniTemplate;
     [SerializeField] private Button contextMenuAddButton;
     [SerializeField] private Button contextMenuChangeIconButton;
     [SerializeField] private Button contextMenuRenameButton;
@@ -39,6 +40,7 @@ public class ModScrollHandler : MonoBehaviour
     [SerializeField] private Transform contentModTransform;
     [SerializeField] private GameObject keyIcon;
     [SerializeField] private GameObject selectButton;
+    [SerializeField] private GameObject selectedButton;
     [SerializeField] private float selectedScale;
     [SerializeField] private float notSelectedScale;
 
@@ -49,6 +51,16 @@ public class ModScrollHandler : MonoBehaviour
     private void Start()
     {
         InitializeModItems();
+    }
+
+    public void SelectModButton()
+    {
+        ModManagerUtils.ModSelectedKeyPress(TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup), _currentTargetIndex);
+        _currentSelectedGroup.selectedModIndex = _currentTargetIndex;
+        ModManagerUtils.SaveManagedModData();
+        
+        SetVisualSelectedMod();
+        SetVisualSelectedButton();
     }
 
     //Called from ModItem if clicked
@@ -64,6 +76,13 @@ public class ModScrollHandler : MonoBehaviour
         _currentSelectedGroup = selectedGroupData;
 
         SetModItemsActive(isAddButtonGroup); //If add button, disable
+
+        if(!isAddButtonGroup)
+        {
+            SetVisualSelectedMod();
+            SetVisualSelectedButton();
+            simpleScrollSnap.GoToPanel(selectedGroupData.selectedModIndex);
+        }
     }
 
     // Called from PlayerInput
@@ -109,6 +128,7 @@ public class ModScrollHandler : MonoBehaviour
         _currentTargetIndex = targetIndex;
         ScaleModToSelected(targetIndex);
         ScaleModToDefault(previousIndex);
+        SetVisualSelectedButton();
 
         // SimulateKeyPress to change active mod (placeholder for additional logic)
     }
@@ -154,6 +174,31 @@ public class ModScrollHandler : MonoBehaviour
     private void ScaleModToDefault(int modIndex)
     {
         contentModTransform.GetChild(modIndex).DOScale(new Vector3(notSelectedScale, notSelectedScale, notSelectedScale), animationDuration);
+    }
+
+    private void SetVisualSelectedMod()
+    {
+        foreach (Transform modItem in contentModTransform)
+        {
+            modItem.GetChild(BorderChildIndex).GetComponent<Image>().color = Color.white;
+        }
+        Color selectedColor = Color.white;
+        ColorUtility.TryParseHtmlString("#3BBBFF", out selectedColor);
+        contentModTransform.GetChild(_currentSelectedGroup.selectedModIndex).GetChild(BorderChildIndex).GetComponent<Image>().color = selectedColor;
+    }
+
+    private void SetVisualSelectedButton()
+    {
+        if(_currentSelectedGroup.selectedModIndex == _currentTargetIndex)
+        {
+            selectButton.SetActive(false);
+            selectedButton.SetActive(true);
+        }
+        else
+        {
+            selectButton.SetActive(true);
+            selectedButton.SetActive(false);
+        }
     }
 
 
@@ -337,6 +382,8 @@ public class ModScrollHandler : MonoBehaviour
             return;
         }
 
+        CheckAndCreateGroupIni(TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup));
+
         string destinationModFolder = Path.Combine(_currentSelectedGroup.groupPath, Path.GetFileName(selectedModFolder[0])) + '_';
 
         try
@@ -401,7 +448,7 @@ public class ModScrollHandler : MonoBehaviour
         {
             new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
         };
-        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.Width_ModIcon}px:{ConstantVar.Height_ModIcon}px)", "", extensions, false);
+        string[] inputPath = StandaloneFileBrowser.OpenFilePanel($"Select image ({ConstantVar.Width_ModIcon}:{ConstantVar.Height_ModIcon}px)", "", extensions, false);
         if(inputPath.Length > 0)
         {
             ModManagerUtils.CreateIcon(inputPath[0], Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[_currentTargetIndex], "icon.png"), false);
@@ -415,6 +462,12 @@ public class ModScrollHandler : MonoBehaviour
         TMP_InputField titleInputField = modTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
         titleInputField.interactable = true;
         EventSystem.current.SetSelectedGameObject(titleInputField.gameObject);
+    }
+
+    public void TryFixModButton()
+    {
+        tabModFixManager.modPathField.text = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modNames[_currentTargetIndex]);
+        uiManager.ChangeTab((int)TabState.ModFix);
     }
 
     public void RemoveModButton()
@@ -479,14 +532,27 @@ public class ModScrollHandler : MonoBehaviour
     //Called from mod item inputfield
     public void OnDoneRename(string text)
     {
+        Transform groupTransform = contentModTransform.GetChild(_currentTargetIndex);
+        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+
         string oldModName = _currentSelectedGroup.modNames[_currentTargetIndex];
         string newModName = text + '_';
 
         string oldModPath = Path.Combine(_currentSelectedGroup.groupPath, oldModName);
-        string newModPath = Path.Combine(_currentSelectedGroup.groupPath, newModName);
+        string newModPath;
 
-        Transform groupTransform = contentModTransform.GetChild(_currentTargetIndex);
-        TMP_InputField titleInputField = groupTransform.GetChild(TitleTextChildIndex).GetComponent<TMP_InputField>();
+        try
+        {
+            newModPath = Path.Combine(_currentSelectedGroup.groupPath, newModName);
+        }
+        catch (ArgumentException ex)
+        {
+            Debug.Log(ex.Message);
+            ToggleOperationInfo("Name contains illegal characters, operation cancelled.");
+            titleInputField.text = oldModName.TrimEnd('_');
+            titleInputField.interactable = false;
+            return;
+        }
 
         if(oldModName != newModName)
         {
@@ -522,7 +588,18 @@ public class ModScrollHandler : MonoBehaviour
                 ToggleOperationInfo(errorMessage);
             }
         }
+        titleInputField.text = titleInputField.text.TrimEnd('_');
         titleInputField.interactable = false;
+    }
+
+    private void CheckAndCreateGroupIni(int groupIndex)
+    {
+        string groupIniPath = Path.Combine(_currentSelectedGroup.groupPath, ConstantVar.IniFile_Group.Replace("{x}", groupIndex.ToString()));
+        if(!File.Exists(groupIniPath))
+        {
+            string content = groupIniTemplate.text.Replace("{x}", groupIndex.ToString()).Replace("{group_x}", $"group_{groupIndex}");
+            File.WriteAllText(groupIniPath, content);
+        }
     }
     #endregion
 

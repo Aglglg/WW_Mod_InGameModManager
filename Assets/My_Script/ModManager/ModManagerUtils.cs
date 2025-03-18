@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using WindowsInput;
 
 public static class ModManagerUtils
 {
@@ -76,6 +77,19 @@ public static class ModManagerUtils
             Debug.LogError("DDS conversion failed!");
         }
     }
+
+    public static void ModSelectedKeyPress(int groupIndex, int modIndex)
+    {
+        List<VirtualKeyCode> virtualKeyCodes = new()
+        {
+            VirtualKeyCode.CLEAR
+        };
+        KeymapGroupIndex(virtualKeyCodes, groupIndex);
+        KeyPressSimulator.SimulateKey(virtualKeyCodes.ToArray());
+        KeymapModIndex(virtualKeyCodes, modIndex);
+        KeyPressSimulator.SimulateKey(virtualKeyCodes.ToArray());
+    }
+
 
 
     #region ImageProcessing
@@ -325,6 +339,303 @@ public static class ModManagerUtils
             }
         }
         return false;
+    }
+    #endregion
+
+
+    #region Simulate Keypress Keymapper
+    private static void KeymapGroupIndex(List<VirtualKeyCode> virtualKeys, int index)
+    {
+        switch (index)
+        {
+            case 1:
+                virtualKeys.Add(VirtualKeyCode.F13);// NO_RETURN NO_BACK
+                break;
+            case 2:
+                virtualKeys.Add(VirtualKeyCode.F14);
+                break;
+            case 3:
+                virtualKeys.Add(VirtualKeyCode.F15);
+                break;
+            case 4:
+                virtualKeys.Add(VirtualKeyCode.F16);
+                break;
+            case 5:
+                virtualKeys.Add(VirtualKeyCode.F17);
+                break;
+            case 6:
+                virtualKeys.Add(VirtualKeyCode.F18);
+                break;
+            case 7:
+                virtualKeys.Add(VirtualKeyCode.F19);
+                break;
+            case 8:
+                virtualKeys.Add(VirtualKeyCode.F20);
+                break;
+            case 9:
+                virtualKeys.Add(VirtualKeyCode.F21);
+                break;
+            case 10:
+                virtualKeys.Add(VirtualKeyCode.F22);
+                break;
+            case 11:
+                virtualKeys.Add(VirtualKeyCode.F23);
+                break;
+            case 12:
+                virtualKeys.Add(VirtualKeyCode.F24);
+                break;
+            case 13:
+                virtualKeys.Add(VirtualKeyCode.RETURN); //NO_BACK
+                virtualKeys.Add(VirtualKeyCode.F13);
+                break;
+            case 14:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F14);
+                break;
+            case 15:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F15);
+                break;
+            case 16:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F16);
+                break;
+            case 17:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F17);
+                break;
+            case 18:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F18);
+                break;
+            case 19:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F19);
+                break;
+            case 20:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F20);
+                break;
+            case 21:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F21);
+                break;
+            case 22:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F22);
+                break;
+            case 23:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F23);
+                break;
+            case 24:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.F24);
+                break;
+            case 25:
+                virtualKeys.Add(VirtualKeyCode.BACK); //NO RETURN
+                virtualKeys.Add(VirtualKeyCode.F13);
+                break;
+            case 26:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F14);
+                break;
+            case 27:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F15);
+                break;
+            case 28:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F16);
+                break;
+            case 29:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F17);
+                break;
+            case 30:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F18);
+                break;
+            case 31:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F19);
+                break;
+            case 32:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F20);
+                break;
+            case 33:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F21);
+                break;
+            case 34:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F22);
+                break;
+            case 35:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F23);
+                break;
+            case 36:
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F24);
+                break;
+            case 37:
+                virtualKeys.Add(VirtualKeyCode.RETURN); //no NO_
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F13);
+                break;
+            case 38:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F14);
+                break;
+            case 39:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F15);
+                break;
+            case 40:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F16);
+                break;
+            case 41:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F17);
+                break;
+            case 42:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F18);
+                break;
+            case 43:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F19);
+                break;
+            case 44:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F20);
+                break;
+            case 45:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F21);
+                break;
+            case 46:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F22);
+                break;
+            case 47:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F23);
+                break;
+            case 48:
+                virtualKeys.Add(VirtualKeyCode.RETURN);
+                virtualKeys.Add(VirtualKeyCode.BACK);
+                virtualKeys.Add(VirtualKeyCode.F24);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void KeymapModIndex(List<VirtualKeyCode> virtualKeys, int index)
+    {
+        switch (index)
+        {
+            case 0:
+                virtualKeys.Add(VirtualKeyCode.ESCAPE);
+                break;
+            case 1:
+                virtualKeys.Add(VirtualKeyCode.VK_1); //NO_RCONTROL NO_TAB
+                break;
+            case 2:
+                virtualKeys.Add(VirtualKeyCode.VK_2);
+                break;
+            case 3:
+                virtualKeys.Add(VirtualKeyCode.VK_3);
+                break;
+            case 4:
+                virtualKeys.Add(VirtualKeyCode.VK_4);
+                break;
+            case 5:
+                virtualKeys.Add(VirtualKeyCode.VK_5);
+                break;
+            case 6:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL); //NO_TAB
+                virtualKeys.Add(VirtualKeyCode.VK_1);
+                break;
+            case 7:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_2);
+                break;
+            case 8:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_3);
+                break;
+            case 9:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_4);
+                break;
+            case 10:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_5);
+                break;
+            case 11:
+                virtualKeys.Add(VirtualKeyCode.TAB); //NO_RCONTROL
+                virtualKeys.Add(VirtualKeyCode.VK_1);
+                break;
+            case 12:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_2);
+                break;
+            case 13:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_3);
+                break;
+            case 14:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_4);
+                break;
+            case 15:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_5);
+                break;
+            case 16:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL); //no NO_
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_1);
+                break;
+            case 17:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_2);
+                break;
+            case 18:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_3);
+                break;
+            case 19:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_4);
+                break;
+            case 20:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_5);
+                break;
+            default:
+                virtualKeys.Add(VirtualKeyCode.ESCAPE);
+                break;
+        }
     }
     #endregion
 }

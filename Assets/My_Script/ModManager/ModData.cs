@@ -12,4 +12,5 @@ public class GroupData
 {
     public string groupPath;
     public string[] modNames;
+    public int selectedModIndex = 0;
 }

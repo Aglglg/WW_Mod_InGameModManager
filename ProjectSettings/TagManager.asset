@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ModFixManager
   - InputSystem
+  - Panel
   layers:
   - Default
   - TransparentFX

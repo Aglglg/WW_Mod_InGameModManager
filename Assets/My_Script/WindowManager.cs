@@ -61,6 +61,8 @@ public class WindowManager : MonoBehaviour
     public static bool targetGamehWndFound = false;
     private bool windowIsHidden;
 
+    [SerializeField] private Camera mainCam;
+
     //Activated after done initialization
     private void Start()
     {
@@ -81,6 +83,7 @@ public class WindowManager : MonoBehaviour
                 {
                     targetGamehWnd = GetForegroundWindow();
                     QualitySettings.vSyncCount = 1;
+                    mainCam.enabled = true;
                     windowIsHidden = false;
 
                     ShowWindow(thisApphWnd, SW_SHOW);
@@ -100,7 +103,9 @@ public class WindowManager : MonoBehaviour
         {
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 10;
+            mainCam.enabled = false;
             windowIsHidden = true;
+
             ShowWindow(thisApphWnd, SW_HIDE);
             StartCoroutine(ToggleButtons(false));
         }

@@ -8,7 +8,7 @@ public class ModFixLogToUI : MonoBehaviour
     [SerializeField] private Scrollbar scrollbar;
 
     private string[] colors = new string[3]{
-        "#aaaaaa", // White
+        "#ffffff", // White
         "#ffdd33", // Yellow
         "#ff6666"  // Red
     };
