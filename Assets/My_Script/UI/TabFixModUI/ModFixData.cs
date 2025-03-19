@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
+public class ModFixList
+{
+    public List<string> fixesLink;
+}
+
+[Serializable]
 public class ModFixDataWrapper
 {
     public string title;

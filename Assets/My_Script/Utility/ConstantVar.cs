@@ -6,13 +6,14 @@ public static class ConstantVar
     public const string Link_GetSupportLink = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/supportlink.txt";
     public const string Link_GetSupportIcon = "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/Assets/My_Sprite/UI/IconDonate.png";
 
-    public static readonly string[] Link_PathModFixes = new string[4]{
-        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/Wuwa",
-        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/Genshin",
-        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/HSR",
-        "https://api.github.com/repos/Aglglg/WW_Mod_InGameModManager/contents/ModFixDatas/ZZZ"
+    public static readonly string[] Link_ListModFixes = new string[4]{
+        "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/Wuwa/!Wuwa_ModFixes_List.json",
+        "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/Genshin/!Genshin_ModFixes_List.json",
+        "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/HSR/!Hsr_ModFixes_List.json",
+        "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/ZZZ/!Zzz_ModFixes_List.json"
     };
-    public const string File_Fixes_Log = "LOG.json";
+
+    public const string File_Fixes_Log = "LOG.txt";
     public const string Path_Cached_Fixes = "cache_mod_fix";
     public const string Fix_Backup_Extension = "ini_managed_fix_backup";
     public const string Tag_ModFixManager = "ModFixManager";

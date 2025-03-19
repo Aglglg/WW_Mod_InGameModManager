@@ -269,7 +269,7 @@ public class TabModFixManager : MonoBehaviour
     #endregion
 
     #region Retrive fixes data
-    private async void GetFixesList()
+    private async void GetFixesList() //FIRST check fixes list from local or cloud
     {
         //Back/close button
         expandedGames[(int)selectedGame].GetComponentInChildren<Button>().interactable = false;
@@ -292,7 +292,7 @@ public class TabModFixManager : MonoBehaviour
         {
             // Download JSON files from GitHub
             textModFixLoadingInfo.text = "Downloading";
-            await DownloadJsonFiles(ConstantVar.Link_PathModFixes[(int)selectedGame]);
+            await DownloadJsonFixesListFile(ConstantVar.Link_ListModFixes[(int)selectedGame]);
             textModFixLoadingInfo.text = textInfoAfterLoading;
             InstantiateModFixPrefabs();
         }
@@ -300,7 +300,7 @@ public class TabModFixManager : MonoBehaviour
         expandedGames[(int)selectedGame].GetComponentInChildren<Button>().interactable = true;
     }
 
-    private async Task DownloadJsonFiles(string url)
+    private async Task DownloadJsonFixesListFile(string url) //SECOND, if local cache not found, check & download fixes list on cloud
     {
         UnityWebRequest request = UnityWebRequest.Get(url);
         request.SetRequestHeader("User-Agent", "UnityWebRequest");
@@ -313,29 +313,19 @@ public class TabModFixManager : MonoBehaviour
         }
         else
         {
-            string jsonResponse = request.downloadHandler.text;
-            await ProcessFileListAsync(jsonResponse);
+            string modFixListJson = request.downloadHandler.text;
+            ModFixList modFixList = JsonUtility.FromJson<ModFixList>(modFixListJson);
+
+            foreach (string modFixLink in modFixList.fixesLink)
+            {
+                await DownloadModFixJsonFileAsync(modFixLink);
+            }
         }
     }
 
-    private async Task ProcessFileListAsync(string jsonResponse)
+    private async Task DownloadModFixJsonFileAsync(string modFixLink)
     {
-        // Wrap the JSON array in an object to make it compatible with JsonUtility
-        string wrappedJson = "{\"items\":" + jsonResponse + "}";
-
-        // Deserialize the JSON
-        GitHubContentArrayWrapper wrapper = JsonUtility.FromJson<GitHubContentArrayWrapper>(wrappedJson);
-
-        // Access the deserialized data
-        foreach (var item in wrapper.items)
-        {
-            await DownloadJsonFileAsync(item);
-        }
-    }
-
-    private async Task DownloadJsonFileAsync(GitHubContent gitHubContent)
-    {
-        UnityWebRequest request = UnityWebRequest.Get(gitHubContent.download_url);
+        UnityWebRequest request = UnityWebRequest.Get(modFixLink);
         request.SetRequestHeader("User-Agent", "UnityWebRequest");
 
         await request.SendWebRequest();
@@ -354,11 +344,20 @@ public class TabModFixManager : MonoBehaviour
                 Directory.CreateDirectory(cachedDir);
             }
 
-            string filePath = Path.Join(cachedDir, gitHubContent.name);
+            string filePath = Path.Join(cachedDir, GetFileNameFromUrl(modFixLink));
             await WriteFileAsync(filePath, jsonContent);
             
             await LoadModFixAsync(filePath);
         }
+    }
+
+    private string GetFileNameFromUrl(string url)
+    {
+        Uri uri = new Uri(url);
+
+        string fileName = Path.GetFileName(uri.LocalPath);
+
+        return fileName;
     }
 
     private async Task WriteFileAsync(string filePath, string content)
@@ -424,19 +423,3 @@ public class TabModFixManager : MonoBehaviour
     }
     #endregion
 }
-
-[Serializable]
-public class GitHubContentArrayWrapper
-{
-    public GitHubContent[] items;
-}
-
-[Serializable]
-public class GitHubContent
-{
-    public string name;
-    public string type; // "dir" for folders, "file" for files
-    public string download_url;
-    public string path;
-}
-

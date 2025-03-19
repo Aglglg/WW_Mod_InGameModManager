@@ -51,19 +51,16 @@ public class TabModManager : MonoBehaviour
         {
             if(ModManagerUtils.CheckAndCreateBackgroundKeypressIni(templateBackgroundKeypress))
             {
-                Debug.Log("VALID BUT NEED RELOAD");
                 SetObjectsActiveState(false);
                 reloadManualInfo.SetActive(true);
             }
             else
             {
-                Debug.Log("VALID");
                 HandleValidModPath(modPathKey);
             }
         }
         else
         {
-            Debug.Log("INVALID");
             HandleInvalidModPath();
         }
     }
