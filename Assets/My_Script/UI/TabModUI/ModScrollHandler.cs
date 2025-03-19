@@ -416,7 +416,7 @@ public class ModScrollHandler : MonoBehaviour
             RawImage imageIcon = modTransform.GetChild(ImageMaskIconChildIndex).GetChild(ImageIconChildIndexInMaskTransform).GetComponent<RawImage>();
 
             imageIcon.gameObject.SetActive(true);
-            LoadDefaultImageIcon(imageIcon);
+            SetModIconIndividual(_currentTargetIndex);
             titleInputField.text = _currentSelectedGroup.modNames[_currentTargetIndex];
 
             reloadInfo.SetActive(true);
