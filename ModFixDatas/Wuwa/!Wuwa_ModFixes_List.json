@@ -1,7 +1,6 @@
 {
     "fixesLink": [
-      "link1",
-      "link2",
-      "link3"
+      "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/Wuwa/LOG.txt",
+      "https://raw.githubusercontent.com/Aglglg/WW_Mod_InGameModManager/refs/heads/main/ModFixDatas/Wuwa/wuwa%20fix%20ultra%20perf%20graphic.json"
     ]
 }
