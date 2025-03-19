@@ -118,6 +118,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ef9fe20f8e73484aa114035be9ed187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modFixData:
+    title: 
+    note: 
+    modFixType: 0
+    modFixGame: 0
   tabModFixManager: {fileID: 0}
   noteText: {fileID: 8928568589765046673}
   titleText: {fileID: 5066992606762878062}
@@ -156,10 +161,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4941952331913588412}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -80, y: -45.1}
-  m_SizeDelta: {x: -39.999996, y: -84.2}
+  m_SizeDelta: {x: 120, y: 21.800003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1780691201162270969
 CanvasRenderer:
@@ -533,10 +538,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4941952331913588412}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 80, y: -45.1}
-  m_SizeDelta: {x: -40, y: -84.19997}
+  m_SizeDelta: {x: 120, y: 21.800034}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5732186974698503928
 CanvasRenderer:
@@ -879,6 +884,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baaaa61ab8c24074b8d4ee1b193346ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modFixData:
+    title: 
+    note: 
+    modFixType: 0
+    modFixGame: 0
 --- !u!222 &3455759524862325528
 CanvasRenderer:
   m_ObjectHideFlags: 0
