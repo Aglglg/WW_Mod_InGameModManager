@@ -397,8 +397,18 @@ public class ModScrollHandler : MonoBehaviour
                 ToggleOperationInfo("Selected mod already on Managed folder, operation canceled");
                 return;
             }
+
+            //Apply modfix from this tool permanently, if user previously use the mod fix first before adding to be managed,
+            //Why? because user can accidentally revert fix and that'll break the managed system, because revert fix delete current managed ini
+            //and replace it with old ini (before managed, because user use mod fix first)
+            string[] filesFixBackup = FindIniFiles.FindIniFilesFixBackupRecursive(selectedModFolder[0]);
+            foreach (string backupFile in filesFixBackup)
+            {
+                File.Delete(backupFile);
+            }
+            
             //if selected mod folder already on "Mods" folder, move it, else, copy it.
-            else if(selectedModFolder[0].Contains(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName)))
+            if(selectedModFolder[0].Contains(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName)))
             {
                 Directory.Move(selectedModFolder[0], destinationModFolder);
             }
