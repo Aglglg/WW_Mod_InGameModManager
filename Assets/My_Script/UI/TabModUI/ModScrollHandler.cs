@@ -21,6 +21,7 @@ public class ModScrollHandler : MonoBehaviour
     
     [SerializeField] private UIManager uiManager;
     [SerializeField] private TabModFixManager tabModFixManager;
+    [SerializeField] private TabKeybindManager tabKeybindManager;
     
     [SerializeField] private GameObject reloadInfo;
     [SerializeField] private GameObject operationInfo;
@@ -478,6 +479,14 @@ public class ModScrollHandler : MonoBehaviour
     {
         tabModFixManager.modPathField.text = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex]);
         uiManager.ChangeTab((int)TabState.ModFix);
+    }
+
+    public void KeybindButton()
+    {
+        tabKeybindManager.modFolderPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex]);
+        tabKeybindManager.modGroup = _currentSelectedGroup.groupName;
+        tabKeybindManager.modName = _currentSelectedGroup.modNames[_currentTargetIndex];
+        uiManager.ChangeTab((int)TabState.Keybind);
     }
 
     public void RemoveModButton()
