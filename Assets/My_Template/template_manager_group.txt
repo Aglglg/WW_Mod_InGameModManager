@@ -63,7 +63,7 @@ key = NO_BACK VK_CLEAR RETURN F14
 $active_group_id = 14
 
 [KeyGroup15]
-key = NO_BACK VK_CLEAR RETURN F14
+key = NO_BACK VK_CLEAR RETURN F15
 $active_group_id = 15
 
 [KeyGroup16]
