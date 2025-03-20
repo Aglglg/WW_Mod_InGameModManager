@@ -14,8 +14,13 @@ public static class ModManagerUtils
 
     public static bool CheckAndCreateBackgroundKeypressIni(TextAsset backgroundKeypressIniTemplate)
     {
-        string backgroundKeypressIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-                                    ConstantVar.Managed_Path, ConstantVar.IniFile_BackgroundKeypress);
+        string managetPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Path);
+        string backgroundKeypressIniPath = Path.Combine(managetPath, ConstantVar.IniFile_BackgroundKeypress);
+        if(!Directory.Exists(managetPath))
+        {
+            Directory.CreateDirectory(managetPath);
+        }
+
         if(!File.Exists(backgroundKeypressIniPath))
         {
             string content = backgroundKeypressIniTemplate.text;

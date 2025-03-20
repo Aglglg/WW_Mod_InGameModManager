@@ -51,6 +51,7 @@ public class TabModManager : MonoBehaviour
         {
             if(ModManagerUtils.CheckAndCreateBackgroundKeypressIni(templateBackgroundKeypress))
             {
+                textInfo.SetActive(false);
                 SetObjectsActiveState(false);
                 reloadManualInfo.SetActive(true);
             }
@@ -96,6 +97,7 @@ public class TabModManager : MonoBehaviour
 
     private void HandleInvalidModPath()
     {
+        reloadManualInfo.SetActive(false);
         textInfo.SetActive(true);
         SetObjectsActiveState(false);
     }

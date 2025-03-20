@@ -42,6 +42,11 @@ public static class ConstantVar
     public const string PlayerPrefKey_Height = "Height";
     public const float Default_Height = 1015f;
 
+    //used with Initialization.gameName
+    public const string Prefix_PlayerPrefKey_KeyboardToggle = "KeyboardToggleWindow";
+    public const string Prefix_PlayerPrefKey_GamepadXToggle = "GamepadXToggleWindow";
+
+
     public const int Width_ModIcon = 216;
     public const int Height_ModIcon = 312;
     public const int WidthHeight_GroupIcon = 160;

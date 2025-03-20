@@ -12,8 +12,11 @@ public class TabSettingManager : MonoBehaviour
     [SerializeField] private Transform backgroundPanel;
     [SerializeField] private Image backgroundFillImage;
     [SerializeField] private TMP_InputField modPathField;
+    [SerializeField] private TMP_Dropdown dropdownKey;
+    [SerializeField] private TMP_Dropdown dropdownKeyGamepad;
     [SerializeField] private Slider opacitySlider;
     [SerializeField] private Slider scaleSlider;
+    [SerializeField] private TextMeshProUGUI textVersion;
 
 
     [Header("\n\nSUPPORT")]
@@ -28,6 +31,7 @@ public class TabSettingManager : MonoBehaviour
 
     private void OnEnable()
     {
+        textVersion.text = "v"+Application.version;
         StartCoroutine(LoadSupportImage());
         StartCoroutine(LoadSupportLink());
 
@@ -48,6 +52,11 @@ public class TabSettingManager : MonoBehaviour
     //Called from UIManager
     public void LoadSetting()
     {
+        dropdownKey.value = PlayerPrefs.GetInt(ConstantVar.Prefix_PlayerPrefKey_KeyboardToggle + Initialization.gameName);
+        dropdownKeyGamepad.value = PlayerPrefs.GetInt(ConstantVar.Prefix_PlayerPrefKey_GamepadXToggle + Initialization.gameName);
+        KeyToggleWindow.keyToggleWindow = dropdownKey.value;
+        KeyToggleWindow.gamepadXKeyToggleWindow = dropdownKeyGamepad.value;
+
         if(PlayerPrefs.HasKey(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName))
         {
             modPathField.text = PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName);
@@ -100,6 +109,20 @@ public class TabSettingManager : MonoBehaviour
     private void SaveModPath()
     {
         PlayerPrefs.SetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName, modPathField.text);
+    }
+    #endregion
+
+    #region KEY TOGGLE
+    public void OnValueChangedKeyboardToggle(int value)
+    {
+        PlayerPrefs.SetInt(ConstantVar.Prefix_PlayerPrefKey_KeyboardToggle + Initialization.gameName, value);
+        KeyToggleWindow.keyToggleWindow = value;
+    }
+
+    public void OnValueChangedGamepadXToggle(int value)
+    {
+        PlayerPrefs.SetInt(ConstantVar.Prefix_PlayerPrefKey_GamepadXToggle + Initialization.gameName, value);
+        KeyToggleWindow.gamepadXKeyToggleWindow = value;
     }
     #endregion
 
