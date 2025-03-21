@@ -264,55 +264,24 @@ public class GroupScrollHandler : MonoBehaviour
         {
             groupName = groupName,
             groupPath = groupPath,
-            modNames = new[]
+            modNames = new()
             {
-                "NoneButton",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty"
+                "NoneButton"
             },
-            modFolders = new[]
+            modFolders = new()
             {
-                "NoneButton",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty",
-                "Empty"
+                "NoneButton"
             }
         };
+        
+        while(newGroupData.modFolders.Count < ConstantVar.Total_MaxModPerGroup)
+        {
+            newGroupData.modFolders.Add("Empty");
+        }
+        while(newGroupData.modNames.Count < ConstantVar.Total_MaxModPerGroup)
+        {
+            newGroupData.modNames.Add("Empty");
+        }
 
         TabModManager.modData.groupDatas.Add(newGroupData);
         ModManagerUtils.SaveManagedModData();
@@ -446,6 +415,28 @@ public class GroupScrollHandler : MonoBehaviour
             string content = groupManagerIniTemplate.text;
             File.WriteAllText(groupManagerIniPath, content);
             reloadInfo.SetActive(true);
+        }
+    }
+
+    //Called from TabModManager if data loaded
+    public void EnsureGroupManagerIniLatestVersion()
+    {
+        string groupManagerIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
+                                    ConstantVar.Managed_Path, ConstantVar.IniFile_GroupManager);
+        if(File.Exists(groupManagerIniPath))
+        {
+            string firstLine = "";
+            using (StreamReader reader = new StreamReader(groupManagerIniPath))
+            {
+                firstLine = reader.ReadLine();
+            }
+
+            if(!firstLine.Contains(Application.version))
+            {
+                string content = groupManagerIniTemplate.text;
+                File.WriteAllText(groupManagerIniPath, content);
+                reloadInfo.SetActive(true);
+            }   
         }
     }
     #endregion

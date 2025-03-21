@@ -215,7 +215,7 @@ public class ModScrollHandler : MonoBehaviour
             titleInputField.text = "Empty";
         }
 
-        for (int i = 0; i < _currentSelectedGroup.modFolders.Length; i++)
+        for (int i = 0; i < _currentSelectedGroup.modFolders.Count; i++)
         {
             if(i == 0) continue; //None Button
             if(_currentSelectedGroup.modFolders[i] == "Empty") continue; //Empty
@@ -235,7 +235,7 @@ public class ModScrollHandler : MonoBehaviour
             imageIcon.gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < _currentSelectedGroup.modFolders.Length; i++)
+        for (int i = 0; i < _currentSelectedGroup.modFolders.Count; i++)
         {
             if(i == 0) continue; //None Button
             if(_currentSelectedGroup.modFolders[i] == "Empty") continue; //Empty
@@ -571,6 +571,33 @@ public class ModScrollHandler : MonoBehaviour
                             Replace("{group_x}", Path.GetFileName(_currentSelectedGroup.groupPath));
             File.WriteAllText(groupIniPath, content);
         }
+    }
+
+    //Called from TabModManager if data loaded
+    public void EnsureGroupIniLatestVersion()
+    {
+        bool changed = false;
+        foreach (var item in TabModManager.modData.groupDatas)
+        {
+            string groupIniPath = Path.Combine(item.groupPath, ConstantVar.IniFile_Group.Replace("{group_x}", Path.GetFileName(item.groupPath)));
+            if(File.Exists(groupIniPath))
+            {
+                string firstLine = "";
+                using (StreamReader reader = new StreamReader(groupIniPath))
+                {
+                    firstLine = reader.ReadLine();
+                }
+
+                if(!firstLine.Contains(Application.version))
+                {
+                    string content = groupIniTemplate.text.Replace("{x}", Path.GetFileName(item.groupPath).TrimStart("group_".ToCharArray())).
+                            Replace("{group_x}", Path.GetFileName(item.groupPath));
+                    File.WriteAllText(groupIniPath, content);
+                    changed = true;
+                }
+            }
+        }
+        if(changed)reloadInfo.SetActive(true);
     }
     #endregion
 

@@ -8,6 +8,7 @@ public class TabModManager : MonoBehaviour
 
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GroupScrollHandler groupScrollHandler;
+    [SerializeField] private ModScrollHandler modScrollHandler;
     [SerializeField] private GameObject textInfo;
     [SerializeField] private GameObject reloadInfo;
     [SerializeField] private GameObject reloadManualInfo;
@@ -127,6 +128,8 @@ public class TabModManager : MonoBehaviour
         }
 
         groupScrollHandler.InstantiateGroup();
+        groupScrollHandler.EnsureGroupManagerIniLatestVersion();
+        modScrollHandler.EnsureGroupIniLatestVersion();
         _modDataWasLoaded = true;
     }
 
@@ -142,6 +145,27 @@ public class TabModManager : MonoBehaviour
     {
         string jsonData = File.ReadAllText(jsonPath);
         modData = JsonUtility.FromJson<ModData>(jsonData);
+        EnsureModDataCompatibleWithLatestVersion();
+    }
+
+    private void EnsureModDataCompatibleWithLatestVersion()
+    {
+        bool changed = false;
+        foreach (var item in modData.groupDatas)
+        {
+            if(item.groupName == "AddButton") continue;
+            while(item.modFolders.Count < ConstantVar.Total_MaxModPerGroup)
+            {
+                changed = true;
+                item.modFolders.Add("Empty");
+            }
+            while(item.modNames.Count < ConstantVar.Total_MaxModPerGroup)
+            {
+                changed = true;
+                item.modNames.Add("Empty");
+            }
+        }
+        if(changed) ModManagerUtils.SaveManagedModData();
     }
 
     private void CreateNewModData(string jsonPath)
@@ -150,8 +174,8 @@ public class TabModManager : MonoBehaviour
         {
             groupName = "AddButton",
             groupPath = "AddButton",
-            modNames = new string[]{},
-            modFolders = new string[]{},
+            modNames = new(),
+            modFolders = new(),
         };
 
         modData = new ModData

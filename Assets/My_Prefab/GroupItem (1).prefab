@@ -263,8 +263,8 @@ GameObject:
   - component: {fileID: 6642822015100933322}
   - component: {fileID: 4741470849025258158}
   m_Layer: 5
-  m_Name: InputFieldGroupName
-  m_TagString: Untagged
+  m_Name: '@InputFieldGroupName'
+  m_TagString: ModNGroupInputField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -19,9 +19,11 @@ public static class ConstantVar
     public const string Tag_ModFixManager = "ModFixManager";
     public const string Tag_InputSystem = "InputSystem";
     public const string Tag_Panel = "Panel";
+    public const string ModNGroup_InputFieldTag = "ModNGroupInputField";
 
     public const int Total_MaxGroup = 49; //Actually 48, but 0 index is reserved for Add group button
-    public const string ModsFolder_ValidSuffix = "mi\\mods";
+    public const int Total_MaxModPerGroup = 41; //Actually 40
+    public const string ModsFolder_ValidSuffix = "\\mods";
     public const string ModData_Json_File = "moddata.json";
     public const string ModData_Icon_File = "icon.dds";
     public const string Managed_Path = "MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT";

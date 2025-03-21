@@ -181,14 +181,14 @@ public class WindowManager : MonoBehaviour
             yield return null;
             foreach (Selectable button in selectables)
             {
-                button.interactable = true;
+                if(button.gameObject.tag != ConstantVar.ModNGroup_InputFieldTag) button.interactable = true; 
             }
         }
         else
         {
             foreach (Selectable button in selectables)
             {
-                button.interactable = false;
+                if(button.gameObject.tag != ConstantVar.ModNGroup_InputFieldTag) button.interactable = false;
             }
         }
     }

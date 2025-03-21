@@ -1,3 +1,4 @@
+;v1.2.0
 namespace = modmanageragl\group_manager
 
 [Constants]

@@ -197,8 +197,6 @@ public static class ModManagerUtils
         var lines = File.ReadAllLines(filePath);
         var modifiedLines = new List<string>();
         string currentSection = null;
-        modifiedLines.Add("[Constants]");
-        modifiedLines.Add($"global $managed_slot_id = {slotId}\n");
 
         foreach (var line in lines)
         {
@@ -265,6 +263,10 @@ public static class ModManagerUtils
                 }
             }
         }
+
+        //Add on bottom in case a mod use namespace. Namespace must be on top. so to make sure it doesnt interfere, it is written on bottom.
+        modifiedLines.Add("[Constants]");
+        modifiedLines.Add($"global $managed_slot_id = {slotId}\n");
 
         // Write the modified lines back to the file
         File.WriteAllLines(filePath, modifiedLines);
@@ -662,6 +664,86 @@ public static class ModManagerUtils
                 virtualKeys.Add(VirtualKeyCode.RCONTROL);
                 virtualKeys.Add(VirtualKeyCode.TAB);
                 virtualKeys.Add(VirtualKeyCode.VK_5);
+                break;
+            case 21:
+                virtualKeys.Add(VirtualKeyCode.VK_Z); //NO_RCONTROL NO_TAB
+                break;
+            case 22:
+                virtualKeys.Add(VirtualKeyCode.VK_X);
+                break;
+            case 23:
+                virtualKeys.Add(VirtualKeyCode.VK_C);
+                break;
+            case 24:
+                virtualKeys.Add(VirtualKeyCode.VK_V);
+                break;
+            case 25:
+                virtualKeys.Add(VirtualKeyCode.VK_B);
+                break;
+            case 26:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL); //NO_TAB
+                virtualKeys.Add(VirtualKeyCode.VK_Z);
+                break;
+            case 27:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_X);
+                break;
+            case 28:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_C);
+                break;
+            case 29:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_V);
+                break;
+            case 30:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.VK_B);
+                break;
+            case 31:
+                virtualKeys.Add(VirtualKeyCode.TAB); //NO_RCONTROL
+                virtualKeys.Add(VirtualKeyCode.VK_Z);
+                break;
+            case 32:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_X);
+                break;
+            case 33:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_C);
+                break;
+            case 34:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_V);
+                break;
+            case 35:
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_B);
+                break;
+            case 36:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL); //no NO_
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_Z);
+                break;
+            case 37:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_X);
+                break;
+            case 38:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_C);
+                break;
+            case 39:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_V);
+                break;
+            case 40:
+                virtualKeys.Add(VirtualKeyCode.RCONTROL);
+                virtualKeys.Add(VirtualKeyCode.TAB);
+                virtualKeys.Add(VirtualKeyCode.VK_B);
                 break;
             default:
                 virtualKeys.Add(VirtualKeyCode.ESCAPE);
