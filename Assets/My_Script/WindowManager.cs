@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -48,6 +49,10 @@ public class WindowManager : MonoBehaviour
     [DllImport("user32.dll")]
     private static extern IntPtr SetFocus(IntPtr hWnd);
 
+    //custom from rust
+    [DllImport("rust_get_process_pid_from_modmanager", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int get_pid_by_name(string process_name);
+
 
     private const int GWL_EXSTYLE = -20;
     private const uint WS_EX_LAYERED = 0x00080000;
@@ -76,27 +81,31 @@ public class WindowManager : MonoBehaviour
         #if !UNITY_EDITOR
         if (windowIsHidden)
         {
-            string activeWindow = GetActiveWindowTitle();
-            if (!string.IsNullOrEmpty(activeWindow))
+            if(!targetGamehWndFound)
             {
-                if(activeWindow.Contains(Initialization.gameName))
+                int targetGamePid = get_pid_by_name(Initialization.gameName);
+                if(targetGamePid != -1)
                 {
-                    targetGamehWnd = GetForegroundWindow();
-                    QualitySettings.vSyncCount = 1;
-                    mainCam.enabled = true;
-                    windowIsHidden = false;
-
-                    ShowWindow(thisApphWnd, SW_SHOW);
-
-                    SetWindowLong(thisApphWnd, GWL_EXSTYLE, WS_EX_LAYERED);
-                    var sim = new InputSimulator();
-                    sim.Mouse.LeftButtonClick();
-
-                    StartCoroutine(CheckCurrentActiveWindow());
-                    StartCoroutine(SetClickthrough());
-                    if(!targetGamehWndFound) StartCoroutine(SetTargetWindowIsFound());
-                    StartCoroutine(ToggleButtons(true));
+                    targetGamehWnd = Process.GetProcessById(targetGamePid).MainWindowHandle;
                 }
+            }
+            
+            if(GetForegroundWindow() == targetGamehWnd)
+            {
+                QualitySettings.vSyncCount = 1;
+                mainCam.enabled = true;
+                windowIsHidden = false;
+
+                ShowWindow(thisApphWnd, SW_SHOW);
+
+                SetWindowLong(thisApphWnd, GWL_EXSTYLE, WS_EX_LAYERED);
+                var sim = new InputSimulator();
+                sim.Mouse.LeftButtonClick();
+
+                StartCoroutine(CheckCurrentActiveWindow());
+                StartCoroutine(SetClickthrough());
+                if(!targetGamehWndFound) StartCoroutine(SetTargetWindowIsFound());
+                StartCoroutine(ToggleButtons(true));
             }
         }
         else
@@ -110,37 +119,36 @@ public class WindowManager : MonoBehaviour
             StartCoroutine(ToggleButtons(false));
         }
         #endif
-        
     }
 
-    public static void ForceFocusWindow(bool isThisApp)//Used when simulating input, currently not used
-    {
-        IntPtr selectedHwnd = isThisApp ? thisApphWnd : targetGamehWnd;
+    // public static void ForceFocusWindow(bool isThisApp)//Used when simulating input, currently not used
+    // {
+    //     IntPtr selectedHwnd = isThisApp ? thisApphWnd : targetGamehWnd;
 
-        // Get the current thread ID
-        uint currentThreadId = GetCurrentThreadId();
+    //     // Get the current thread ID
+    //     uint currentThreadId = GetCurrentThreadId();
 
-        // Get the thread ID of the window
-        uint windowThreadId = GetWindowThreadProcessId(selectedHwnd, IntPtr.Zero);
+    //     // Get the thread ID of the window
+    //     uint windowThreadId = GetWindowThreadProcessId(selectedHwnd, IntPtr.Zero);
 
-        // Attach the input processing mechanism of the current thread to the window's thread
-        if (currentThreadId != windowThreadId)
-        {
-            AttachThreadInput(currentThreadId, windowThreadId, true);
-        }
+    //     // Attach the input processing mechanism of the current thread to the window's thread
+    //     if (currentThreadId != windowThreadId)
+    //     {
+    //         AttachThreadInput(currentThreadId, windowThreadId, true);
+    //     }
 
-        // Set the window to the foreground
-        SetForegroundWindow(selectedHwnd);
+    //     // Set the window to the foreground
+    //     SetForegroundWindow(selectedHwnd);
 
-        // Set focus to the window
-        SetFocus(selectedHwnd);
+    //     // Set focus to the window
+    //     SetFocus(selectedHwnd);
 
-        // Detach the input processing mechanism
-        if (currentThreadId != windowThreadId)
-        {
-            AttachThreadInput(currentThreadId, windowThreadId, false);
-        }
-    }
+    //     // Detach the input processing mechanism
+    //     if (currentThreadId != windowThreadId)
+    //     {
+    //         AttachThreadInput(currentThreadId, windowThreadId, false);
+    //     }
+    // }
 
 
 
@@ -159,17 +167,11 @@ public class WindowManager : MonoBehaviour
         #endif
     }
 
-    private string GetActiveWindowTitle()
-    {
-        IntPtr hWnd = GetForegroundWindow();
-        if (hWnd == IntPtr.Zero)
-            return null;
-
-        StringBuilder title = new StringBuilder(256);
-        GetWindowText(hWnd, title, title.Capacity);
-        
-        return title.Length > 0 ? title.ToString() : null;
-    }
+    // private IntPtr CheckActiveWindow()
+    // {
+    //     IntPtr hWnd = GetForegroundWindow();
+    //     return 
+    // }
 
     private IEnumerator ToggleButtons(bool isActive)
     {
@@ -195,17 +197,14 @@ public class WindowManager : MonoBehaviour
     {
         while (!windowIsHidden)
         {
-            string activeWindow = GetActiveWindowTitle();
-            if (!string.IsNullOrEmpty(activeWindow))
+            IntPtr currentActiveWindowHandle = GetForegroundWindow();
+            if(currentActiveWindowHandle == targetGamehWnd || currentActiveWindowHandle == thisApphWnd)
             {
-                if(activeWindow.Contains(Initialization.gameName) || activeWindow.Contains(Application.productName))
-                {
 
-                }
-                else
-                {
-                    ToggleWindow();
-                }
+            }
+            else
+            {
+                ToggleWindow();
             }
             yield return null;
         }

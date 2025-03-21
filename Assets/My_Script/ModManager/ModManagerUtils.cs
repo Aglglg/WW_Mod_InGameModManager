@@ -225,13 +225,22 @@ public static class ModManagerUtils
                     modifiedLines.Add($"if {modifiedManagedSlotCondition}");
                 }
             }
-            else if (!string.IsNullOrEmpty(trimmedLine) && !ShouldExcludeSection(currentSection))
+            else if (!string.IsNullOrEmpty(trimmedLine))
             {
-                modifiedLines.Add(line);
+                // Ensure we only check exclusions if we're inside a valid section
+                if (currentSection != null && !ShouldExcludeSection(currentSection))
+                {
+                    modifiedLines.Add(line);
+                }
+                else
+                {
+                    // If the line is outside a section, keep it as it is
+                    modifiedLines.Add(line);
+                }
             }
             else
             {
-                // Add the line as-is (empty lines or excluded sections)
+                // Add empty lines as they are
                 modifiedLines.Add(line);
             }
         }
@@ -263,10 +272,14 @@ public static class ModManagerUtils
 
     private static bool ShouldExcludeSection(string section)
     {
+        // Ensure section is not null to avoid NullReferenceException
+        if (string.IsNullOrEmpty(section))
+            return true; // Treat lines outside sections as excluded
+
         // Exclude sections starting with Constants, Resource, or Key
         return section.StartsWith("Constants", StringComparison.OrdinalIgnoreCase) ||
-               section.StartsWith("Resource", StringComparison.OrdinalIgnoreCase) ||
-               section.StartsWith("Key", StringComparison.OrdinalIgnoreCase);
+            section.StartsWith("Resource", StringComparison.OrdinalIgnoreCase) ||
+            section.StartsWith("Key", StringComparison.OrdinalIgnoreCase);
     }
     #endregion
 
