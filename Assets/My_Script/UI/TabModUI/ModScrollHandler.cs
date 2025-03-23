@@ -56,7 +56,16 @@ public class ModScrollHandler : MonoBehaviour
 
     public void SelectModButton()
     {
-        ModManagerUtils.ModSelectedKeyPress(TabModManager.modData.groupDatas.IndexOf(_currentSelectedGroup), _currentTargetIndex);
+        string groupFolderName = Path.GetFileName(_currentSelectedGroup.groupPath);
+        string[] parts = groupFolderName.Split('_');
+
+        if (parts.Length <= 1 || !int.TryParse(parts[1], out int groupIndex))
+        {
+            ToggleOperationInfo("Cannot determine group index, mod data might be corrupted/edited");
+            return;
+        }
+
+        ModManagerUtils.ModSelectedKeyPress(groupIndex, _currentTargetIndex);
         _currentSelectedGroup.selectedModIndex = _currentTargetIndex;
         ModManagerUtils.SaveManagedModData();
         
@@ -382,6 +391,15 @@ public class ModScrollHandler : MonoBehaviour
             return;
         }
 
+        if(selectedModFolder[0].Contains(ConstantVar.Managed_Path))
+        {
+            ToggleOperationInfo("Selected mod already on Managed folder, operation canceled");
+            return;
+        }
+
+        //If somehow user add mod folder, but that mod folder already managed from previous ver
+        ModManagerUtils.RevertManagedMod(selectedModFolder[0]);
+        
         CheckAndCreateGroupIni();
 
         string destinationModFolder = Path.Combine(_currentSelectedGroup.groupPath, Path.GetFileName(selectedModFolder[0]));
@@ -393,12 +411,6 @@ public class ModScrollHandler : MonoBehaviour
 
         try
         {
-            if(selectedModFolder[0].Contains(ConstantVar.Managed_Path))
-            {
-                ToggleOperationInfo("Selected mod already on Managed folder, operation canceled");
-                return;
-            }
-
             //Apply modfix from this tool permanently, if user previously use the mod fix first before adding to be managed,
             //Why? because user can accidentally revert fix and that'll break the managed system, because revert fix delete current managed ini
             //and replace it with old ini (before managed, because user use mod fix first)

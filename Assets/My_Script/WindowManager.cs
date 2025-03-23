@@ -14,6 +14,8 @@ public class WindowManager : MonoBehaviour
     [Header("This by default disabled, enabled automatically after Initialization script")]
     [SerializeField] private bool unusedBool;
 
+    [SerializeField] private Button dummyButtonBlockRaycast;
+
 
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
@@ -105,7 +107,7 @@ public class WindowManager : MonoBehaviour
                 StartCoroutine(CheckCurrentActiveWindow());
                 StartCoroutine(SetClickthrough());
                 if(!targetGamehWndFound) StartCoroutine(SetTargetWindowIsFound());
-                StartCoroutine(ToggleButtons(true));
+                StartCoroutine(DisableDummyButtons(true));
             }
         }
         else
@@ -116,7 +118,7 @@ public class WindowManager : MonoBehaviour
             windowIsHidden = true;
 
             ShowWindow(thisApphWnd, SW_HIDE);
-            StartCoroutine(ToggleButtons(false));
+            StartCoroutine(DisableDummyButtons(false));
         }
         #endif
     }
@@ -173,23 +175,17 @@ public class WindowManager : MonoBehaviour
     //     return 
     // }
 
-    private IEnumerator ToggleButtons(bool isActive)
+    private IEnumerator DisableDummyButtons(bool isShowWindow)
     {
-        Selectable[] selectables = FindObjectsByType<Selectable>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        if(isActive)
+        //If window activated
+        if(isShowWindow)
         {
             yield return null;
-            foreach (Selectable button in selectables)
-            {
-                if(button.gameObject.tag != ConstantVar.ModNGroup_InputFieldTag) button.interactable = true; 
-            }
+            dummyButtonBlockRaycast.gameObject.SetActive(false);
         }
         else
         {
-            foreach (Selectable button in selectables)
-            {
-                if(button.gameObject.tag != ConstantVar.ModNGroup_InputFieldTag) button.interactable = false;
-            }
+            dummyButtonBlockRaycast.gameObject.SetActive(true);
         }
     }
 
@@ -210,7 +206,7 @@ public class WindowManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SetClickthrough()//Not used for now
+    private IEnumerator SetClickthrough()
     {
         while(!windowIsHidden)
         {

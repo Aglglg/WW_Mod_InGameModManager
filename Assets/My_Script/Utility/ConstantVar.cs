@@ -17,16 +17,13 @@ public static class ConstantVar
     public const string Path_Cached_Fixes = "cache_mod_fix";
     public const string Fix_Backup_Extension = "ini_managed_fix_backup";
     public const string Tag_ModFixManager = "ModFixManager";
-    public const string Tag_InputSystem = "InputSystem";
-    public const string Tag_Panel = "Panel";
-    public const string ModNGroup_InputFieldTag = "ModNGroupInputField";
 
     public const int Total_MaxGroup = 49; //Actually 48, but 0 index is reserved for Add group button
     public const int Total_MaxModPerGroup = 41; //Actually 40
     public const string ModsFolder_ValidSuffix = "\\mods";
     public const string ModData_Json_File = "moddata.json";
     public const string ModData_Icon_File = "icon.dds";
-    public const string Managed_Path = "MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT";
+    public const string Managed_Path = "V1_3_x_MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT";
     public const string Removed_Path = "DISABLED_MANAGED_REMOVED";
     public const string Managed_Backup_Extension = "ini_managed_backup";
     public const string IniFile_GroupManager = "manager_group.ini";

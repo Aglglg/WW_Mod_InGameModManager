@@ -48,8 +48,11 @@ public static class ModManagerUtils
         foreach (string iniFile in iniFiles)
         {
             string backupFile = Path.ChangeExtension(iniFile, ConstantVar.Managed_Backup_Extension);
-            File.Copy(iniFile, backupFile);
-
+            if(!File.Exists(backupFile))
+            {
+                File.Copy(iniFile, backupFile);
+            }
+            
             ModifyIniFile(iniFile, groupFolderName, modIndex);
             ModifyIniFileKey(iniFile, groupFolderName);
         }
@@ -281,7 +284,14 @@ public static class ModManagerUtils
         // Exclude sections starting with Constants, Resource, or Key
         return section.StartsWith("Constants", StringComparison.OrdinalIgnoreCase) ||
             section.StartsWith("Resource", StringComparison.OrdinalIgnoreCase) ||
-            section.StartsWith("Key", StringComparison.OrdinalIgnoreCase);
+            section.StartsWith("Key", StringComparison.OrdinalIgnoreCase) ||
+            
+            (section.StartsWith("Shader", StringComparison.OrdinalIgnoreCase) &&
+             (section.EndsWith(".InsertDeclarations") ||
+              section.EndsWith(".Pattern") ||
+              section.EndsWith(".Replace")
+             )
+            );
     }
     #endregion
 

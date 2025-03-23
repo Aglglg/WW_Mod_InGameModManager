@@ -243,6 +243,37 @@ public class GroupScrollHandler : MonoBehaviour
         }
     }
 
+    public void ReorderGroup(bool toLeft)
+    {
+        if(toLeft)
+        {
+            if(_currentTargetIndex == 1) return;
+        }
+        else
+        {
+            if(_currentTargetIndex == TabModManager.modData.groupDatas.Count -1) return;
+        }
+        
+        int targetIndex = toLeft ? _currentTargetIndex - 1 : _currentTargetIndex + 1;
+
+        GameObject currentGroupObject = Instantiate(simpleScrollSnap.Panels[_currentTargetIndex].gameObject);
+        currentGroupObject.name = currentGroupObject.name.Replace("(Clone)", "");
+        GroupData currentGroupData = TabModManager.modData.groupDatas[_currentTargetIndex];
+
+        simpleScrollSnap.Remove(_currentTargetIndex);
+        TabModManager.modData.groupDatas.RemoveAt(_currentTargetIndex);
+
+        simpleScrollSnap.Add(currentGroupObject, targetIndex);
+        TabModManager.modData.groupDatas.Insert(targetIndex, currentGroupData);
+
+        Destroy(currentGroupObject);
+
+        ModManagerUtils.SaveManagedModData();
+        simpleScrollSnap.GoToPanel(targetIndex);
+        _currentTargetIndex = targetIndex; //To make sure, incase OnPanelCentered not called
+        ToggleOperationInfo("Group re-ordered");
+    }
+
     //Called from context menu buttons & add group button
     public void AddGroupButton()
     {
