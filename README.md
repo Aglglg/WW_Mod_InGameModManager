@@ -29,7 +29,7 @@ This tool supports **mouse**, **keyboard**, and **gamepad (XInput)** inputs for 
 4. **Shift + Right Click** on the .bat file and select **Copy as Path**.
 5. **Open XXMI Launcher** → Select your game → **Settings → Advanced**.
 6. Enable **Run Pre-Launch** and paste the copied path into this field.
-   - If another program (e.g., ReShade) is already using this field, separate them using `&&` (e.g., `"path/to/reshade" && "path/to/modmanager"`).
+   - If another program (e.g., ReShade) is already using this field, separate them using `&` (e.g., `"..\..\ReShade\XXMI-ReShade-Extension.vbs" ww & "D:\Mods_GachaGames\Tool_InGameModManager\WUWA_modmanager.bat"`).
 7. **Launch the game** via XXMI.
 8. **Press F5** in-game to open the Mod Manager. You can change this key on **Setting** tab.
 9. **Set your Mods folder path** in the **Settings** tab.
@@ -114,6 +114,6 @@ Special thanks to:
 - **Jason (Ko-Fi Supporters)**
 - **HuanJue** – For reporting some bug & give detailed explanation.
 - **IverinNova** – Helped with Chinese game version compatibility & testing more on compatibility issues.
-- **All bug reporters & supporters!** ❤️
+- **All bug reporters, testers version v1.2.0 and below, and supporters!** ❤️
 
 ---
