@@ -182,6 +182,7 @@ public class WindowManager : MonoBehaviour
         {
             yield return null;
             dummyButtonBlockRaycast.gameObject.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(null);
         }
         else
         {

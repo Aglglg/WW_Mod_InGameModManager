@@ -66,7 +66,7 @@ public class TabKeybindManager : MonoBehaviour
 
     private void GetIniFiles(string modPath)
     {
-        iniFiles = FindIniFiles.FindIniFilesRecursive(modPath);
+        iniFiles = FindIniFiles.FindIniFilesRecursiveExcludeDisabled(modPath);
 
         for (int i = 0; i < iniFiles.Length; i++)
         {

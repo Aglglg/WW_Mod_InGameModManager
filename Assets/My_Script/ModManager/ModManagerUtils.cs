@@ -287,9 +287,9 @@ public static class ModManagerUtils
             section.StartsWith("Key", StringComparison.OrdinalIgnoreCase) ||
             
             (section.StartsWith("Shader", StringComparison.OrdinalIgnoreCase) &&
-             (section.EndsWith(".InsertDeclarations") ||
-              section.EndsWith(".Pattern") ||
-              section.EndsWith(".Replace")
+             (section.EndsWith(".InsertDeclarations", StringComparison.OrdinalIgnoreCase) ||
+              section.EndsWith(".Pattern", StringComparison.OrdinalIgnoreCase) ||
+              section.EndsWith(".Replace", StringComparison.OrdinalIgnoreCase)
              )
             );
     }

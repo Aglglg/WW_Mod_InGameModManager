@@ -13,6 +13,14 @@ public static class FindIniFiles
         return iniFiles;
     }
 
+    public static string[] FindIniFilesRecursiveExcludeDisabled(string mainFolder)
+    {
+        string[] iniFiles = Directory.GetFiles(mainFolder, "*.ini", SearchOption.AllDirectories)
+                            .Where(file => !file.EndsWith("desktop.ini", StringComparison.OrdinalIgnoreCase) && !Path.GetFileName(file).StartsWith("disabled", StringComparison.OrdinalIgnoreCase))
+                            .ToArray();
+        return iniFiles;
+    }
+
     public static string[] FindIniFilesFixBackupRecursive(string mainFolder)
     {
         string[] iniFilesFixBackup = Directory.GetFiles(mainFolder, $"*.{ConstantVar.Fix_Backup_Extension}", SearchOption.AllDirectories);
