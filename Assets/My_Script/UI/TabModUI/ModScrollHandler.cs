@@ -600,10 +600,10 @@ public class ModScrollHandler : MonoBehaviour
                     firstLine = reader.ReadLine();
                 }
 
-                if(!firstLine.Contains(Application.version))
+                if(firstLine.Trim() != $";v{Application.version}")
                 {
                     string content = groupIniTemplate.text.Replace("{x}", Path.GetFileName(item.groupPath).TrimStart("group_".ToCharArray())).
-                            Replace("{group_x}", Path.GetFileName(item.groupPath));
+                            Replace("{group_x}", Path.GetFileName(item.groupPath)).Replace(";vx.x.x", $";v{Application.version}");
                     File.WriteAllText(groupIniPath, content);
                     changed = true;
                 }

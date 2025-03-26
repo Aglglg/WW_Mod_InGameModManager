@@ -1,4 +1,4 @@
-;v1.3.1
+;vx.x.x
 namespace = modmanageragl\group_manager
 
 [Constants]

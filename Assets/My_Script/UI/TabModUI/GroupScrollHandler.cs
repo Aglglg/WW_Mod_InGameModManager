@@ -462,9 +462,9 @@ public class GroupScrollHandler : MonoBehaviour
                 firstLine = reader.ReadLine();
             }
 
-            if(!firstLine.Contains(Application.version))
+            if(firstLine.Trim() != $";v{Application.version}")
             {
-                string content = groupManagerIniTemplate.text;
+                string content = groupManagerIniTemplate.text.Replace(";vx.x.x", $";v{Application.version}");
                 File.WriteAllText(groupManagerIniPath, content);
                 reloadInfo.SetActive(true);
             }   

@@ -73,6 +73,8 @@ public class WindowManager : MonoBehaviour
     //Activated after done initialization
     private void Start()
     {
+        Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+        Screen.fullScreen = true;
         GetThisAppWindow();
         SetWindowTransparent();
         ToggleWindow();
