@@ -43,20 +43,50 @@ This tool supports **mouse**, **keyboard**, and **gamepad (XInput)** inputs for 
 3. **Launch the game**, press **F5** to open the manager.
 4. **Set your Mods folder path** and follow the on-screen instructions.
 
----
+### 🔄 Update Guide (only if you're from v1.2.0 and below)
+If you're updating from **v1.2.0 or earlier**, follow these steps:
 
-## ⚠️ Important Notes
-- **Incompatible with other mod managers**.
-- Works by **simulating key presses** to interact with WWMI.
-- Managed mods are stored in `MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT`.
-- To **remove a mod**, right-click it in the Mod Manager and select **Remove** (restores modified files).
-- **You can still use only the Mod Fix tool without adding managed mods.**
+1. Delete previous tool version (v1.2.0 and below), if any.
+2. Place tool under the same path/directory/folder(optional).
+3. Make sure you double check XXMI=>Setting=>Advanced=>Run Pre-Launch. Make sure it's using the latest version.
+4. On your "Mods" folder, rename MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT to be DISABLED_OTHERFOLDERNAME. Or just move it outside "Mods" folder (also need rename to other folder name). Folder name must not contains something like "managed".
+5. Then just use & run the game as usual with XXMI.
+6. You need to redo the adding process, you can just add group, add mod, select mod folder.
+7. You can add back mods that still on DISABLED_OTHERFOLDERNAME. **USE THE TOOL! NOT MANUAL COPY PASTE. DO NOT DO IT MANUALLY WITH FILE EXPLORER (Copy Paste)**!
+8. Done
+   In previous version, If you encounter game crash because adding unsupported mod, the guide above will also fix it, and you can play the game again.
+   If after following the guide above, game still crash and cannot be opened. Just move everything inside your "Mods" folder, place it outside "Mods" folder. Add back manually one-by-one to see which mod cause crash.
+
+---
+## 📌 IMPORTANT (To avoid Error/Bug on your mods)
+
+### ✅ What you can do
+- If you have merged/combined mods (example: merged.ini)
+  Place it under 1 folder, select that 1 unified folder. Do not select one by one.
+- If you ever used other mod manager that also modify .ini files
+  **Quick & easy way**: revert it with the tool that they provided. And do not use it anymore.
+  **Advanced way (I personally never try it)**: Place them under 1 folder, make sure you know which one of them. Just add it select that 1 unified folder.
+- How to use with ReShade or other? Run Pre-Launch is not empty
+  Just add '**&**' between them. Please read the guide, I already wrote it.
+  
+### ❌ What you must NOT do
+- Do not add mods manually by **move/cut/copy** with **File Explorer**!
+  It will not work & .ini files remain unmodified!
+  And it basically break basic modding rules (1 mod for 1 character at a time).
+  Because your mods all are active at the same time.
+  I mean, do not add mod with copy paste to "V1_3_x_MANAGED..." folder. You can still add other mod with File Explorer of course, just do not put it in that folder.
+- Do not ever remove added/managed mods manually by move/cut/copy with FIle Explorer
+  Removing it manually with File Explorer will not revert modified mod!
+  I mean, do not remove mod with move/cut/copy from  "V1_3_x_MANAGED..." folder.
+- In case game crash because adding unsupported mod that I never tested
+  Use "reverter_only.rar" read the GUIDE.txt inside that folder.
+  And you better tell me which mod that cause crash.
 
 ---
 
 ## ⚠️ Disclaimer & Warnings
 - This is a **Windows Overlay App**.
-- Simulates **key presses** but does **not** interact directly with the game.
+- Simulates **key presses** but does **not** interact directly with the game. Only with WWMI/SRMI/ZZMI/GIMI
 - **Use at your own risk.**
 - **Not responsible for account issues due to mod usage.**
 - By downloading and using this tool, you **accept full responsibility**.
@@ -92,7 +122,7 @@ This tool supports **mouse**, **keyboard**, and **gamepad (XInput)** inputs for 
 - **F13 - F24** – Used to change groups.
 - **Enter / Backspace** – Used to change groups.
 - **Tab / Right Ctrl** – Used to change mods.
-- **Numbers 1-5** – Used to change mods.
+- **Numbers 1-5 & Z-B** – Used to change mods.
 
 > 🛑 **Note:** If your PC/system uses these keys for other shortcuts, you'll need to **change your system settings** if you can/if you want.
 
