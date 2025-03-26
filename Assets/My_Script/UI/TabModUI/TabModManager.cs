@@ -113,7 +113,7 @@ public class TabModManager : MonoBehaviour
         if (_modDataWasLoaded) return;
 
         string modPathKey = ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName;
-        string managedPath = Path.Combine(PlayerPrefs.GetString(modPathKey), ConstantVar.Managed_Path);
+        string managedPath = Path.Combine(PlayerPrefs.GetString(modPathKey), ConstantVar.Managed_Folder);
         string jsonPath = Path.Combine(managedPath, ConstantVar.ModData_Json_File);
 
         EnsureManagedDirectoryExists(managedPath);
@@ -145,6 +145,8 @@ public class TabModManager : MonoBehaviour
     {
         string jsonData = File.ReadAllText(jsonPath);
         modData = JsonUtility.FromJson<ModData>(jsonData);
+
+        EnsureGroupPathIsSync();
         EnsureModDataCompatibleWithLatestVersion();
     }
 
@@ -166,6 +168,33 @@ public class TabModManager : MonoBehaviour
             }
         }
         if(changed) ModManagerUtils.SaveManagedModData();
+    }
+
+    //In case user move/copy "...MANAGED..." folder
+    private void EnsureGroupPathIsSync()
+    {
+        string managedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Managed_Folder);
+        bool groupPathDesync = false;
+
+        foreach (var groupData in modData.groupDatas)
+        {
+            if(groupData.groupPath == "AddButton") continue;
+            string parentPath = Path.GetDirectoryName(groupData.groupPath);
+            if (parentPath != null)
+            {
+                if(parentPath != managedPath)
+                {
+                    parentPath = managedPath;
+                    groupData.groupPath = Path.Combine(parentPath, Path.GetFileName(groupData.groupPath));
+                    groupPathDesync = true;
+                }
+            }
+        }
+
+        if(groupPathDesync)
+        {
+            ModManagerUtils.SaveManagedModData();
+        }
     }
 
     private void CreateNewModData(string jsonPath)

@@ -351,7 +351,7 @@ public class GroupScrollHandler : MonoBehaviour
 
     public void RemoveGroupButton()
     {
-        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
+        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Folder);
         string targetGroupPath = TabModManager.modData.groupDatas[_currentTargetIndex].groupPath;
         string targetGroupPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetGroupPath));
         
@@ -375,7 +375,7 @@ public class GroupScrollHandler : MonoBehaviour
             if(ModManagerUtils.RevertManagedMod(targetGroupPathRemoved))
             {
                 reloadInfo.SetActive(true);
-                ToggleOperationInfo($"Group removed and moved to <color=yellow>{ConstantVar.Removed_Path}</color>");
+                ToggleOperationInfo($"Group removed and moved to <color=yellow>{ConstantVar.Removed_Folder}</color>");
             }
             else
             {
@@ -407,7 +407,7 @@ public class GroupScrollHandler : MonoBehaviour
         int startingIndex = 1; //0 is Add group button, so it's 1
         string groupPath = Path.Combine(
             PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-            ConstantVar.Managed_Path,
+            ConstantVar.Managed_Folder,
             $"group_{startingIndex}"
         );
 
@@ -416,7 +416,7 @@ public class GroupScrollHandler : MonoBehaviour
             startingIndex++;
             groupPath = Path.Combine(
                 PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-                ConstantVar.Managed_Path,
+                ConstantVar.Managed_Folder,
                 $"group_{startingIndex}"
             );
         }
@@ -440,7 +440,7 @@ public class GroupScrollHandler : MonoBehaviour
     private void CheckAndCreateGroupManagerIni()
     {
         string groupManagerIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-                                    ConstantVar.Managed_Path, ConstantVar.IniFile_GroupManager);
+                                    ConstantVar.Managed_Folder, ConstantVar.IniFile_GroupManager);
         if(!File.Exists(groupManagerIniPath))
         {
             string content = groupManagerIniTemplate.text;
@@ -453,7 +453,7 @@ public class GroupScrollHandler : MonoBehaviour
     public void EnsureGroupManagerIniLatestVersion()
     {
         string groupManagerIniPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName),
-                                    ConstantVar.Managed_Path, ConstantVar.IniFile_GroupManager);
+                                    ConstantVar.Managed_Folder, ConstantVar.IniFile_GroupManager);
         if(File.Exists(groupManagerIniPath))
         {
             string firstLine = "";

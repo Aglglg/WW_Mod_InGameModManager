@@ -391,7 +391,7 @@ public class ModScrollHandler : MonoBehaviour
             return;
         }
 
-        if(selectedModFolder[0].Contains(ConstantVar.Managed_Path))
+        if(selectedModFolder[0].Contains(ConstantVar.Managed_Folder))
         {
             ToggleOperationInfo("Selected mod already on Managed folder, operation canceled");
             return;
@@ -503,7 +503,7 @@ public class ModScrollHandler : MonoBehaviour
 
     public void RemoveModButton()
     {
-        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Path);
+        string removedPath = Path.Combine(PlayerPrefs.GetString(ConstantVar.Prefix_PlayerPrefKey_ModPath + Initialization.gameName), ConstantVar.Removed_Folder);
         string targetModPath = Path.Combine(_currentSelectedGroup.groupPath, _currentSelectedGroup.modFolders[_currentTargetIndex]);
         string targetModPathRemoved = Path.Combine(removedPath, Path.GetFileName(targetModPath));
         
@@ -534,7 +534,7 @@ public class ModScrollHandler : MonoBehaviour
             if(ModManagerUtils.RevertManagedMod(targetModPathRemoved))
             {
                 reloadInfo.SetActive(true);
-                ToggleOperationInfo($"Mod removed and moved to <color=yellow>{ConstantVar.Removed_Path}</color>");
+                ToggleOperationInfo($"Mod removed and moved to <color=yellow>{ConstantVar.Removed_Folder}</color>");
             }
             else
             {

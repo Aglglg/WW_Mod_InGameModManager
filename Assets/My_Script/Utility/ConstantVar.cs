@@ -23,8 +23,8 @@ public static class ConstantVar
     public const string ModsFolder_ValidSuffix = "\\mods";
     public const string ModData_Json_File = "moddata.json";
     public const string ModData_Icon_File = "icon.dds";
-    public const string Managed_Path = "V1_3_x_MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT";
-    public const string Removed_Path = "DISABLED_MANAGED_REMOVED";
+    public const string Managed_Folder = "V1_3_x_MANAGED-DO_NOT_EDIT_COPY_MOVE_CUT";
+    public const string Removed_Folder = "DISABLED_MANAGED_REMOVED";
     public const string Managed_Backup_Extension = "ini_managed_backup";
     public const string IniFile_GroupManager = "manager_group.ini";
     public const string IniFile_BackgroundKeypress = "background_keypress.ini";
