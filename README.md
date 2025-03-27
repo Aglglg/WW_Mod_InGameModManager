@@ -1,4 +1,4 @@
-# Complete In-Game Mod Manager
+# Complete In-Game Mod Manager (need XXMI)
 [Click here to Download](https://gamebanana.com/mods/582623)
 
 ## Overview
