@@ -1,7 +1,7 @@
 {
     "title": "Fix Mod for Ultra Performance/Performance Graphic Setting",
     "note":
-        "by <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link>\nMost character mods only works in Quality&Balanced(In-Game Graphic Setting), that's bad if you have low VRAM GPU. You can use this to make mods work in Ultra Performance & Performance.\nOriginal(unmodded) texture will have lower resolution only if you set the game to Ultra Performance/Performance (even after you custom it to be all high). That's good for low VRAM GPU.\n\nIncluded in this fix:\n   - All characters\n   - All characters injured state\n   - Character skins\n\nMake sure your target mods is already working fine on Quality. Make sure to disable Auto Config in XXMI. If still not working, restart the game in Ultra Performance/Performance (You can custom it to be all high, etc).\nUltra Performance and custom to be All High, will get more FPS than Quality to be All Low.",
+        "by <link=\"https://gamebanana.com/tools/18999\"><u>@agulag</u></link>\nUpdate:\nAdded Cantarella\n\nMost character mods only works in Quality&Balanced(In-Game Graphic Setting), that's bad if you have low VRAM GPU. You can use this to make mods work in Ultra Performance & Performance.\nOriginal(unmodded) texture will have lower resolution only if you set the game to Ultra Performance/Performance (even after you custom it to be all high). That's good for low VRAM GPU.\n\nIncluded in this fix:\n   - All characters\n   - All characters injured state\n   - Character skins\n\nMake sure your target mods is already working fine on Quality. Make sure to disable Auto Config in XXMI. If still not working, restart the game in Ultra Performance/Performance (You can custom it to be all high, etc).\nUltra Performance and custom to be All High, will get more FPS than Quality to be All Low.",
     "modFixType": "1",
     "modFixGame": "0",
     "hashpair":
@@ -1841,7 +1841,22 @@
             {
             "key": "92ab1de5",
             "value": "33e39fcb"
-        }
+        },
+        { "key": "5db1989d", "value": "f5e478e4" },
+  { "key": "22ba1d3e", "value": "d6b8c7c3" },
+  { "key": "87821a93", "value": "92838744" },
+  { "key": "83a99602", "value": "64df8a0f" },
+  { "key": "0fce3633", "value": "63bd0a5e" },
+  { "key": "d789c54e", "value": "63915a2b" },
+  { "key": "c93ea25b", "value": "49a4e7b6" },
+  { "key": "94a9c5e1", "value": "d793f3b3" },
+  { "key": "dcb62fb6", "value": "366b82a1" },
+  { "key": "35c01267", "value": "0c65e7d2" },
+  { "key": "787c92b8", "value": "583b6efd" },
+  { "key": "dc14e209", "value": "52d10f2d" },
+  { "key": "73360451", "value": "8ef9b717" },
+  { "key": "52a54db3", "value": "04c66147" },
+  { "key": "daed0b06", "value": "66770668" }
     ],
-    "modifiedDate": "2025/02/24T04:50:30Z"
+    "modifiedDate": "2025-03-27T05:10:00Z"
 }
