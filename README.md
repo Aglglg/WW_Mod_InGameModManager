@@ -1,5 +1,6 @@
 # Complete In-Game Mod Manager (need XXMI)
 [Click here to Download](https://gamebanana.com/mods/582623)
+[Better Version (On-Development/Unfinished)](https://github.com/Aglglg/No-Reload-Mod-Manager)
 
 ## Overview
 The **Complete In-Game Mod Manager** is a tool designed to make managing mods easier. With this tool, you can:
